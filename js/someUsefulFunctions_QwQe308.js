@@ -1,5 +1,4 @@
 //快捷调用+提高运算速度
-//天哪 我恨OmegaNum
 var zero = new OmegaNum(0)
 var one = new OmegaNum(1)
 var two = new OmegaNum(2)

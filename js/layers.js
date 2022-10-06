@@ -1,25 +1,75 @@
-addLayer("p", { //这是代码中的节点代码 例如player.p可以调用该层级的数据 尽量使用顺手的字母什么的 不建议数字开头
-    symbol: "P", // 这是节点上显示的字母
-    position: 0, // 节点顺序
-    startData() { return {
-        unlocked: true, //是否开始就解锁
-		points: new ExpantaNum(0),
-    }},
-    color: "lime",
-    resource: "重置点", // 重置获得的资源名称
-    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+addLayer("data",
+{
+    symbol: "M",
+    position: 0,
+    startData()
+    {
+        return{
+            unlocked: true,
+            points: new ExpantaNum(0),
+            att:two,
+            def:one,
+            hp:n(10),
+            spd:n(1000),
+        }
+    },
+    color: "white",
+    resource: "重置点",
+    type: "normal",
     requires:new ExpantaNum(10),
     exponent:1,
-    baseAmount(){return player.points},//基础资源数量
-    baseResource:"点数",//基础资源名称
-    gainMult() { // 资源获取数量倍率
+    baseAmount()
+    {
+        return zero
+    },
+    baseResource:"点数",
+    gainMult()
+    {
         mult = new ExpantaNum(1)
         return mult
     },
-    gainExp() { // 资源获取指数加成(与exponent相乘)
+    gainExp()
+    {
         var exp = new ExpantaNum(1)
         return exp
     },
-    row: 1, // Row the layer is in on the tree (0 is the first row)  QwQ:1也可以当第一排
+    tabFormat:
+    {
+        "属性":
+        {
+            buttonStyle()
+            {
+                return {"border-radius":"0px"}
+            },
+            content:[
+                "blank",
+                ["display-text",
+                    function() {
+                        return '<text style="color:#FF000099">攻击 : </text><text style="color:#FF0000">'+format(player.data.att)+'</text>'
+                    },
+                    { "color": "white", "font-size": "32px",}
+                ],
+                ["display-text",
+                    function() {
+                        return '<text style="color:#0000FF99">防御 : </text><text style="color:#0000FF">'+format(player.data.def)+'</text>'
+                    },
+                    { "color": "white", "font-size": "32px",}
+                ],
+                ["display-text",
+                    function() {
+                        return '<text style="color:#00FF0099">生命 : </text><text style="color:#00FF00">'+format(player.data.hp)+'</text>'
+                    },
+                    { "color": "white", "font-size": "32px",}
+                ],
+                ["display-text",
+                    function() {
+                        return '<text style="color:#FF00FF99">速度 : </text><text style="color:#FF00FF">'+format(player.data.spd)+'</text>'
+                    },
+                    { "color": "white", "font-size": "32px",}
+                ],
+            ],
+        },
+    },
+    row: "side",
     layerShown(){return true},
 })
