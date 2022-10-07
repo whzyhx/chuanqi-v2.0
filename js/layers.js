@@ -1,6 +1,6 @@
 addLayer("data",
 {
-    symbol: "M",
+    symbol: "S",
     position: 0,
     startData()
     {
@@ -15,24 +15,7 @@ addLayer("data",
     },
     color: "white",
     resource: "重置点",
-    type: "normal",
-    requires:new ExpantaNum(10),
-    exponent:1,
-    baseAmount()
-    {
-        return zero
-    },
-    baseResource:"点数",
-    gainMult()
-    {
-        mult = new ExpantaNum(1)
-        return mult
-    },
-    gainExp()
-    {
-        var exp = new ExpantaNum(1)
-        return exp
-    },
+    type: "none",
     tabFormat:
     {
         "属性":
