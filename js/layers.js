@@ -278,7 +278,7 @@ addLayer("stat",
                 ],
                 ["display-text",
                     function() {
-                        return '<text style="color:#FF00FF99">幸运 : </text><text style="color:green">'+format(player[this.layer].luck)+' <br>我草匿名你上个色我不知道哪个颜色好看</text>'
+                        return '<text style="color:#FFFF0099">幸运 : </text><text style="color:#FFFF00">'+format(player[this.layer].luck)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
@@ -316,8 +316,11 @@ addLayer("battle",
 
     tabFormat:
     {
-        
-        
+        "1":{
+            content:[
+
+            ]
+        }
     },
 
     layerShown(){return true},
