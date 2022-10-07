@@ -319,11 +319,11 @@ addLayer("battle",
 
         //下面开始处理！
         if (player[this.layer].currentDoingStage==0) {//stage=0:找怪
-            //player[this.layer].currentDoingProgress+=n(1000).div(player.stat.spd).mul(diff).min(10).toNumber()
+            player[this.layer].currentDoingProgress+=n(1000).div(player.stat.spd).mul(diff).min(10).toNumber()
             return ['找怪',player[this.layer].currentDoingProgress]
         }
         if (player[this.layer].currentDoingStage==1) {//stage=1:打怪
-            //player[this.layer].currentDoingProgress+=0.01
+            player[this.layer].currentDoingProgress+=0.01
             return ['打怪',player[this.layer].currentDoingProgress]
         }
     },
