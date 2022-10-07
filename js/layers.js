@@ -1,5 +1,5 @@
 // ------------ 装备轮子 -------------\\
-const pinzhi=[//这个看不懂就砍死你丫的(?
+const quality=[//这个看不懂就砍死你丫的(?
     "<text style='color:grey'>破损</text>",
     "<text style='color:white'>普通</text>",
     "<text style='color:lime'>优秀</text>",
@@ -8,7 +8,7 @@ const pinzhi=[//这个看不懂就砍死你丫的(?
     "<text style='color:gold'>传奇</text>",
     "<text style='color:red'>神话</text>",
 ]
-const buwei=[
+const part=[
     "剑",
     "护甲",
     "护手",
@@ -17,7 +17,7 @@ const buwei=[
     "项链",
     "戒指",
 ]
-const jichu=[
+const base=[
     [1,2,5,100],//表示不同品质的基础属性 , 同时属性收到装备等级影响 , (数值未填充)
     [1,2,5,100],//对了 , 不同装备应该有不同侧重点
     [1,2,5,100],//后面再说
@@ -26,7 +26,7 @@ const jichu=[
     [1,2,5,100],
     [1,2,5,100],
 ]
-const cizhui=[
+const affix=[
     ["词缀1","---"],//左边是名称，右边是说明
     ["词缀2","---"],
     ["词缀3","---"],
@@ -42,16 +42,16 @@ const cizhui=[
 //[名字,att,def,hp,spd,(...),[ , , ]]-后面的数组是用来存放词缀的
 //                      |
 //          这个是给以后更多的属性预留的地方
-function getCiZhui()
+function getAffix()
 {
     var xx=n(0).add(Math.random())
-    xx=xx.mul(cizhui.length).floor()
+    xx=xx.mul(affix.length).floor()
     return xx
 }
 function summon()
 {
     var data=[]
-    var cizhuiku=[]
+    var affixku=[]
     //装备基础爆率 (显然 , 这个东西收到难度影响还有玩家自身属性)
     //破损:90%
     //普通:9%
@@ -63,13 +63,13 @@ function summon()
     var x=n(0).add(Math.random())//随机品质
     x=n(0.0000000001)
     var name=''
-    if(x.lte(0.000001))name=name+pinzhi[6]
-    else if(x.lte(0.000009))name=name+pinzhi[5]
-    else if(x.lte(0.00009))name=name+pinzhi[4]
-    else if(x.lte(0.0009))name=name+pinzhi[3]
-    else if(x.lte(0.009))name=name+pinzhi[2]
-    else if(x.lte(0.09))name=name+pinzhi[1]
-    else name=name+pinzhi[0]
+    if(x.lte(0.000001))name=name+quality[6]
+    else if(x.lte(0.000009))name=name+quality[5]
+    else if(x.lte(0.00009))name=name+quality[4]
+    else if(x.lte(0.0009))name=name+quality[3]
+    else if(x.lte(0.009))name=name+quality[2]
+    else if(x.lte(0.09))name=name+quality[1]
+    else name=name+quality[0]
     name=name+'的'
     var xxx=n(0).add(Math.random())//随机词缀
     if(x.lte(0.000001))
@@ -88,9 +88,9 @@ function summon()
         var pos
         for(var i=0;i<changdu;i++)
         {
-            pos=getCiZhui()
-            name=name+cizhui[pos][0]+'的'
-            cizhuiku.push(pos)
+            pos=getAffix()
+            name=name+affix[pos][0]+'的'
+            affixku.push(pos)
         }
     }
     else if(x.lte(0.000009))
@@ -108,9 +108,9 @@ function summon()
         var pos
         for(var i=0;i<changdu;i++)
         {
-            pos=getCiZhui()
-            name=name+cizhui[pos][0]+'的'
-            cizhuiku.push(pos)
+            pos=getAffix()
+            name=name+affix[pos][0]+'的'
+            affixku.push(pos)
         }
     }
     else if(x.lte(0.00009))
@@ -126,9 +126,9 @@ function summon()
         var pos
         for(var i=0;i<changdu;i++)
         {
-            pos=getCiZhui()
-            name=name+cizhui[pos][0]+'的'
-            cizhuiku.push(pos)
+            pos=getAffix()
+            name=name+affix[pos][0]+'的'
+            affixku.push(pos)
         }
     }
     else if(x.lte(0.0009))
@@ -142,9 +142,9 @@ function summon()
         var pos
         for(var i=0;i<changdu;i++)
         {
-            pos=getCiZhui()
-            name=name+cizhui[pos][0]+'的'
-            cizhuiku.push(pos)
+            pos=getAffix()
+            name=name+affix[pos][0]+'的'
+            affixku.push(pos)
         }
     }
     else if(x.lte(0.009))
@@ -156,14 +156,14 @@ function summon()
         var pos
         for(var i=0;i<changdu;i++)
         {
-            pos=getCiZhui()
-            name=name+cizhui[pos][0]+'的'
-            cizhuiku.push(pos)
+            pos=getAffix()
+            name=name+affix[pos][0]+'的'
+            affixku.push(pos)
         }
     }
     var xx=n(0).add(Math.random())//随机部位
-    xx=xx.mul(buwei.length).floor()
-    name=name+buwei[xx]
+    xx=xx.mul(part.length).floor()
+    name=name+part[xx]
     data.push(name)
     //计算装备属性区域
     data.push(1)
@@ -171,7 +171,7 @@ function summon()
     data.push(5)
     data.push(10)
     /////////////////
-    data.push(cizhuiku)
+    data.push(affixku)
     return data
 }
 function output(data)//根据数据打印装备
@@ -189,7 +189,7 @@ function output(data)//根据数据打印装备
     s+='速度+'+format(data[4])+'<br>'
     for(var i=0;i<data[5].length;i++)
     {
-        s+=cizhui[data[5][i]][0]+' : '+cizhui[data[5][i]][1]+'<br>'
+        s+=affix[data[5][i]][0]+' : '+affix[data[5][i]][1]+'<br>'
     }
     return s
 }
