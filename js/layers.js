@@ -305,7 +305,6 @@ addLayer("battle",
             currentDoingStage:0,//现在在干啥
             //stage=0:找怪
             //stage=1:打怪
-            //stage=2:捡装备
         }
     },
     color: "white",
@@ -315,21 +314,17 @@ addLayer("battle",
     currentDoing(){//现在在干嘛
         if (player[this.layer].currentDoingProgress>=1){
             player[this.layer].currentDoingProgress=0
-            player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%3//保证事件在这三样之间循环
+            player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
         }
-
-        player[this.layer].currentDoingProgress+=0.01
 
         //下面开始处理！
-        if (player[this.layer].currentDoingStage==0) {
-            
+        if (player[this.layer].currentDoingStage==0) {//stage=0:找怪
+            player[this.layer].currentDoingProgress+=n(1000).div(player.stat.spd).div(100).min(10).toNumber()
             return ['找怪',player[this.layer].currentDoingProgress]
         }
-        if (player[this.layer].currentDoingStage==1) {
+        if (player[this.layer].currentDoingStage==1) {//stage=1:打怪
+            player[this.layer].currentDoingProgress+=0.01
             return ['打怪',player[this.layer].currentDoingProgress]
-        }
-        if (player[this.layer].currentDoingStage==2) {
-            return ['捡装备',player[this.layer].currentDoingProgress]
         }
     },
 
@@ -338,13 +333,24 @@ addLayer("battle",
             direction: RIGHT,
             width: 400,
             height: 25,
-            progress() {return player[this.layer].currentDoingProgress},
-        }
+            progress() {
+                if (player[this.layer].currentDoingStage==0) return player[this.layer].currentDoingProgress
+                if (player[this.layer].currentDoingStage==1){
+                    return 1-player[this.layer].currentDoingProgress
+                }
+            },
+            fillStyle(){
+                if (player[this.layer].currentDoingStage==0) return {"background-color":"#00FF00"}
+                return {"background-color":"#FF0000"}
+            },
+        },
     },
 
     tabFormat:[
         ["display-text",function(){return `正在${tmp.battle.currentDoing[0]}中...`}],
         ["bar","thatBar"],
+        ["display-text",function(){return `Progress: ${format(player[this.layer].currentDoingProgress,2)} || Bar Progress: ${format(tmp.battle.bars.thatBar.progress,2)}`}],
+
     ],
 
     layerShown(){return true},
