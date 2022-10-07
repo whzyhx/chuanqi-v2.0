@@ -293,6 +293,7 @@ addLayer("stat",
 addLayer("battle",
 {
     symbol: "b",
+    row: 0,
     position: 0,
     startData()
     {
@@ -319,6 +320,5 @@ addLayer("battle",
         
     },
 
-    row: "side",
     layerShown(){return true},
 })
