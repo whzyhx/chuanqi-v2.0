@@ -311,7 +311,7 @@ addLayer("battle",
     type: "none",
     tooltip:"战场（？",
 
-    currentDoing(){//现在在干嘛
+    update(diff){//现在在干嘛
         if (player[this.layer].currentDoingProgress>=1){
             player[this.layer].currentDoingProgress=0
             player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
@@ -319,11 +319,11 @@ addLayer("battle",
 
         //下面开始处理！
         if (player[this.layer].currentDoingStage==0) {//stage=0:找怪
-            player[this.layer].currentDoingProgress+=n(1000).div(player.stat.spd).div(100).min(10).toNumber()
+            //player[this.layer].currentDoingProgress+=n(1000).div(player.stat.spd).mul(diff).min(10).toNumber()
             return ['找怪',player[this.layer].currentDoingProgress]
         }
         if (player[this.layer].currentDoingStage==1) {//stage=1:打怪
-            player[this.layer].currentDoingProgress+=0.01
+            //player[this.layer].currentDoingProgress+=0.01
             return ['打怪',player[this.layer].currentDoingProgress]
         }
     },
@@ -347,7 +347,7 @@ addLayer("battle",
     },
 
     tabFormat:[
-        ["display-text",function(){return `正在${tmp.battle.currentDoing[0]}中...`}],
+        ["display-text",function(){return `正在${player[this.layer].currentDoingStage==1?'打怪':'找怪'}中...`}],
         ["bar","thatBar"],
         ["display-text",function(){return `Progress: ${format(player[this.layer].currentDoingProgress,2)} || Bar Progress: ${format(tmp.battle.bars.thatBar.progress,2)}`}],
 
