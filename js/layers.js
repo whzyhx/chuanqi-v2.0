@@ -212,6 +212,7 @@ addLayer("stat",
     },
     color: "white",
     type: "none",
+    tooltip:"数据",
 
     calcStats:{//在这里面计算属性
         atk(){
