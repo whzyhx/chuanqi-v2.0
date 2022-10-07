@@ -289,8 +289,28 @@ addLayer("stat",
     row: "side",
     layerShown(){return true},
 })
-
-
+const monster_name=[
+    "史莱姆"
+]
+const monster_img_src=[
+    '<img src="js/img/史莱姆.png" alt="">',
+]
+const map_img_src=[
+    '<img src="js/img/地图-草.png" alt="">',
+]
+const monster_base=[
+    [n(1),n(0),n(5),n(2000)],
+]
+function re_calc()//重新生成怪物属性
+{
+    // var level=1
+    player.battle.monsterHPmx=n(5)
+    player.battle.monsterHPnow=n(5)
+    player.battle.monsterATK=n(1)
+    player.battle.monsterDEF=n(0)
+    player.battle.monsterSPD=n(2000)
+    return
+}
 addLayer("battle",
 {
     symbol: "b",
@@ -305,6 +325,10 @@ addLayer("battle",
             currentDoingStage:0,//现在在干啥
             //stage=0:找怪
             //stage=1:打怪
+            inFight:0,//在战斗中?
+            monsterHPmx:n(0),monsterHPnow:n(0),
+            monsterATK:n(0),monsterDEF:n(0),
+            monsterSPD:n(0),
         }
     },
     color: "white",
@@ -313,18 +337,34 @@ addLayer("battle",
 
     update(diff){//现在在干嘛
         if (player[this.layer].currentDoingProgress>=1){
-            player[this.layer].currentDoingProgress=0
+            if(player.battle.currentDoingStage==0)
+            {
+                player.battle.inFight=1
+                re_calc()
+            }
+            else
+            {
+                player[this.layer].currentDoingProgress=0
+            }
             player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
         }
 
         //下面开始处理！
         if (player[this.layer].currentDoingStage==0) {//stage=0:找怪
             player[this.layer].currentDoingProgress+=n(1000).div(player.stat.spd).mul(diff).min(10).toNumber()
+<<<<<<< Updated upstream
             return ['找怪',player[this.layer].currentDoingProgress]
         }
         if (player[this.layer].currentDoingStage==1) {//stage=1:打怪
             player[this.layer].currentDoingProgress+=0.01
             return ['打怪',player[this.layer].currentDoingProgress]
+=======
+            // return ['找怪',player[this.layer].currentDoingProgress]
+        }
+        if (player[this.layer].currentDoingStage==1) {//stage=1:打怪
+            // player[this.layer].currentDoingProgress+=0.01
+            // return ['打怪',player[this.layer].currentDoingProgress]
+>>>>>>> Stashed changes
         }
     },
 
@@ -334,22 +374,45 @@ addLayer("battle",
             width: 400,
             height: 25,
             progress() {
-                if (player[this.layer].currentDoingStage==0) return player[this.layer].currentDoingProgress
-                if (player[this.layer].currentDoingStage==1){
-                    return 1-player[this.layer].currentDoingProgress
-                }
+                return player[this.layer].currentDoingProgress
             },
             fillStyle(){
-                if (player[this.layer].currentDoingStage==0) return {"background-color":"#00FF00"}
+                if (player[this.layer].inFight==0) return {"background-color":"#00FF00"}
                 return {"background-color":"#FF0000"}
             },
+        },
+        monsterHPBar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress() {
+                return player.battle.monsterHPnow.div(player.battle.monsterHPmx)
+            },
+            fillStyle(){
+                return {"background-color":"#FF0000"}
+            },
+            display()
+            {
+
+            }
         },
     },
 
     tabFormat:[
         ["display-text",function(){return `正在${player[this.layer].currentDoingStage==1?'打怪':'找怪'}中...`}],
         ["bar","thatBar"],
-        ["display-text",function(){return `Progress: ${format(player[this.layer].currentDoingProgress,2)} || Bar Progress: ${format(tmp.battle.bars.thatBar.progress,2)}`}],
+        "blank",
+        ["display-text",function(){return "怪物 : "+monster_name[0]}],
+        ["display-text",function(){return monster_img_src[0]+'<br>'+map_img_src[0]}],
+        // ["display-text",function(){return map_img_src[0]}],
+        // ["display-image",()=>{
+        //     return monster_img_src[0]
+        // }, {maxWidth:'500%',maxHeight:'500%',position: 'relative'}],
+        // ["display-image",()=>{
+        //     return map_img_src[0]
+        // }, {maxWidth:'500%',maxHeight:'500%',position: 'relative'}],
+        // ["bar","thatBar"],
+        // ["display-text",function(){return `Progress: ${format(player[this.layer].currentDoingProgress,2)} || Bar Progress: ${format(tmp.battle.bars.thatBar.progress,2)}`}],
 
     ],
 
