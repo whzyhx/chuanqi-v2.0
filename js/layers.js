@@ -298,31 +298,54 @@ addLayer("battle",
     position: 0,
     startData()
     {
-        return{
+        return {
             unlocked: true,
             points: new ExpantaNum(0),
+            currentDoingProgress:0,//现在干的进度
+            currentDointStage:0,//现在在干啥
+            //stage=0:找怪
+            //stage=1:打怪
+            //stage=2:捡装备
         }
     },
     color: "white",
     type: "none",
+    tooltip:"战场（？",
+
+    currentDoing(){//现在在干嘛
+        if (player[this.layer].currentDoingProgress>=1){
+            player[this.layer].currentDoingProgress=0
+            player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%3//保证事件在这三样之间循环
+        }
+
+        player[this.layer].currentDoingProgress+=0.01
+
+        //下面开始处理！
+        if (player[this.layer].currentDoingStage==0) {
+            
+            return ['找怪',player[this.layer].currentDoingProgress]
+        }
+        if (player[this.layer].currentDoingStage==1) {
+            return ['打怪',player[this.layer].currentDoingProgress]
+        }
+        if (player[this.layer].currentDoingStage==2) {
+            return ['捡装备',player[this.layer].currentDoingProgress]
+        }
+    },
 
     bars:{
         thatBar:{
             direction: RIGHT,
-            width: 200,
-            height: 50,
-            progress() { return 0 },
+            width: 400,
+            height: 25,
+            progress() {return player[this.layer].currentDoingProgress},
         }
     },
 
-    tabFormat:
-    {
-        "1":{
-            content:[
-
-            ]
-        }
-    },
+    tabFormat:[
+        ["display-text",function(){return `正在${tmp.battle.currentDoing[0]}中...`}],
+        ["bar","thatBar"],
+    ],
 
     layerShown(){return true},
 })
