@@ -7,7 +7,7 @@ addLayer("data",
         return{
             unlocked: true,
             points: new ExpantaNum(0),
-            att:two,
+            atk:two,
             def:one,
             hp:n(10),
             spd:n(1000),
@@ -16,6 +16,10 @@ addLayer("data",
     color: "white",
     resource: "重置点",
     type: "none",
+
+
+
+
     tabFormat:
     {
         "属性":
@@ -28,7 +32,7 @@ addLayer("data",
                 "blank",
                 ["display-text",
                     function() {
-                        return '<text style="color:#FF000099">攻击 : </text><text style="color:#FF0000">'+format(player.data.att)+'</text>'
+                        return '<text style="color:#FF000099">攻击 : </text><text style="color:#FF0000">'+format(player.data.atk)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
