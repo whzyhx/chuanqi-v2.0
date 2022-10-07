@@ -302,7 +302,7 @@ addLayer("battle",
             unlocked: true,
             points: new ExpantaNum(0),
             currentDoingProgress:0,//现在干的进度
-            currentDointStage:0,//现在在干啥
+            currentDoingStage:0,//现在在干啥
             //stage=0:找怪
             //stage=1:打怪
             //stage=2:捡装备
