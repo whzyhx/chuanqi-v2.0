@@ -301,8 +301,8 @@ addLayer("battle",
         return {
             unlocked: true,
             points: new ExpantaNum(0),
-            currentDoingProgress:0,//现在干的进度
-            currentDointStage:0,//现在在干啥
+            currentDoingProgress:zero,//现在干的进度
+            currentDoingStage:zero,//现在在干啥
             //stage=0:找怪
             //stage=1:打怪
             //stage=2:捡装备
@@ -311,25 +311,32 @@ addLayer("battle",
     color: "white",
     type: "none",
     tooltip:"战场（？",
-
+    update(diff)
+    {
+        var speed=n(0.5)
+        player.battle.currentDoingProgress=player.battle.currentDoingProgress.add(speed.mul(diff))
+    },
     currentDoing(){//现在在干嘛
-        if (player[this.layer].currentDoingProgress>=1){
-            player[this.layer].currentDoingProgress=0
-            player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%3//保证事件在这三样之间循环
+        if (player.battle.currentDoingProgress.gte(1)){
+            player.battle.currentDoingProgress=n(0)
+            player.battle.currentDoingStage=player.battle.currentDoingStage.add(1)//保证事件在这三样之间循环
+            if(player.battle.currentDoingStage.gte(3))player.battle.currentDoingStage=player.battle.currentDoingStage.sub(3)
         }
 
-        player[this.layer].currentDoingProgress+=0.01
+        // player.battle.currentDoingProgress+=0.01
 
         //下面开始处理！
-        if (player[this.layer].currentDoingStage==0) {
-            
-            return ['找怪',player[this.layer].currentDoingProgress]
+        if (player.battle.currentDoingStage.lte(0.5))
+        {
+            return '找怪中...('+format(player.battle.currentDoingProgress.mul(100).floor())+'%)'
         }
-        if (player[this.layer].currentDoingStage==1) {
-            return ['打怪',player[this.layer].currentDoingProgress]
+        if (player.battle.currentDoingStage.lte(1.5))
+        {
+            return '打怪中...('+format(player.battle.currentDoingProgress.mul(100).floor())+'%)'
         }
-        if (player[this.layer].currentDoingStage==2) {
-            return ['捡装备',player[this.layer].currentDoingProgress]
+        if (player.battle.currentDoingStage.lte(2.5))
+        {
+            return '捡装备中...('+format(player.battle.currentDoingProgress.mul(100).floor())+'%)'
         }
     },
 
@@ -338,12 +345,12 @@ addLayer("battle",
             direction: RIGHT,
             width: 400,
             height: 25,
-            progress() {return player[this.layer].currentDoingProgress},
+            progress() {return player.battle.currentDoingProgress},
         }
     },
 
     tabFormat:[
-        ["display-text",function(){return `正在${tmp.battle.currentDoing[0]}中...`}],
+        ["display-text",function(){return `正在${layers.battle.currentDoing()}`}],
         ["bar","thatBar"],
     ],
 
