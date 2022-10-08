@@ -205,9 +205,10 @@ addLayer("stat",
             points: new ExpantaNum(0),
             atk:two,
             def:one,
-            hp:n(10),
+            hp:n(10),hpnow:n(10),
             spd:n(1000),
-            luck:one
+            luck:one,
+            playerProgress:n(0)
         }
     },
     color: "white",
@@ -221,7 +222,7 @@ addLayer("stat",
             player.stat.atk=result//返回
         },
         def(){
-            var base = n(1)
+            var base = n(0)
             var result = base
             player.stat.def=result
         },
@@ -329,63 +330,157 @@ addLayer("battle",
             monsterHPmx:n(0),monsterHPnow:n(0),
             monsterATK:n(0),monsterDEF:n(0),
             monsterSPD:n(0),
+            monsterProgress:n(0),
+            stringstringstring:"",
         }
     },
     color: "white",
     type: "none",
-    tooltip:"战场（？",
+    tooltip:"战场",
 
-    update(diff){//现在在干嘛
-        if (player[this.layer].currentDoingProgress>=1){
-            if(player.battle.currentDoingStage==0)
+    update(diff)
+    {//现在在干嘛
+        if (player[this.layer].currentDoingProgress>=1)
+        {
+            if(player.battle.inFight==0)
             {
-                player.battle.inFight=1
-                re_calc()
+                if(player.battle.currentDoingStage==0)
+                {
+                    player.battle.inFight=1
+                    player.stat.hpnow=player.stat.hp
+                    player.battle.stringstringstring=""
+                    player.battle.monsterProgress=n(0)
+                    player.stat.playerProgress=n(0)
+                    re_calc()
+                }
+                else
+                {
+                    player[this.layer].currentDoingProgress=0
+                }
+                player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
             }
-            else
-            {
-                player[this.layer].currentDoingProgress=0
-            }
-            player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
         }
-
+        if(player.battle.inFight==1)
+        {
+            player.battle.monsterProgress=player.battle.monsterProgress.add(player.battle.monsterSPD.div(5000).mul(diff))
+            if(player.battle.monsterProgress.gte(1))
+            {
+                player.battle.monsterProgress=n(0)
+                //产生一次攻击
+                player.stat.hpnow=player.stat.hpnow.sub(player.battle.monsterATK.sub(player.stat.def).max(0))
+            }
+            player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.div(5000).mul(diff))
+            if(player.stat.playerProgress.gte(1))
+            {
+                player.stat.playerProgress=n(0)
+                //产生一次攻击
+                player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
+            }
+            if(player.stat.hpnow.lte(0.001))
+            {
+                player.battle.stringstringstring="<text style='color:red'>你死了</text>"
+                player.battle.inFight=0
+            }
+            else if(player.battle.monsterHPnow.lte(0.001))
+            {
+                player.battle.stringstringstring="<text style='color:gold'>你赢了</text>"
+                player.battle.inFight=0
+                //计算掉落
+                //注意 , 掉落是需要显示的 , 即加到stringstringstring里
+            }
+        }
         //下面开始处理！
-        if (player[this.layer].currentDoingStage==0) {//stage=0:找怪
-            player[this.layer].currentDoingProgress+=n(1000).div(player.stat.spd).mul(diff).min(10).toNumber()
+        if (player[this.layer].currentDoingStage==0)
+        {//stage=0:找怪
+            player[this.layer].currentDoingProgress+=player.stat.spd.div(5000).mul(diff).toNumber()
             // return ['找怪',player[this.layer].currentDoingProgress]
         }
-        if (player[this.layer].currentDoingStage==1) {//stage=1:打怪
+        if (player[this.layer].currentDoingStage==1)
+        {//stage=1:打怪
             // player[this.layer].currentDoingProgress+=0.01
             // return ['打怪',player[this.layer].currentDoingProgress]
         }
     },
 
-    bars:{
-        thatBar:{
+    bars:
+    {
+        thatBar:
+        {
             direction: RIGHT,
             width: 400,
             height: 25,
-            progress() {
+            progress()
+            {
                 return player[this.layer].currentDoingProgress
             },
-            fillStyle(){
+            fillStyle()
+            {
                 if (player[this.layer].inFight==0) return {"background-color":"#00FF00"}
                 return {"background-color":"#FF0000"}
             },
         },
-        monsterHPBar:{
+        monsterHPbar:{
             direction: RIGHT,
             width: 400,
             height: 20,
-            progress() {
+            progress()
+            {
                 return player.battle.monsterHPnow.div(player.battle.monsterHPmx)
             },
-            fillStyle(){
+            fillStyle()
+            {
                 return {"background-color":"#FF0000"}
             },
             display()
             {
-
+                return "HP "+format(player.battle.monsterHPnow)+' / '+format(player.battle.monsterHPmx)
+            }
+        },
+        playerHPbar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress()
+            {
+                return player.stat.hpnow.div(player.stat.hp)
+            },
+            fillStyle()
+            {
+                return {"background-color":"#FF0000"}
+            },
+            display()
+            {
+                return "HP "+format(player.stat.hpnow)+' / '+format(player.stat.hp)
+            }
+        },
+        monsterSPDbar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress() {
+                return player.battle.monsterProgress
+            },
+            fillStyle(){
+                return {"background-color":"#FFFF00"}
+            },
+            display()
+            {
+                return ""
+            }
+        },
+        playerSPDbar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress() {
+                return player.stat.playerProgress
+            },
+            fillStyle(){
+                return {"background-color":"#FFFF00"}
+            },
+            display()
+            {
+                return ""
             }
         },
     },
@@ -394,8 +489,10 @@ addLayer("battle",
         ["display-text",function(){return `正在${player[this.layer].currentDoingStage==1?'打怪':'找怪'}中...`}],
         ["bar","thatBar"],
         "blank",
-        ["display-text",function(){return "怪物 : "+monster_name[0]}],
+        "blank",
+        ["display-text",function(){return "<h2>怪物 : "+monster_name[0]}],
         ["display-text",function(){return monster_img_src[0]+'<br>'+map_img_src[0]}],
+        "blank",
         // ["display-text",function(){return map_img_src[0]}],
         // ["display-image",()=>{
         //     return monster_img_src[0]
@@ -404,6 +501,13 @@ addLayer("battle",
         //     return map_img_src[0]
         // }, {maxWidth:'500%',maxHeight:'500%',position: 'relative'}],
         // ["bar","thatBar"],
+        ["bar","monsterHPbar"],
+        ["bar","monsterSPDbar"],
+        "blank",
+        ["display-text",function(){return player.battle.stringstringstring}],
+        "blank",
+        ["bar","playerHPbar"],
+        ["bar","playerSPDbar"],
         // ["display-text",function(){return `Progress: ${format(player[this.layer].currentDoingProgress,2)} || Bar Progress: ${format(tmp.battle.bars.thatBar.progress,2)}`}],
 
     ],
