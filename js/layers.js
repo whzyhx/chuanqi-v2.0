@@ -323,7 +323,7 @@ function re_calc()//重新生成怪物属性
     }
     var x=n(0).add(Math.random()).mul(canSummon.length).floor()
     var y=canSummon[x]
-    player.battle.monsterID=y
+    player.battle.monsterID=n(y)
     player.battle.monsterHPmx=monster_base[y][2]
     player.battle.monsterHPnow=monster_base[y][2]
     player.battle.monsterATK=monster_base[y][0]
