@@ -2,7 +2,7 @@
 	name: "ajchen",
 	id: "存档id(必须要写一个独一无二的id以防止存档冲突)",
 	author: "作者",
-	pointsName: "点数名称",
+	pointsName: "金币",
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new ExpantaNum (0), // Used for hard resets and new players
@@ -38,7 +38,7 @@ function canGenPoints(){
 // Calculate points/sec!
 function getPointGen() {
 	if(!canGenPoints()) return new ExpantaNum(0)
-	let gain = new ExpantaNum(1)
+	let gain = new ExpantaNum(0)
 	return gain
 }
 

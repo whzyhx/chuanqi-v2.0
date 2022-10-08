@@ -208,7 +208,9 @@ addLayer("stat",
             hp:n(10),hpnow:n(10),
             spd:n(1000),
             luck:one,
-            playerProgress:n(0)
+            playerProgress:n(0),
+            level:n(1),EXPneed:n(10),EXPnow:n(0),
+            money:n(0),
         }
     },
     color: "white",
@@ -302,19 +304,36 @@ const map_img_src=[
 const monster_base=[
     [n(1),n(0),n(5),n(2000)],
 ]
+const monster_EXP_gain=[
+    n(1),
+]
+const monster_MONEY_gain=[
+    n(1),
+]
 function re_calc()//重新生成怪物属性
 {
     // var level=1
-    player.battle.monsterHPmx=n(5)
-    player.battle.monsterHPnow=n(5)
-    player.battle.monsterATK=n(1)
-    player.battle.monsterDEF=n(0)
-    player.battle.monsterSPD=n(2000)
+    var canSummon=[]
+    for(var i=0;i<monster_name.length;i++)
+    {
+        if(1)//表示是否可以生成这一种怪物
+        {
+            canSummon.push(i)
+        }
+    }
+    var x=n(0).add(Math.random()).mul(canSummon.length).floor()
+    var y=canSummon[x]
+    player.battle.monsterID=y
+    player.battle.monsterHPmx=monster_base[y][2]
+    player.battle.monsterHPnow=monster_base[y][2]
+    player.battle.monsterATK=monster_base[y][0]
+    player.battle.monsterDEF=monster_base[y][1]
+    player.battle.monsterSPD=monster_base[y][3]
     return
 }
 addLayer("battle",
 {
-    symbol: "b",
+    symbol: "B",
     row: 0,
     position: 0,
     startData()
@@ -327,6 +346,7 @@ addLayer("battle",
             //stage=0:找怪
             //stage=1:打怪
             inFight:0,//在战斗中?
+            monsterID:n(0),
             monsterHPmx:n(0),monsterHPnow:n(0),
             monsterATK:n(0),monsterDEF:n(0),
             monsterSPD:n(0),
@@ -387,6 +407,14 @@ addLayer("battle",
                 player.battle.inFight=0
                 //计算掉落
                 //注意 , 掉落是需要显示的 , 即加到stringstringstring里
+                var EXPgain=monster_EXP_gain[player.battle.monsterID]
+                var MONEYgain=monster_MONEY_gain[player.battle.monsterID]
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
+                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(EXPgain)+' 点经验'
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
+                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(MONEYgain)+' 金币'
+                player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
+                player.stat.money=player.stat.money.add(MONEYgain)
             }
         }
         //下面开始处理！
@@ -493,14 +521,6 @@ addLayer("battle",
         ["display-text",function(){return "<h2>怪物 : "+monster_name[0]}],
         ["display-text",function(){return monster_img_src[0]+'<br>'+map_img_src[0]}],
         "blank",
-        // ["display-text",function(){return map_img_src[0]}],
-        // ["display-image",()=>{
-        //     return monster_img_src[0]
-        // }, {maxWidth:'500%',maxHeight:'500%',position: 'relative'}],
-        // ["display-image",()=>{
-        //     return map_img_src[0]
-        // }, {maxWidth:'500%',maxHeight:'500%',position: 'relative'}],
-        // ["bar","thatBar"],
         ["bar","monsterHPbar"],
         ["bar","monsterSPDbar"],
         "blank",
@@ -508,8 +528,6 @@ addLayer("battle",
         "blank",
         ["bar","playerHPbar"],
         ["bar","playerSPDbar"],
-        // ["display-text",function(){return `Progress: ${format(player[this.layer].currentDoingProgress,2)} || Bar Progress: ${format(tmp.battle.bars.thatBar.progress,2)}`}],
-
     ],
 
     layerShown(){return true},
