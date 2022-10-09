@@ -8,6 +8,15 @@ const quality=[//这个看不懂就砍死你丫的(?
     "<text style='color:gold'>传奇</text>",
     "<text style='color:red'>神话</text>",
 ]
+const possibility=[
+    n(0.9),
+    n(0.09),
+    n(0.009),
+    n(0.0009),
+    n(0.00009),
+    n(0.000009),
+    n(0.0000009),
+]
 const part=[
     "剑",
     "护甲",
@@ -38,6 +47,14 @@ const affix=[
     ["词缀9","---"],
     //肯定不止九个,以后慢慢加
 ]
+const affixPoss=[
+    [n(0),n(0),n(0),n(0),n(0),],
+    [n(0.5),n(0),n(0),n(0),n(0),],
+    [n(0.8),n(0.2),n(0),n(0),n(0),],
+    [n(0.8),n(0.6),n(0.2),n(0),n(0),],
+    [n(1),n(0.8),n(0.6),n(0.2),n(0),],
+    [n(1),n(1),n(0.8),n(0.6),n(0.2)],
+]
 //每件装备格式如下
 //[名字,att,def,hp,spd,(...),[ , , ]]-后面的数组是用来存放词缀的
 //                      |
@@ -62,99 +79,21 @@ function summon()
     //神话:0.0001%
     var x=n(0).add(Math.random())//随机品质
     x=n(0.0000000001)
+    var which=0
     var name=''
-    if(x.lte(0.000001))name=name+quality[6]
-    else if(x.lte(0.000009))name=name+quality[5]
-    else if(x.lte(0.00009))name=name+quality[4]
-    else if(x.lte(0.0009))name=name+quality[3]
-    else if(x.lte(0.009))name=name+quality[2]
-    else if(x.lte(0.09))name=name+quality[1]
-    else name=name+quality[0]
+    for(var i=0;i<possibility.length;i++)
+    {
+        if(x.lte(possibility[i]))
+        {
+            name=quality[i]
+            which=i
+        }
+    }
     name=name+'的'
     var xxx=n(0).add(Math.random())//随机词缀
-    if(x.lte(0.000001))
+    for(var i=0;i<5;i++)
     {
-        //神话装备
-        //100%:1词缀
-        //100%:2词缀
-        //80%:3词缀
-        //50%:4词缀
-        //20%:5词缀
-        var changdu=0
-        if(xxx.lte(0.2))changdu=5
-        else if(xxx.lte(0.5))changdu=4
-        else if(xxx.lte(0.8))changdu=3
-        else changdu=2
-        var pos
-        for(var i=0;i<changdu;i++)
-        {
-            pos=getAffix()
-            name=name+affix[pos][0]+'的'
-            affixku.push(pos)
-        }
-    }
-    else if(x.lte(0.000009))
-    {
-        //传奇装备
-        //100%:1词缀
-        //80%:2词缀
-        //60%:3词缀
-        //20%:4词缀
-        var changdu=0
-        if(xxx.lte(0.2))changdu=4
-        else if(xxx.lte(0.6))changdu=3
-        else if(xxx.lte(0.8))changdu=2
-        else changdu=1
-        var pos
-        for(var i=0;i<changdu;i++)
-        {
-            pos=getAffix()
-            name=name+affix[pos][0]+'的'
-            affixku.push(pos)
-        }
-    }
-    else if(x.lte(0.00009))
-    {
-        //史诗装备
-        //80%:1词缀
-        //60%:2词缀
-        //20%:3词缀
-        var changdu=0
-        if(xxx.lte(0.2))changdu=3
-        else if(xxx.lte(0.6))changdu=2
-        else if(xxx.lte(0.8))changdu=1
-        var pos
-        for(var i=0;i<changdu;i++)
-        {
-            pos=getAffix()
-            name=name+affix[pos][0]+'的'
-            affixku.push(pos)
-        }
-    }
-    else if(x.lte(0.0009))
-    {
-        //精良装备
-        //80%:1词缀
-        //20%:2词缀
-        var changdu=0
-        if(xxx.lte(0.2))changdu=2
-        else if(xxx.lte(0.8))changdu=1
-        var pos
-        for(var i=0;i<changdu;i++)
-        {
-            pos=getAffix()
-            name=name+affix[pos][0]+'的'
-            affixku.push(pos)
-        }
-    }
-    else if(x.lte(0.009))
-    {
-        //优秀装备
-        //50%:1词缀
-        var changdu=0
-        if(xxx.lte(0.5))changdu=1
-        var pos
-        for(var i=0;i<changdu;i++)
+        if(xxx.lte(affixPoss[n(which).toNumber()][i]))
         {
             pos=getAffix()
             name=name+affix[pos][0]+'的'
@@ -256,6 +195,12 @@ addLayer("stat",
             },
             content:[
                 "blank",
+                ["display-text",
+                    function() {
+                        return output(summon())
+                    },
+                    { "color": "white", "font-size": "32px",}
+                ],
                 ["display-text",
                     function() {
                         return '<text style="color:#FF000099">攻击 : </text><text style="color:#FF0000">'+format(player[this.layer].atk)+'</text>'
