@@ -9,13 +9,13 @@ const quality=[//这个看不懂就砍死你丫的(?
     "<text style='color:red'>神话</text>",
 ]
 const possibility=[
-    n(0.9),
-    n(0.09),
-    n(0.009),
-    n(0.0009),
-    n(0.00009),
-    n(0.000009),
-    n(0.0000009),
+    n(1),
+    n(0.1),
+    n(0.01),
+    n(0.001),
+    n(0.0001),
+    n(0.00001),
+    n(0.000001),
 ]
 const part=[
     "剑",
@@ -48,17 +48,18 @@ const affix=[
     //肯定不止九个,以后慢慢加
 ]
 const affixPoss=[
-    [n(0),n(0),n(0),n(0),n(0),],
-    [n(0.5),n(0),n(0),n(0),n(0),],
-    [n(0.8),n(0.2),n(0),n(0),n(0),],
-    [n(0.8),n(0.6),n(0.2),n(0),n(0),],
-    [n(1),n(0.8),n(0.6),n(0.2),n(0),],
-    [n(1),n(1),n(0.8),n(0.6),n(0.2)],
+    [n(0),n(0),n(0),n(0),n(0)],
+    [n(0),n(0),n(0),n(0),n(0)],
+    [n(0.5),n(0),n(0),n(0),n(0)],
+    [n(0.8),n(0.2),n(0),n(0),n(0)],
+    [n(0.8),n(0.6),n(0.2),n(0),n(0)],
+    [n(1),n(0.8),n(0.6),n(0.2),n(0)],
+    [n(1),n(1),n(0.8),n(0.6),n(0.2)]
 ]
 //每件装备格式如下
-//[名字,att,def,hp,spd,(...),[ , , ]]-后面的数组是用来存放词缀的
-//                      |
-//          这个是给以后更多的属性预留的地方
+//[名字,部位,att,def,hp,spd,(...),[ , , ]]-后面的数组是用来存放词缀的
+//                           |
+//              这个是给以后更多的属性预留的地方
 function getAffix()
 {
     var xx=n(0).add(Math.random())
@@ -78,7 +79,7 @@ function summon()
     //传奇:0.0009%
     //神话:0.0001%
     var x=n(0).add(Math.random())//随机品质
-    x=n(0.0000000001)
+    // x=n(0.0000000001)
     var which=0
     var name=''
     for(var i=0;i<possibility.length;i++)
@@ -91,44 +92,68 @@ function summon()
     }
     name=name+'的'
     var xxx=n(0).add(Math.random())//随机词缀
-    for(var i=0;i<5;i++)
+    var xxxx=n(which)
+    // console.log(xx)
+    for(var j=0;j<7;j++)
     {
-        if(xxx.lte(affixPoss[n(which).toNumber()][i]))
+        if(xxxx.eq(j))
         {
-            pos=getAffix()
-            name=name+affix[pos][0]+'的'
-            affixku.push(pos)
+            for(var i=0;i<5;i++)
+            {
+                // console.log(j)
+                var gailv=affixPoss[j][i]
+                if(xxx.lte(gailv))
+                {
+                    pos=getAffix()
+                    name=name+affix[pos][0]+'的'
+                    affixku.push(pos)
+                }
+            }
         }
     }
     var xx=n(0).add(Math.random())//随机部位
     xx=xx.mul(part.length).floor()
     name=name+part[xx]
     data.push(name)
+    data.push(xx)
     //计算装备属性区域
-    data.push(1)
-    data.push(2)
-    data.push(5)
-    data.push(10)
+    data.push(n(1))
+    data.push(n(2))
+    data.push(n(5))
+    data.push(n(10))
     /////////////////
     data.push(affixku)
     return data
 }
 function output(data)//根据数据打印装备
 {
-    var s=''
+    var s='<h2>'
     s+=data[0]
-    s+='<br>'
-    if(data[1]>0)
-    s+='攻击+'+format(data[1])+'<br>'
+    s+='</h2><br>'
+    var xxx=n(data[1])
+    // for(var i=0;i<7;i++)
+    // {
+    //     if(xxx.eq(i))
+    //     s+='部位 : '+part[i]
+    // }
+    s+='部位 : '+part[xxx]
+    s+='<br><h1>---------</h1><br><h2>'
     if(data[2]>0)
-    s+='防御+'+format(data[2])+'<br>'
+    s+='攻击+'+format(data[2])+'<br>'
     if(data[3]>0)
-    s+='生命+'+format(data[3])+'<br>'
+    s+='防御+'+format(data[3])+'<br>'
     if(data[4]>0)
-    s+='速度+'+format(data[4])+'<br>'
-    for(var i=0;i<data[5].length;i++)
+    s+='生命+'+format(data[4])+'<br>'
+    if(data[5]>0)
+    s+='速度+'+format(data[5])+'<br>'
+    for(var i=0;i<data[6].length;i++)
     {
-        s+=affix[data[5][i]][0]+' : '+affix[data[5][i]][1]+'<br>'
+        var j=n(data[6][i])
+        // for(var jj=0;jj<9;jj++)
+        // {
+        //     if(j.eq(jj))
+        s+=affix[j][0]+' : '+affix[j][1]+'<br>'
+        // }
     }
     return s
 }
@@ -358,8 +383,12 @@ addLayer("battle",
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(EXPgain)+' 点经验'
                 player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(MONEYgain)+' 金币'
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
+                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
+                var wea=summon()
+                player.equip.weapon.push(wea)
             }
         }
         //下面开始处理！
@@ -475,5 +504,181 @@ addLayer("battle",
         ["bar","playerSPDbar"],
     ],
 
+    layerShown(){return true},
+})
+addLayer("equip",
+{
+    symbol: "Z",
+    position: 1,
+    startData()
+    {
+        return{
+            unlocked: true,
+            points: new ExpantaNum(0),
+            currentPage:n(1),currentPos:n(1),maxPage:n(1),maxPos:n(1),
+            weapon:[
+            ],
+            weaponCurrent:[
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+            ],
+        }
+    },
+    color: "white",
+    type: "none",
+    tooltip:"装备",
+    update(diff)
+    {
+        player.equip.maxPage=n(player.equip.weapon.length).div(10).add(1).floor()
+        player.equip.maxPos=n(player.equip.weapon.length).sub(player.equip.currentPage.sub(1).mul(10)).min(10)
+    },
+    clickables:
+    {
+        "Up":
+        {
+            display()
+            {
+                return '↑'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.equip.currentPage.gte(1.5)},
+            onClick(){
+                player.equip.currentPage=player.equip.currentPage.sub(1)
+                player.equip.currentPos=n(1)
+            },
+        },
+        "Down":
+        {
+            display()
+            {
+                return '↓'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.equip.currentPage.lte(player.equip.maxPage.sub(0.5))},
+            onClick(){
+                player.equip.currentPage=player.equip.currentPage.add(1)
+                player.equip.currentPos=n(1)
+            },
+        },
+        "Left":
+        {
+            display()
+            {
+                return '←'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.equip.currentPos.gte(1.5)},
+            onClick(){
+                player.equip.currentPos=player.equip.currentPos.sub(1)
+            },
+        },
+        "Right":
+        {
+            display()
+            {
+                return '→'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.equip.currentPos.lte(player.equip.maxPos.sub(0.5))},
+            onClick(){
+                player.equip.currentPos=player.equip.currentPos.add(1)
+            },
+        },
+        "Now":
+        {
+            display()
+            {
+                var l=player.equip.currentPage.sub(1).mul(10).add(player.equip.currentPos).sub(1)
+                if(n(player.equip.weapon.length).lte(l))
+                {
+                    return "<text style='color:white'><h1>"+"无"
+                }
+                if(n(player.equip.weapon[l].length).lte(1))
+                {
+                    return "<text style='color:white'><h1>"+"无"
+                }
+                return "<text style='color:white'>"+output(player.equip.weapon[l])
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+    },
+    tabFormat:
+    {
+        "Player":
+        {
+            buttonStyle()
+            {
+                return {"border-radius":"0px"}
+            },
+            content:[
+                "blank",
+            ],
+        },
+        "Bag":
+        {
+            buttonStyle()
+            {
+                return {"border-radius":"0px"}
+            },
+            content:[
+                "blank",
+                ["row",[["clickable","Up"]]],
+                ["row",[["clickable","Left"],
+                        "blank",
+                        ["display-text",function(){return format(player.equip.currentPage)+' / '+format(player.equip.maxPage)}],
+                        "blank",
+                        ["clickable","Right"],]],
+                ["row",[["clickable","Down"]]],
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                ["display-text",function(){
+                    var l=player.equip.currentPage.sub(1).mul(10)
+                    var r=player.equip.maxPos.add(l).sub(1)
+                    // console.log(l)
+                    // console.log(r)
+                    var rt=''
+                    for(var i=l;i.lte(r);i=i.add(1))
+                    {
+                        if(n(player.equip.weapon.length).lte(i))
+                        {
+                            break
+                        }
+                        if(i.eq(player.equip.currentPos.add(l).sub(1)))
+                        {
+                            rt=rt+'<br><h1>'+player.equip.weapon[i][0]+'</h1><br><br>'
+                        }
+                        else
+                        rt=rt+player.equip.weapon[i][0]+'<br>'
+                    }
+                    return rt
+                }],
+                "blank",
+                "blank",
+                ["row",[["clickable","Now"]]],
+            ],
+        },
+    },
+    row: "side",
     layerShown(){return true},
 })
