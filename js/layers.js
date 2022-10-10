@@ -1,12 +1,12 @@
 // ------------ 装备轮子 -------------\\
 const quality=[//这个看不懂就砍死你丫的(?
-    "<text style='color:grey'>破损</text>",
-    "<text style='color:white'>普通</text>",
-    "<text style='color:lime'>优秀</text>",
-    "<text style='color:blue'>精良</text>",
-    "<text style='color:magenta'>史诗</text>",
-    "<text style='color:gold'>传奇</text>",
-    "<text style='color:red'>神话</text>",
+    "<text style='color:grey'>破损的</text>",
+    "<text style='color:white'>普通的</text>",
+    "<text style='color:lime'>优秀的</text>",
+    "<text style='color:blue'>精良的</text>",
+    "<text style='color:magenta'>史诗的</text>",
+    "<text style='color:gold'>传奇的</text>",
+    "<text style='color:red'>神话的</text>",
 ]
 const possibility=[
     n(1),
@@ -26,25 +26,27 @@ const part=[
     "项链",
     "戒指",
 ]
-const base=[
-    [1,2,5,100],//表示不同品质的基础属性 , 同时属性收到装备等级影响 , (数值未填充)
-    [1,2,5,100],//对了 , 不同装备应该有不同侧重点
-    [1,2,5,100],//后面再说
-    [1,2,5,100],
-    [1,2,5,100],
-    [1,2,5,100],
-    [1,2,5,100],
+const part_base=[
+    [n(3),n(0),n(0),n(0)],
+    [n(0),n(3),n(0),n(0)],
+    [n(1),n(1),n(1),n(0)],
+    [n(0.5),n(1.5),n(1),n(0)],
+    [n(0),n(0),n(0),n(3)],
+    [n(0),n(0),n(3),n(0)],
+    [n(0),n(1.5),n(1.5),n(0)],
 ]
+const base=[n(2),n(1),n(5),n(10)]
+const quality_base=[n(1),n(2),n(5),n(10),n(20),n(50),n(100)]
 const affix=[
-    ["词缀1","---"],//左边是名称，右边是说明
-    ["词缀2","---"],
-    ["词缀3","---"],
-    ["词缀4","---"],
-    ["词缀5","---"],
-    ["词缀6","---"],
-    ["词缀7","---"],
-    ["词缀8","---"],
-    ["词缀9","---"],
+    ["词缀1的","---"],//左边是名称，右边是说明
+    ["词缀2的","---"],
+    ["词缀3的","---"],
+    ["词缀4的","---"],
+    ["词缀5的","---"],
+    ["词缀6的","---"],
+    ["词缀7的","---"],
+    ["词缀8的","---"],
+    ["词缀9的","---"],
     //肯定不止九个,以后慢慢加
 ]
 const affixPoss=[
@@ -90,22 +92,19 @@ function summon()
             which=i
         }
     }
-    name=name+'的'
     var xxx=n(0).add(Math.random())//随机词缀
     var xxxx=n(which)
-    // console.log(xx)
     for(var j=0;j<7;j++)
     {
         if(xxxx.eq(j))
         {
             for(var i=0;i<5;i++)
             {
-                // console.log(j)
                 var gailv=affixPoss[j][i]
                 if(xxx.lte(gailv))
                 {
                     pos=getAffix()
-                    name=name+affix[pos][0]+'的'
+                    name=name+affix[pos][0]
                     affixku.push(pos)
                 }
             }
@@ -117,10 +116,10 @@ function summon()
     data.push(name)
     data.push(xx)
     //计算装备属性区域
-    data.push(n(1))
-    data.push(n(2))
-    data.push(n(5))
-    data.push(n(10))
+    for(var i=0;i<4;i++)
+    {
+        data.push(n(base[i].mul(quality_base[xxxx]).mul(part_base[xx][i])))
+    }
     /////////////////
     data.push(affixku)
     return data
@@ -131,29 +130,20 @@ function output(data)//根据数据打印装备
     s+=data[0]
     s+='</h2><br>'
     var xxx=n(data[1])
-    // for(var i=0;i<7;i++)
-    // {
-    //     if(xxx.eq(i))
-    //     s+='部位 : '+part[i]
-    // }
     s+='部位 : '+part[xxx]
     s+='<br><h1>---------</h1><br><h2>'
-    if(data[2]>0)
-    s+='攻击+'+format(data[2])+'<br>'
-    if(data[3]>0)
-    s+='防御+'+format(data[3])+'<br>'
-    if(data[4]>0)
-    s+='生命+'+format(data[4])+'<br>'
-    if(data[5]>0)
-    s+='速度+'+format(data[5])+'<br>'
+    if(data[2].gte(0.001))
+    s+='<text style="color:#FF0000">攻击+'+format(data[2])+'<br>'
+    if(data[3].gte(0.001))
+    s+='<text style="color:lightblue">防御+'+format(data[3])+'<br>'
+    if(data[4].gte(0.001))
+    s+='<text style="color:#00FF00">生命+'+format(data[4])+'<br>'
+    if(data[5].gte(0.001))
+    s+='<text style="color:#FF00FF">速度+'+format(data[5])+'<br>'
     for(var i=0;i<data[6].length;i++)
     {
         var j=n(data[6][i])
-        // for(var jj=0;jj<9;jj++)
-        // {
-        //     if(j.eq(jj))
         s+=affix[j][0]+' : '+affix[j][1]+'<br>'
-        // }
     }
     return s
 }
@@ -183,7 +173,7 @@ addLayer("stat",
 
     calcStats:{//在这里面计算属性
         atk(){
-            var base = n(2)//看不懂砍死你丫的
+            var base = n(2)//坏也 , 我看不懂/kel/kel , ajchen救救我 , ajchen带带我 , ajchen涩涩我 (?(?(?(?))))
             var result = base//计算
             player.stat.atk=result//返回
         },
@@ -222,19 +212,13 @@ addLayer("stat",
                 "blank",
                 ["display-text",
                     function() {
-                        return output(summon())
-                    },
-                    { "color": "white", "font-size": "32px",}
-                ],
-                ["display-text",
-                    function() {
                         return '<text style="color:#FF000099">攻击 : </text><text style="color:#FF0000">'+format(player[this.layer].atk)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
                 ["display-text",
                     function() {
-                        return '<text style="color:#0000FF99">防御 : </text><text style="color:#0000FF">'+format(player[this.layer].def)+'</text>'
+                        return '<text style="color:#0000FF99">防御 : </text><text style="color:lightblue">'+format(player[this.layer].def)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
@@ -519,14 +503,14 @@ addLayer("equip",
             weapon:[
             ],
             weaponCurrent:[
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
             ],
         }
     },
@@ -540,11 +524,11 @@ addLayer("equip",
     },
     clickables:
     {
-        "Up":
+        "Left":
         {
             display()
             {
-                return '↑'
+                return '←'
             },
             unlocked(){return true},
             style(){
@@ -555,11 +539,11 @@ addLayer("equip",
                 player.equip.currentPos=n(1)
             },
         },
-        "Down":
+        "Right":
         {
             display()
             {
-                return '↓'
+                return '→'
             },
             unlocked(){return true},
             style(){
@@ -570,11 +554,11 @@ addLayer("equip",
                 player.equip.currentPos=n(1)
             },
         },
-        "Left":
+        "Up":
         {
             display()
             {
-                return '←'
+                return '↑'
             },
             unlocked(){return true},
             style(){
@@ -584,11 +568,11 @@ addLayer("equip",
                 player.equip.currentPos=player.equip.currentPos.sub(1)
             },
         },
-        "Right":
+        "Down":
         {
             display()
             {
-                return '→'
+                return '↓'
             },
             unlocked(){return true},
             style(){
@@ -620,6 +604,197 @@ addLayer("equip",
             onClick(){
             },
         },
+        "Player":
+        {
+            display()
+            {
+                var l=player.equip.currentPage.sub(1).mul(10).add(player.equip.currentPos).sub(1)
+                if(n(player.equip.weapon.length).lte(l))
+                {
+                    return "<text style='color:white'><h1>"+"无"
+                }
+                var x=n(player.equip.weapon[l][1])
+                if(n(player.equip.weaponCurrent[x].length).lte(3))
+                {
+                    return "<text style='color:white'><h1>"+"无"
+                }
+                return "<text style='color:white'>"+output(player.equip.weaponCurrent[x])
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Equip":
+        {
+            display()
+            {
+                return '装备'
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px"}},
+            canClick(){return true},
+            onClick(){
+                var l=player.equip.currentPage.sub(1).mul(10).add(player.equip.currentPos).sub(1)
+                if(n(player.equip.weapon.length).lte(l))
+                {
+                    return
+                }
+                var x=n(player.equip.weapon[l][1])
+                if(n(player.equip.weaponCurrent[x].length).lte(3))
+                {
+                    player.equip.weaponCurrent[x]=player.equip.weapon[l]
+                    player.equip.weapon.slice(l,1)
+                    return
+                }
+                var tmp=player.equip.weapon[l]
+                player.equip.weapon[l]=player.equip.weaponCurrent[x]
+                player.equip.weaponCurrent[x]=tmp
+            },
+        },
+        "Weapon-0":
+        {
+            display()
+            {
+                if(n(player.equip.weaponCurrent[0].length).lte(3))
+                {
+                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+                }
+                else
+                {
+                    return '<text style="color:white">'+output(player.equip.weaponCurrent[0])+'</text>'
+                }
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Weapon-1":
+        {
+            display()
+            {
+                if(n(player.equip.weaponCurrent[1].length).lte(3))
+                {
+                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+                }
+                else
+                {
+                    return '<text style="color:white">'+output(player.equip.weaponCurrent[1])+'</text>'
+                }
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Weapon-2":
+        {
+            display()
+            {
+                if(n(player.equip.weaponCurrent[2].length).lte(3))
+                {
+                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+                }
+                else
+                {
+                    return '<text style="color:white">'+output(player.equip.weaponCurrent[2])+'</text>'
+                }
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Weapon-3":
+        {
+            display()
+            {
+                if(n(player.equip.weaponCurrent[3].length).lte(3))
+                {
+                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+                }
+                else
+                {
+                    return '<text style="color:white">'+output(player.equip.weaponCurrent[3])+'</text>'
+                }
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Weapon-4":
+        {
+            display()
+            {
+                if(n(player.equip.weaponCurrent[4].length).lte(3))
+                {
+                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+                }
+                else
+                {
+                    return '<text style="color:white">'+output(player.equip.weaponCurrent[4])+'</text>'
+                }
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Weapon-5":
+        {
+            display()
+            {
+                if(n(player.equip.weaponCurrent[5].length).lte(3))
+                {
+                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+                }
+                else
+                {
+                    return '<text style="color:white">'+output(player.equip.weaponCurrent[5])+'</text>'
+                }
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Weapon-6":
+        {
+            display()
+            {
+                if(n(player.equip.weaponCurrent[6].length).lte(3))
+                {
+                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+                }
+                else
+                {
+                    return '<text style="color:white">'+output(player.equip.weaponCurrent[6])+'</text>'
+                }
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+            canClick(){return false},
+            onClick(){
+            },
+        },
     },
     tabFormat:
     {
@@ -631,6 +806,9 @@ addLayer("equip",
             },
             content:[
                 "blank",
+                ["row",[["clickable","Weapon-5"],["clickable","Weapon-6"],]],
+                ["row",[["clickable","Weapon-0"],["clickable","Weapon-1"],["clickable","Weapon-2"],]],
+                ["row",[["clickable","Weapon-3"],["clickable","Weapon-4"],]],
             ],
         },
         "Bag":
@@ -675,7 +853,8 @@ addLayer("equip",
                 }],
                 "blank",
                 "blank",
-                ["row",[["clickable","Now"]]],
+                ["row",[["clickable","Equip"]]],
+                ["row",[["clickable","Now"],["clickable","Player"],]],
             ],
         },
     },
