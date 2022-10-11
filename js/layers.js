@@ -132,13 +132,13 @@ function output(data)//根据数据打印装备
     var xxx=n(data[1])
     s+='部位 : '+part[xxx]
     s+='<br><h1>---------</h1><br><h2>'
-    if(data[2].gte(0.001))
+    if(n(data[2]).gte(0.001))
     s+='<text style="color:#FF0000">攻击+'+format(data[2])+'<br>'
-    if(data[3].gte(0.001))
+    if(n(data[3]).gte(0.001))
     s+='<text style="color:lightblue">防御+'+format(data[3])+'<br>'
-    if(data[4].gte(0.001))
+    if(n(data[4]).gte(0.001))
     s+='<text style="color:#00FF00">生命+'+format(data[4])+'<br>'
-    if(data[5].gte(0.001))
+    if(n(data[5]).gte(0.001))
     s+='<text style="color:#FF00FF">速度+'+format(data[5])+'<br>'
     for(var i=0;i<data[6].length;i++)
     {
@@ -175,21 +175,53 @@ addLayer("stat",
         atk(){
             var base = n(2)//坏也 , 我看不懂/kel/kel , ajchen救救我 , ajchen带带我 , ajchen涩涩我 (?(?(?(?))))
             var result = base//计算
+            for(var i=0;i<7;i++)
+            {
+                if(n(player.equip.weaponCurrent[i].length).lte(3))
+                {
+                    continue
+                }
+                result=result.add(player.equip.weaponCurrent[i][2])
+            }
             player.stat.atk=result//返回
         },
         def(){
             var base = n(0)
             var result = base
+            for(var i=0;i<7;i++)
+            {
+                if(n(player.equip.weaponCurrent[i].length).lte(3))
+                {
+                    continue
+                }
+                result=result.add(player.equip.weaponCurrent[i][3])
+            }
             player.stat.def=result
         },
         hp(){
             var base = n(10)
             var result = base
+            for(var i=0;i<7;i++)
+            {
+                if(n(player.equip.weaponCurrent[i].length).lte(3))
+                {
+                    continue
+                }
+                result=result.add(player.equip.weaponCurrent[i][4])
+            }
             player.stat.hp=result
         },
         spd(){
             var base = n(1000)
             var result = base
+            for(var i=0;i<7;i++)
+            {
+                if(n(player.equip.weaponCurrent[i].length).lte(3))
+                {
+                    continue
+                }
+                result=result.add(player.equip.weaponCurrent[i][5])
+            }
             player.stat.spd=result
         },
         luck(){
