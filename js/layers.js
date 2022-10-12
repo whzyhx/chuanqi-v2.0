@@ -39,16 +39,29 @@ const part_base=[
 const base=[n(2),n(1),n(5),n(10)]
 const quality_base=[n(1),n(2),n(5),n(10),n(20),n(50),n(100)]
 const affix=[
-    ["词缀1的","---"],//左边是名称，右边是说明
-    ["词缀2的","---"],
-    ["词缀3的","---"],
-    ["词缀4的","---"],
-    ["词缀5的","---"],
-    ["词缀6的","---"],
-    ["词缀7的","---"],
-    ["词缀8的","---"],
-    ["词缀9的","---"],
-    //肯定不止九个,以后慢慢加
+    ["<text style='color:grey'>力量I的</text>"  , "攻击+10%"],
+    ["<text style='color:white'>力量II的</text>" ,"攻击+20%"],
+    ["<text style='color:lime'>力量III的</text>" ,"攻击+30%"],
+    ["<text style='color:blue'>力量IV的</text>" , "攻击+40%"],
+    ["<text style='color:magenta'>力量V的</text>","攻击+50%"],
+    ["<text style='color:gold'>力量VI的</text>" , "攻击+60%"],
+    ["<text style='color:red'>力量VII的</text>" , "攻击+70%"],
+
+    ["<text style='color:grey'>强壮I的</text>"  , "生命+10%"],
+    ["<text style='color:white'>强壮II的</text>" ,"生命+20%"],
+    ["<text style='color:lime'>强壮III的</text>" ,"生命+30%"],
+    ["<text style='color:blue'>强壮IV的</text>" , "生命+40%"],
+    ["<text style='color:magenta'>强壮V的</text>","生命+50%"],
+    ["<text style='color:gold'>强壮VI的</text>" , "生命+60%"],
+    ["<text style='color:red'>强壮VII的</text>" , "生命+70%"],
+
+    ["<text style='color:grey'>韧性I的</text>"  , "防御+10%"],
+    ["<text style='color:white'>韧性II的</text>" ,"防御+20%"],
+    ["<text style='color:lime'>韧性III的</text>" ,"防御+30%"],
+    ["<text style='color:blue'>韧性IV的</text>" , "防御+40%"],
+    ["<text style='color:magenta'>韧性V的</text>","防御+50%"],
+    ["<text style='color:gold'>韧性VI的</text>" , "防御+60%"],
+    ["<text style='color:red'>韧性VII的</text>" , "防御+70%"],
 ]
 const affixPoss=[
     [n(0),n(0),n(0),n(0),n(0)],
@@ -60,7 +73,7 @@ const affixPoss=[
     [n(1),n(1),n(0.8),n(0.6),n(0.2)]
 ]
 //每件装备格式如下
-//[名字,部位,att,def,hp,spd,(...),[ , , ]]-后面的数组是用来存放词缀的
+//[名字,部位,att,def,hp,spd,(...),[ , , ],level]-后面的数组是用来存放词缀的
 //                           |
 //              这个是给以后更多的属性预留的地方
 function getAffix()
@@ -116,31 +129,38 @@ function summon()
     name=name+part[xx]
     data.push(name)
     data.push(xx)
+    //计算装备等级对属性的影响
+    var mult=n(1.05).pow(player.battle.currentLvl.sub(1))
     //计算装备属性区域
     for(var i=0;i<4;i++)
     {
-        data.push(n(base[i].mul(quality_base[xxxx]).mul(part_base[xx][i])))
+        if(i==3)
+        {
+            mult=n(1)
+        }
+        data.push(n(base[i].mul(quality_base[xxxx]).mul(part_base[xx][i])).mul(mult))
     }
     /////////////////
     data.push(affixku)
+    data.push(player.battle.currentLvl)
     return data
 }
 function output(data)//根据数据打印装备
 {
-    var s='<h2>'
+    var s='<h2>LV.'+format(data[7])+' '
     s+=data[0]
     s+='</h2><br>'
     var xxx=n(data[1])
     s+='部位 : '+part[xxx]
     s+='<br><h1>---------</h1><br><h2>'
     if(n(data[2]).gte(0.001))
-    s+='<text style="color:#FF0000">攻击+'+format(data[2])+'<br>'
+    s+='<text style="color:#FF0000">攻击+'+format(data[2])+'<br></text>'
     if(n(data[3]).gte(0.001))
-    s+='<text style="color:lightblue">防御+'+format(data[3])+'<br>'
+    s+='<text style="color:lightblue">防御+'+format(data[3])+'<br></text>'
     if(n(data[4]).gte(0.001))
-    s+='<text style="color:#00FF00">生命+'+format(data[4])+'<br>'
+    s+='<text style="color:#00FF00">生命+'+format(data[4])+'<br></text>'
     if(n(data[5]).gte(0.001))
-    s+='<text style="color:#FF00FF">速度+'+format(data[5])+'<br>'
+    s+='<text style="color:#FF00FF">速度+'+format(data[5])+'<br></text>'
     for(var i=0;i<data[6].length;i++)
     {
         var j=n(data[6][i])
@@ -176,6 +196,7 @@ addLayer("stat",
         atk(){
             var base = n(2)//坏也 , 我看不懂/kel/kel , ajchen救救我 , ajchen带带我 , ajchen涩涩我 (?(?(?(?))))
             var result = base//计算
+            var mult=n(1)
             for(var i=0;i<7;i++)
             {
                 if(n(player.equip.weaponCurrent[i].length).lte(3))
@@ -183,12 +204,24 @@ addLayer("stat",
                     continue
                 }
                 result=result.add(player.equip.weaponCurrent[i][2])
+                //计算词缀对属性的影响
+                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
+                {
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(0))mult=mult.mul(1.1)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(1))mult=mult.mul(1.2)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(2))mult=mult.mul(1.3)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(3))mult=mult.mul(1.4)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(4))mult=mult.mul(1.5)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(5))mult=mult.mul(1.6)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(6))mult=mult.mul(1.7)
+                }
             }
-            player.stat.atk=result//返回
+            player.stat.atk=result.mul(mult)//返回
         },
         def(){
             var base = n(0)
             var result = base
+            var mult=n(1)
             for(var i=0;i<7;i++)
             {
                 if(n(player.equip.weaponCurrent[i].length).lte(3))
@@ -196,12 +229,24 @@ addLayer("stat",
                     continue
                 }
                 result=result.add(player.equip.weaponCurrent[i][3])
+                //计算词缀对属性的影响
+                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
+                {
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(7))mult=mult.mul(1.1)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(8))mult=mult.mul(1.2)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(9))mult=mult.mul(1.3)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(10))mult=mult.mul(1.4)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(11))mult=mult.mul(1.5)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(12))mult=mult.mul(1.6)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(13))mult=mult.mul(1.7)
+                }
             }
-            player.stat.def=result
+            player.stat.def=result.mul(mult)//返回
         },
         hp(){
             var base = n(10)
             var result = base
+            var mult=n(1)
             for(var i=0;i<7;i++)
             {
                 if(n(player.equip.weaponCurrent[i].length).lte(3))
@@ -209,8 +254,19 @@ addLayer("stat",
                     continue
                 }
                 result=result.add(player.equip.weaponCurrent[i][4])
+                //计算词缀对属性的影响
+                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
+                {
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(14))mult=mult.mul(1.1)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(15))mult=mult.mul(1.2)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(16))mult=mult.mul(1.3)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(17))mult=mult.mul(1.4)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(18))mult=mult.mul(1.5)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(19))mult=mult.mul(1.6)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(20))mult=mult.mul(1.7)
+                }
             }
-            player.stat.hp=result
+            player.stat.hp=result.mul(mult)//返回
         },
         spd(){
             var base = n(1000)
@@ -280,41 +336,81 @@ addLayer("stat",
     layerShown(){return true},
 })
 const monster_name=[
-    "史莱姆"
+    "幼年史莱姆",
+    "史莱姆<text style='color:#FF0000'>战士</text>",
+    "史莱姆<text style='color:#00FF00'>弓手</text>",
+    "史莱姆<text style='color:#0000FF'>法师</text>",
+    "史莱姆<text style='color:#00FFFF'>精英</text>",
 ]
 const monster_img_src=[
     '<img src="js/img/史莱姆.png" alt="">',
+    '<img src="js/img/史莱姆战士.png" alt="">',
+    '<img src="js/img/史莱姆弓手.png" alt="">',
+    '<img src="js/img/史莱姆法师.png" alt="">',
+    '<img src="js/img/史莱姆精英.png" alt="">',
 ]
 const map_img_src=[
     '<img src="js/img/地图-草.png" alt="">',
 ]
 const monster_base=[
     [n(1),n(0),n(5),n(2000)],
+    [n(5),n(2),n(20),n(2000)],
+    [n(10),n(5),n(40),n(2500)],
+    [n(15),n(5),n(50),n(2500)],
+    [n(25),n(15),n(100),n(1500)],
 ]
 const monster_EXP_gain=[
     n(1),
+    n(2),
+    n(4),
+    n(8),
+    n(15),
 ]
 const monster_MONEY_gain=[
     n(1),
+    n(3),
+    n(6),
+    n(15),
+    n(30),
 ]
-function re_calc()//重新生成怪物属性
+const monster_lvl_require=[//规定怪物最少在多少级的地图出现
+    n(1),
+    n(2),
+    n(4),
+    n(6),
+    n(10),
+]
+const monster_map_require=[//有些怪物只在特定地图出现 , 0表示暂时没有要求
+    [n(0)],
+    [n(0)],
+    [n(0)],
+    [n(0)],
+    [n(0)],
+]
+function re_calc(lvl)//重新生成怪物属性
 {
-    // var level=1
+    var level=n(lvl)
     var canSummon=[]
+
     for(var i=0;i<monster_name.length;i++)
-    {
-        if(1)//表示是否可以生成这一种怪物
+    {//是否可以生成这一种怪物
+        if(level.gte(n(monster_lvl_require[i])))
         {
             canSummon.push(i)
         }
     }
     var x=n(0).add(Math.random()).mul(canSummon.length).floor()
     var y=canSummon[x]
+
+    //计算高等级地图对低等级怪物属性的影响
+    var mult=n(1),cha=level.sub(monster_lvl_require[x])
+    mult=n(1.1).pow(cha)
+
     player.battle.monsterID=n(y)
-    player.battle.monsterHPmx=monster_base[y][2]
-    player.battle.monsterHPnow=monster_base[y][2]
-    player.battle.monsterATK=monster_base[y][0]
-    player.battle.monsterDEF=monster_base[y][1]
+    player.battle.monsterHPmx=monster_base[y][2].mul(mult)
+    player.battle.monsterHPnow=monster_base[y][2].mul(mult)
+    player.battle.monsterATK=monster_base[y][0].mul(mult)
+    player.battle.monsterDEF=monster_base[y][1].mul(mult)
     player.battle.monsterSPD=monster_base[y][3]
     return
 }
@@ -333,6 +429,7 @@ addLayer("battle",
             //stage=0:找怪
             //stage=1:打怪
             inFight:0,//在战斗中?
+            currentLvl:n(1),
             monsterID:n(0),
             monsterHPmx:n(0),monsterHPnow:n(0),
             monsterATK:n(0),monsterDEF:n(0),
@@ -358,7 +455,7 @@ addLayer("battle",
                     player.battle.stringstringstring=""
                     player.battle.monsterProgress=n(0)
                     player.stat.playerProgress=n(0)
-                    re_calc()
+                    re_calc(player.battle.currentLvl)
                 }
                 else
                 {
@@ -419,6 +516,38 @@ addLayer("battle",
             // player[this.layer].currentDoingProgress+=0.01
             // return ['打怪',player[this.layer].currentDoingProgress]
         }
+    },
+
+    clickables:
+    {
+        "SUB":
+        {
+            display()
+            {
+                return '←'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.battle.currentLvl.gte(2)},
+            onClick(){
+                player.battle.currentLvl=player.battle.currentLvl.sub(1)
+            },
+        },
+        "ADD":
+        {
+            display()
+            {
+                return '→'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.battle.currentLvl.lte(9)},
+            onClick(){
+                player.battle.currentLvl=player.battle.currentLvl.add(1)
+            },
+        },
     },
 
     bars:
@@ -505,12 +634,16 @@ addLayer("battle",
     },
 
     tabFormat:[
+        ["row",[["clickable","SUB"],"blank",
+                                    ["display-text",function(){return 'Level : '+format(player.battle.currentLvl)}],
+                                    ,"blank",["clickable","ADD"],]],
+        "blank",
         ["display-text",function(){return `正在${player[this.layer].currentDoingStage==1?'打怪':'找怪'}中...`}],
         ["bar","thatBar"],
         "blank",
         "blank",
-        ["display-text",function(){return "<h2>怪物 : "+monster_name[0]}],
-        ["display-text",function(){return monster_img_src[0]+'<br>'+map_img_src[0]}],
+        ["display-text",function(){return "<h2>怪物 : "+monster_name[player.battle.monsterID]}],
+        ["display-text",function(){return monster_img_src[player.battle.monsterID]+'<br>'+map_img_src[0]}],
         "blank",
         ["bar","monsterHPbar"],
         ["bar","monsterSPDbar"],
@@ -877,10 +1010,10 @@ addLayer("equip",
                         }
                         if(i.eq(player.equip.currentPos.add(l).sub(1)))
                         {
-                            rt=rt+'<br><h1>'+player.equip.weapon[i][0]+'</h1><br><br>'
+                            rt=rt+'<br><h1>'+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'</h1><br><br>'
                         }
                         else
-                        rt=rt+player.equip.weapon[i][0]+'<br>'
+                        rt=rt+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'<br>'
                     }
                     return rt
                 }],
