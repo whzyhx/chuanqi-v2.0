@@ -39,29 +39,29 @@ const part_base=[
 const base=[n(2),n(1),n(5),n(10)]
 const quality_base=[n(1),n(2),n(5),n(10),n(20),n(50),n(100)]
 const affix=[
-    ["<text style='color:grey'>力量I的</text>"  , "攻击+10%"],
-    ["<text style='color:white'>力量II的</text>" ,"攻击+20%"],
-    ["<text style='color:lime'>力量III的</text>" ,"攻击+30%"],
-    ["<text style='color:blue'>力量IV的</text>" , "攻击+40%"],
-    ["<text style='color:magenta'>力量V的</text>","攻击+50%"],
-    ["<text style='color:gold'>力量VI的</text>" , "攻击+60%"],
-    ["<text style='color:red'>力量VII的</text>" , "攻击+70%"],
+    ["<text style='color:grey'>力量I</text>"  , "攻击+10%"],
+    ["<text style='color:white'>力量II</text>" ,"攻击+20%"],
+    ["<text style='color:lime'>力量III</text>" ,"攻击+30%"],
+    ["<text style='color:blue'>力量IV</text>" , "攻击+40%"],
+    ["<text style='color:magenta'>力量V</text>","攻击+50%"],
+    ["<text style='color:gold'>力量VI</text>" , "攻击+60%"],
+    ["<text style='color:red'>力量VII</text>" , "攻击+70%"],
 
-    ["<text style='color:grey'>强壮I的</text>"  , "生命+10%"],
-    ["<text style='color:white'>强壮II的</text>" ,"生命+20%"],
-    ["<text style='color:lime'>强壮III的</text>" ,"生命+30%"],
-    ["<text style='color:blue'>强壮IV的</text>" , "生命+40%"],
-    ["<text style='color:magenta'>强壮V的</text>","生命+50%"],
-    ["<text style='color:gold'>强壮VI的</text>" , "生命+60%"],
-    ["<text style='color:red'>强壮VII的</text>" , "生命+70%"],
+    ["<text style='color:grey'>强壮I</text>"  , "生命+10%"],
+    ["<text style='color:white'>强壮II</text>" ,"生命+20%"],
+    ["<text style='color:lime'>强壮III</text>" ,"生命+30%"],
+    ["<text style='color:blue'>强壮IV</text>" , "生命+40%"],
+    ["<text style='color:magenta'>强壮V</text>","生命+50%"],
+    ["<text style='color:gold'>强壮VI</text>" , "生命+60%"],
+    ["<text style='color:red'>强壮VII</text>" , "生命+70%"],
 
-    ["<text style='color:grey'>韧性I的</text>"  , "防御+10%"],
-    ["<text style='color:white'>韧性II的</text>" ,"防御+20%"],
-    ["<text style='color:lime'>韧性III的</text>" ,"防御+30%"],
-    ["<text style='color:blue'>韧性IV的</text>" , "防御+40%"],
-    ["<text style='color:magenta'>韧性V的</text>","防御+50%"],
-    ["<text style='color:gold'>韧性VI的</text>" , "防御+60%"],
-    ["<text style='color:red'>韧性VII的</text>" , "防御+70%"],
+    ["<text style='color:grey'>韧性I</text>"  , "防御+10%"],
+    ["<text style='color:white'>韧性II</text>" ,"防御+20%"],
+    ["<text style='color:lime'>韧性III</text>" ,"防御+30%"],
+    ["<text style='color:blue'>韧性IV</text>" , "防御+40%"],
+    ["<text style='color:magenta'>韧性V</text>","防御+50%"],
+    ["<text style='color:gold'>韧性VI</text>" , "防御+60%"],
+    ["<text style='color:red'>韧性VII</text>" , "防御+70%"],
 ]
 const affixPoss=[
     [n(0),n(0),n(0),n(0),n(0)],
@@ -118,7 +118,7 @@ function summon()
                 if(xxx.lte(gailv))
                 {
                     pos=getAffix()
-                    name=name+affix[pos][0]
+                    name=name+affix[pos][0]+'的'
                     affixku.push(pos)
                 }
             }
