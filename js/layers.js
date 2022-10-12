@@ -698,7 +698,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
+               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPage.gte(1.5)},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.sub(1)
@@ -713,7 +713,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
+               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPage.lte(player.equip.maxPage.sub(0.5))},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.add(1)
@@ -728,7 +728,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
+               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPos.gte(1.5)},
             onClick(){
                 player.equip.currentPos=player.equip.currentPos.sub(1)
@@ -742,7 +742,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
+               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPos.lte(player.equip.maxPos.sub(0.5))},
             onClick(){
                 player.equip.currentPos=player.equip.currentPos.add(1)
@@ -765,7 +765,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -788,7 +788,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -801,7 +801,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px"}},
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","transition-duration":"0s",}},
             canClick(){return true},
             onClick(){
                 var l=player.equip.currentPage.sub(1).mul(10).add(player.equip.currentPos).sub(1)
@@ -836,7 +836,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -856,7 +856,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -876,7 +876,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -896,7 +896,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -916,7 +916,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -936,7 +936,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
@@ -956,7 +956,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black"}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
             canClick(){return false},
             onClick(){
             },
