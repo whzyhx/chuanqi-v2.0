@@ -39,29 +39,29 @@ const part_base=[
 const base=[n(2),n(1),n(5),n(10)]
 const quality_base=[n(1),n(2),n(5),n(10),n(20),n(50),n(100)]
 const affix=[
-    ["<text style='color:grey'>力量I</text>"  , "攻击+10%"],
-    ["<text style='color:white'>力量II</text>" ,"攻击+20%"],
-    ["<text style='color:lime'>力量III</text>" ,"攻击+30%"],
-    ["<text style='color:blue'>力量IV</text>" , "攻击+40%"],
-    ["<text style='color:magenta'>力量V</text>","攻击+50%"],
-    ["<text style='color:gold'>力量VI</text>" , "攻击+60%"],
-    ["<text style='color:red'>力量VII</text>" , "攻击+70%"],
+    ["<text style='color:grey'>力量I"  , "攻击+10%"],
+    ["<text style='color:white'>力量II" ,"攻击+20%"],
+    ["<text style='color:lime'>力量III" ,"攻击+30%"],
+    ["<text style='color:blue'>力量IV" , "攻击+40%"],
+    ["<text style='color:magenta'>力量V","攻击+50%"],
+    ["<text style='color:gold'>力量VI" , "攻击+60%"],
+    ["<text style='color:red'>力量VII" , "攻击+70%"],
 
-    ["<text style='color:grey'>强壮I</text>"  , "生命+10%"],
-    ["<text style='color:white'>强壮II</text>" ,"生命+20%"],
-    ["<text style='color:lime'>强壮III</text>" ,"生命+30%"],
-    ["<text style='color:blue'>强壮IV</text>" , "生命+40%"],
-    ["<text style='color:magenta'>强壮V</text>","生命+50%"],
-    ["<text style='color:gold'>强壮VI</text>" , "生命+60%"],
-    ["<text style='color:red'>强壮VII</text>" , "生命+70%"],
+    ["<text style='color:grey'>强壮I"  , "生命+10%"],
+    ["<text style='color:white'>强壮II" ,"生命+20%"],
+    ["<text style='color:lime'>强壮III" ,"生命+30%"],
+    ["<text style='color:blue'>强壮IV" , "生命+40%"],
+    ["<text style='color:magenta'>强壮V","生命+50%"],
+    ["<text style='color:gold'>强壮VI" , "生命+60%"],
+    ["<text style='color:red'>强壮VII" , "生命+70%"],
 
-    ["<text style='color:grey'>韧性I</text>"  , "防御+10%"],
-    ["<text style='color:white'>韧性II</text>" ,"防御+20%"],
-    ["<text style='color:lime'>韧性III</text>" ,"防御+30%"],
-    ["<text style='color:blue'>韧性IV</text>" , "防御+40%"],
-    ["<text style='color:magenta'>韧性V</text>","防御+50%"],
-    ["<text style='color:gold'>韧性VI</text>" , "防御+60%"],
-    ["<text style='color:red'>韧性VII</text>" , "防御+70%"],
+    ["<text style='color:grey'>韧性I"  , "防御+10%"],
+    ["<text style='color:white'>韧性II" ,"防御+20%"],
+    ["<text style='color:lime'>韧性III" ,"防御+30%"],
+    ["<text style='color:blue'>韧性IV" , "防御+40%"],
+    ["<text style='color:magenta'>韧性V","防御+50%"],
+    ["<text style='color:gold'>韧性VI" , "防御+60%"],
+    ["<text style='color:red'>韧性VII" , "防御+70%"],
 ]
 const affixPoss=[
     [n(0),n(0),n(0),n(0),n(0)],
@@ -95,7 +95,7 @@ function summon()
     //传奇:0.0009%
     //神话:0.0001%
     var x=n(0).add(Math.random())//随机品质
-    // x=n(0.0000000001)
+    // x=n(0.0000000001) // 匿名专属爆率 , ajchen不许用(?)
     var which=0
     var name=''
     for(var i=0;i<possibility.length;i++)
@@ -118,7 +118,7 @@ function summon()
                 if(xxx.lte(gailv))
                 {
                     pos=getAffix()
-                    name=name+affix[pos][0]+'的'
+                    name=name+affix[pos][0]+'的</text>'
                     affixku.push(pos)
                 }
             }
@@ -1009,9 +1009,9 @@ addLayer("equip",
             var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
             if(player.equip.currentID.eq(idd))
             {
-                return {"height":"30px","min-height":"30px","width":"150px","background-color":"rgb(205,185,39)","border-radius":"0px","transition-duration":"0s"}
+                return {"height":"50px","min-height":"50px","width":"150px","background-color":"rgb(205,185,39)","border-radius":"0px","transition-duration":"0s"}
             }
-            return {"height":"30px","min-height":"30px","width":"150px","background-color":"black","border-radius":"0px","transition-duration":"0s"}
+            return {"height":"50px","min-height":"50px","width":"150px","background-color":"black","border-radius":"0px","transition-duration":"0s"}
         },
         onClick(data, id) {
             var x=n(id/100).floor(),y=n(id%100)
