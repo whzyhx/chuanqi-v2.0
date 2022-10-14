@@ -54,7 +54,38 @@ addLayer("tree-tab", {
         "blank",
         "blank",
         "blank",
-        ["tree", function() {return (layoutInfo.treeLayout ? layoutInfo.treeLayout : TREE_LAYERS)}]
+        ["tree", function() {return (layoutInfo.treeLayout ? layoutInfo.treeLayout : TREE_LAYERS)}],
+        "blank",
+        ["display-text",
+            function() {
+                return '<text style="color:#FF000099">攻击 : </text><text style="color:#FF0000">'+format(player.stat.atk)+'</text>'
+            },
+            { "color": "white", "font-size": "32px",}
+        ],
+        ["display-text",
+            function() {
+                return '<text style="color:#0000FF99">防御 : </text><text style="color:lightblue">'+format(player.stat.def)+'</text>'
+            },
+            { "color": "white", "font-size": "32px",}
+        ],
+        ["display-text",
+            function() {
+                return '<text style="color:#00FF0099">生命 : </text><text style="color:#00FF00">'+format(player.stat.hp)+'</text>'
+            },
+            { "color": "white", "font-size": "32px",}
+        ],
+        ["display-text",
+            function() {
+                return '<text style="color:#FF00FF99">速度 : </text><text style="color:#FF00FF">'+format(player.stat.spd)+'</text>'
+            },
+            { "color": "white", "font-size": "32px",}
+        ],
+        ["display-text",
+            function() {
+                return '<text style="color:#FFFF0099">幸运 : </text><text style="color:#FFFF00">'+format(player.stat.luck)+'</text>'
+            },
+            { "color": "white", "font-size": "32px",}
+        ],
     ],
     previousTab: "",
     leftTab: true,

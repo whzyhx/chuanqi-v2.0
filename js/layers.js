@@ -73,7 +73,7 @@ const affixPoss=[
     [n(1),n(1),n(0.8),n(0.6),n(0.2)]
 ]
 //每件装备格式如下
-//[名字,部位,att,def,hp,spd,(...),[ , , ],level]-后面的数组是用来存放词缀的
+//[名字,部位,att,def,hp,spd,(...),[ , , ],level,quality]-后面的数组是用来存放词缀的
 //                           |
 //              这个是给以后更多的属性预留的地方
 function getAffix()
@@ -143,6 +143,7 @@ function summon()
     /////////////////
     data.push(affixku)
     data.push(player.battle.currentLvl)
+    data.push(xxxx)
     return data
 }
 function output(data)//根据数据打印装备
@@ -287,7 +288,36 @@ addLayer("stat",
             player.stat.luck=result
         },
     },
-
+    clickables:
+    {
+        "Sell 0":
+        {
+            display()
+            {
+                return '一键卖出<br>'+quality[0]
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px",}},
+            canClick(){return true},
+            onClick(){
+                var newWeapon=[]
+                var gain=n(0)
+                for(var i=0;i<player.equip.weapon.length;i++)
+                {
+                    if(n(player.equip.weapon[i][8]).eq(0))
+                    {
+                        gain=gain.add(1)
+                    }
+                    else
+                    {
+                        newWeapon.push(player.equip.weapon[i])
+                    }
+                }
+                player.equip.weapon=newWeapon
+            },
+        },
+    },
 
     tabFormat:
     {
@@ -331,87 +361,107 @@ addLayer("stat",
                 ],
             ],
         },
+        "选项":
+        {
+            buttonStyle()
+            {
+                return {"border-radius":"0px"}
+            },
+            content:[
+                "blank",
+                ["row",[["clickable","Sell 0"]]]
+            ],
+        },
     },
     row: "side",
     layerShown(){return true},
 })
-const monster_name=[
-    "幼年史莱姆",
-    "史莱姆<text style='color:#FF0000'>战士</text>",
-    "史莱姆<text style='color:#00FF00'>弓手</text>",
-    "史莱姆<text style='color:#0000FF'>法师</text>",
-    "史莱姆<text style='color:#00FFFF'>精英</text>",
-]
-const monster_img_src=[
-    '<img src="js/img/史莱姆.png" alt="">',
-    '<img src="js/img/史莱姆战士.png" alt="">',
-    '<img src="js/img/史莱姆弓手.png" alt="">',
-    '<img src="js/img/史莱姆法师.png" alt="">',
-    '<img src="js/img/史莱姆精英.png" alt="">',
-]
+var monster={
+    slime:{
+        name(){return "幼年史莱姆"},
+        src(){return '史莱姆'},
+        unlocked(){return n(player.battle.currentLvl).gte(1)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(1).max(0))},
+        hp(){return n(5).mul(monster['slime'].mult())},
+        atk(){return n(1).mul(monster['slime'].mult())},
+        def(){return n(0).mul(monster['slime'].mult())},
+        spd(){return n(2000)},
+        EXP_gain(){return n(1)},
+        MONEY_gain(){return n(1)},
+    },
+    slime_zhanshi:{
+        name(){return "史莱姆<text style='color:#FF0000'>战士</text>"},
+        src(){return '史莱姆战士'},
+        unlocked(){return n(player.battle.currentLvl).gte(2)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(2).max(0))},
+        hp(){return n(20).mul(monster['slime_zhanshi'].mult())},
+        atk(){return n(5).mul(monster['slime_zhanshi'].mult())},
+        def(){return n(2).mul(monster['slime_zhanshi'].mult())},
+        spd(){return n(2000)},
+        EXP_gain(){return n(2)},
+        MONEY_gain(){return n(3)},
+    },
+    slime_gongshou:{
+        name(){return "史莱姆<text style='color:#00FF00'>弓手</text>"},
+        src(){return '史莱姆弓手'},
+        unlocked(){return n(player.battle.currentLvl).gte(4)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(4).max(0))},
+        hp(){return n(40).mul(monster['slime_gongshou'].mult())},
+        atk(){return n(10).mul(monster['slime_gongshou'].mult())},
+        def(){return n(5).mul(monster['slime_gongshou'].mult())},
+        spd(){return n(2500)},
+        EXP_gain(){return n(4)},
+        MONEY_gain(){return n(6)},
+    },
+    slime_fashi:{
+        name(){return "史莱姆<text style='color:#0000FF'>法师</text>"},
+        src(){return '史莱姆法师'},
+        unlocked(){return n(player.battle.currentLvl).gte(6)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(6).max(0))},
+        hp(){return n(50).mul(monster['slime_fashi'].mult())},
+        atk(){return n(15).mul(monster['slime_fashi'].mult())},
+        def(){return n(10).mul(monster['slime_fashi'].mult())},
+        spd(){return n(2500)},
+        EXP_gain(){return n(8)},
+        MONEY_gain(){return n(15)},
+    },
+    slime_jingying:{
+        name(){return "史莱姆<text style='color:#00FFFF'>精英</text>"},
+        src(){return '史莱姆精英'},
+        unlocked(){return n(player.battle.currentLvl).gte(10)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(10).max(0))},
+        hp(){return n(100).mul(monster['slime_jingying'].mult())},
+        atk(){return n(25).mul(monster['slime_jingying'].mult())},
+        def(){return n(15).mul(monster['slime_jingying'].mult())},
+        spd(){return n(1500)},
+        EXP_gain(){return n(15)},
+        MONEY_gain(){return n(30)},
+    },
+}
 const map_img_src=[
-    '<img src="js/img/地图-草.png" alt="">',
+    "<img src='js/img/地图-草.png' alt=''>",
 ]
-const monster_base=[
-    [n(1),n(0),n(5),n(2000)],
-    [n(5),n(2),n(20),n(2000)],
-    [n(10),n(5),n(40),n(2500)],
-    [n(15),n(5),n(50),n(2500)],
-    [n(25),n(15),n(100),n(1500)],
-]
-const monster_EXP_gain=[
-    n(1),
-    n(2),
-    n(4),
-    n(8),
-    n(15),
-]
-const monster_MONEY_gain=[
-    n(1),
-    n(3),
-    n(6),
-    n(15),
-    n(30),
-]
-const monster_lvl_require=[//规定怪物最少在多少级的地图出现
-    n(1),
-    n(2),
-    n(4),
-    n(6),
-    n(10),
-]
-const monster_map_require=[//有些怪物只在特定地图出现 , 0表示暂时没有要求
-    [n(0)],
-    [n(0)],
-    [n(0)],
-    [n(0)],
-    [n(0)],
-]
+//`<img src="js/img/`+moster[]+`.png" alt="">`
 function re_calc(lvl)//重新生成怪物属性
 {
     var level=n(lvl)
     var canSummon=[]
 
-    for(var i=0;i<monster_name.length;i++)
+    for(i in monster)
     {//是否可以生成这一种怪物
-        if(level.gte(n(monster_lvl_require[i])))
+        if(monster[i].unlocked())
         {
             canSummon.push(i)
         }
     }
     var x=n(0).add(Math.random()).mul(canSummon.length).floor()
     var y=canSummon[x]
-
-    //计算高等级地图对低等级怪物属性的影响
-    var mult=n(1),cha=level.sub(monster_lvl_require[x])
-    mult=n(1.1).pow(cha)
-
-    player.battle.monsterID=n(y)
-    player.battle.monsterHPmx=monster_base[y][2].mul(mult)
-    player.battle.monsterHPnow=monster_base[y][2].mul(mult)
-    player.battle.monsterATK=monster_base[y][0].mul(mult)
-    player.battle.monsterDEF=monster_base[y][1].mul(mult)
-    player.battle.monsterSPD=monster_base[y][3]
+    player.battle.monsterID=y
+    player.battle.monsterHPmx=monster[y].hp()
+    player.battle.monsterHPnow=monster[y].hp()
+    player.battle.monsterATK=monster[y].atk()
+    player.battle.monsterDEF=monster[y].def()
+    player.battle.monsterSPD=monster[y].spd()
     return
 }
 addLayer("battle",
@@ -430,7 +480,7 @@ addLayer("battle",
             //stage=1:打怪
             inFight:0,//在战斗中?
             currentLvl:n(1),
-            monsterID:n(0),
+            monsterID:'slime',
             monsterHPmx:n(0),monsterHPnow:n(0),
             monsterATK:n(0),monsterDEF:n(0),
             monsterSPD:n(0),
@@ -491,8 +541,8 @@ addLayer("battle",
                 player.battle.inFight=0
                 //计算掉落
                 //注意 , 掉落是需要显示的 , 即加到stringstringstring里
-                var EXPgain=monster_EXP_gain[player.battle.monsterID]
-                var MONEYgain=monster_MONEY_gain[player.battle.monsterID]
+                var EXPgain=monster[player.battle.monsterID].EXP_gain()
+                var MONEYgain=monster[player.battle.monsterID].MONEY_gain()
                 player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(EXPgain)+' 点经验'
                 player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
@@ -543,7 +593,7 @@ addLayer("battle",
             unlocked(){return true},
             style(){
                return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.lte(9)},
+            canClick(){return player.battle.currentLvl.lte(999)},
             onClick(){
                 player.battle.currentLvl=player.battle.currentLvl.add(1)
             },
@@ -642,8 +692,8 @@ addLayer("battle",
         ["bar","thatBar"],
         "blank",
         "blank",
-        ["display-text",function(){return "<h2>怪物 : "+monster_name[player.battle.monsterID]}],
-        ["display-text",function(){return monster_img_src[player.battle.monsterID]+'<br>'+map_img_src[0]}],
+        ["display-text",function(){return "<h2>怪物 : "+monster[player.battle.monsterID].name()}],
+        ["display-text",function(){return `<img src="js/img/`+monster[player.battle.monsterID].src()+`.png" alt="">`+'<br>'+map_img_src[0]}],
         "blank",
         ["bar","monsterHPbar"],
         ["bar","monsterSPDbar"],
@@ -665,7 +715,8 @@ addLayer("equip",
         return{
             unlocked: true,
             points: new ExpantaNum(0),
-            currentPage:n(1),currentPos:n(1),maxPage:n(1),maxPos:n(1),
+            currentID:n(0),
+            currentPage:n(1),maxPage:n(1),
             weapon:[
             ],
             weaponCurrent:[
@@ -685,8 +736,7 @@ addLayer("equip",
     tooltip:"装备",
     update(diff)
     {
-        player.equip.maxPage=n(player.equip.weapon.length).div(10).add(1).floor()
-        player.equip.maxPos=n(player.equip.weapon.length).sub(player.equip.currentPage.sub(1).mul(10)).min(10)
+        player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
     },
     clickables:
     {
@@ -698,11 +748,10 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPage.gte(1.5)},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.sub(1)
-                player.equip.currentPos=n(1)
             },
         },
         "Right":
@@ -713,46 +762,18 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPage.lte(player.equip.maxPage.sub(0.5))},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.add(1)
-                player.equip.currentPos=n(1)
-            },
-        },
-        "Up":
-        {
-            display()
-            {
-                return '↑'
-            },
-            unlocked(){return true},
-            style(){
-               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
-            canClick(){return player.equip.currentPos.gte(1.5)},
-            onClick(){
-                player.equip.currentPos=player.equip.currentPos.sub(1)
-            },
-        },
-        "Down":
-        {
-            display()
-            {
-                return '↓'
-            },
-            unlocked(){return true},
-            style(){
-               return {"width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
-            canClick(){return player.equip.currentPos.lte(player.equip.maxPos.sub(0.5))},
-            onClick(){
-                player.equip.currentPos=player.equip.currentPos.add(1)
             },
         },
         "Now":
         {
             display()
             {
-                var l=player.equip.currentPage.sub(1).mul(10).add(player.equip.currentPos).sub(1)
+                var s='<h1>当前的</h1><br><br>'
+                var l=player.equip.currentID
                 if(n(player.equip.weapon.length).lte(l))
                 {
                     return "<text style='color:white'><h1>"+"无"
@@ -761,11 +782,12 @@ addLayer("equip",
                 {
                     return "<text style='color:white'><h1>"+"无"
                 }
-                return "<text style='color:white'>"+output(player.equip.weapon[l])
+                return "<text style='color:white'>"+s+output(player.equip.weapon[l])
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+                        "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -774,7 +796,8 @@ addLayer("equip",
         {
             display()
             {
-                var l=player.equip.currentPage.sub(1).mul(10).add(player.equip.currentPos).sub(1)
+                var s='<h1>穿戴中</h1><br><br>'
+                var l=player.equip.currentID
                 if(n(player.equip.weapon.length).lte(l))
                 {
                     return "<text style='color:white'><h1>"+"无"
@@ -784,11 +807,12 @@ addLayer("equip",
                 {
                     return "<text style='color:white'><h1>"+"无"
                 }
-                return "<text style='color:white'>"+output(player.equip.weaponCurrent[x])
+                return "<text style='color:white'>"+s+output(player.equip.weaponCurrent[x])
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+                        "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -797,14 +821,14 @@ addLayer("equip",
         {
             display()
             {
-                return '装备'
+                return '装备<br>'+format(player.equip.currentPage)+' / '+format(player.equip.maxPage)
             },
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","transition-duration":"0s",}},
             canClick(){return true},
             onClick(){
-                var l=player.equip.currentPage.sub(1).mul(10).add(player.equip.currentPos).sub(1)
+                var l=player.equip.currentID
                 if(n(player.equip.weapon.length).lte(l))
                 {
                     return
@@ -962,6 +986,52 @@ addLayer("equip",
             },
         },
     },
+    grid: {
+        rows: 10,
+        cols: 5,
+        getStartData(id) {
+            return 0
+        },
+        getUnlocked(id) { // Default
+            return true
+        },
+        getCanClick(data, id) {
+            var x=n(id/100).floor(),y=n(id%100)
+            var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
+            if(n(player.equip.weapon.length).lte(idd))
+            {
+                return false
+            }
+            return true
+        },
+        getStyle(data,id){
+            var x=n(id/100).floor(),y=n(id%100)
+            var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
+            if(player.equip.currentID.eq(idd))
+            {
+                return {"height":"30px","min-height":"30px","width":"150px","background-color":"rgb(205,185,39)","border-radius":"0px","transition-duration":"0s"}
+            }
+            return {"height":"30px","min-height":"30px","width":"150px","background-color":"black","border-radius":"0px","transition-duration":"0s"}
+        },
+        onClick(data, id) {
+            var x=n(id/100).floor(),y=n(id%100)
+            var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
+            player.equip.currentID=idd
+        },
+        getDisplay(data, id) {
+            var x=n(id/100).floor(),y=n(id%100)
+            var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
+            if(n(player.equip.weapon.length).lte(idd))
+            {
+                return ''
+            }
+            // if(player.equip.currentID.eq(idd))
+            // {
+            //     return '<text style="color:black">'+'LV.'+format(player.equip.weapon[idd][7])+' '+player.equip.weapon[idd][0]
+            // }
+            return '<text style="color:white">'+'LV.'+format(player.equip.weapon[idd][7])+' '+player.equip.weapon[idd][0]
+        },
+    },
     tabFormat:
     {
         "Player":
@@ -985,42 +1055,47 @@ addLayer("equip",
             },
             content:[
                 "blank",
-                ["row",[["clickable","Up"]]],
-                ["row",[["clickable","Left"],
+                ["row",[["clickable","Now"],
                         "blank",
-                        ["display-text",function(){return format(player.equip.currentPage)+' / '+format(player.equip.maxPage)}],
                         "blank",
-                        ["clickable","Right"],]],
-                ["row",[["clickable","Down"]]],
+                        "blank",
+                        ["clickable","Left"],
+                        ["clickable","Equip"],
+                        ["clickable","Right"],
+                        "blank",
+                        "blank",
+                        "blank",
+                        ["clickable","Player"],]],
+                // ["row",[["clickable","Equip"]]],
+                // ["row",[["clickable","Now"],["clickable","Player"],]],
                 "blank",
                 "blank",
                 "blank",
                 "blank",
-                ["display-text",function(){
-                    var l=player.equip.currentPage.sub(1).mul(10)
-                    var r=player.equip.maxPos.add(l).sub(1)
-                    // console.log(l)
-                    // console.log(r)
-                    var rt=''
-                    for(var i=l;i.lte(r);i=i.add(1))
-                    {
-                        if(n(player.equip.weapon.length).lte(i))
-                        {
-                            break
-                        }
-                        if(i.eq(player.equip.currentPos.add(l).sub(1)))
-                        {
-                            rt=rt+'<br><h1>'+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'</h1><br><br>'
-                        }
-                        else
-                        rt=rt+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'<br>'
-                    }
-                    return rt
-                }],
+                // ["display-text",function(){
+                //     var l=player.equip.currentPage.sub(1).mul(10)
+                //     var r=player.equip.maxPos.add(l).sub(1)
+                //     // console.log(l)
+                //     // console.log(r)
+                //     var rt=''
+                //     for(var i=l;i.lte(r);i=i.add(1))
+                //     {
+                //         if(n(player.equip.weapon.length).lte(i))
+                //         {
+                //             break
+                //         }
+                //         if(i.eq(player.equip.currentPos.add(l).sub(1)))
+                //         {
+                //             rt=rt+'<br><h1>'+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'</h1><br><br>'
+                //         }
+                //         else
+                //         rt=rt+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'<br>'
+                //     }
+                //     return rt
+                // }],
+                "grid",
                 "blank",
                 "blank",
-                ["row",[["clickable","Equip"]]],
-                ["row",[["clickable","Now"],["clickable","Player"],]],
             ],
         },
     },
