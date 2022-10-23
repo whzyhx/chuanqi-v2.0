@@ -1,7 +1,7 @@
 ﻿let modInfo = {
-	name: "ajchen",
-	id: "存档id(必须要写一个独一无二的id以防止存档冲突)",
-	author: "作者",
+	name: "大概是传奇树？",
+	id: "Maybe_Fantacy_Tree_2",
+	author: "匿_名 和 ajchen",
 	pointsName: "金币",
 	discordName: "",
 	discordLink: "",
@@ -12,13 +12,15 @@
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "",
+	num: "0.01",
+	name: "暂时还没名字",
 }
 
 let changelog = `<h1>更新记录:</h1><br>
-	<h3>v0.0</h3><br>
-		- 添加内容.<br>`
+<br><h3>v0.01</h3><br>
+		- 添加内容.<br>
+		- 因为匿名没写存档id，被迫删除旧存档.<br>
+		`
 
 let winText = `恭喜通关!您已经完成了这个游戏.`
 
