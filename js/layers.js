@@ -172,7 +172,7 @@ function output(data)//根据数据打印装备
 // ------------ END -------------\\
 addLayer("stat",
 {
-    symbol: "S",
+    symbol: "<h1>M",
     position: 0,
     startData()
     {
@@ -191,8 +191,10 @@ addLayer("stat",
     },
     color: "white",
     type: "none",
-    tooltip:"数据",
-
+    tooltip:"面板",
+    nodeStyle(){
+        return {"border-radius":"20px 20px 0 0","background-color":"red"}
+    },
     calcStats:{//在这里面计算属性
         atk(){
             var base = n(2)//坏也 , 我看不懂/kel/kel , ajchen救救我 , ajchen带带我 , ajchen涩涩我 (?(?(?(?))))
@@ -298,7 +300,7 @@ addLayer("stat",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px",}},
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
             onClick(){
                 var newWeapon=[]
@@ -317,8 +319,88 @@ addLayer("stat",
                 player.equip.weapon=newWeapon
             },
         },
+        "Sell 1":
+        {
+            display()
+            {
+                return '一键卖出<br>'+quality[1]
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                var newWeapon=[]
+                var gain=n(0)
+                for(var i=0;i<player.equip.weapon.length;i++)
+                {
+                    if(n(player.equip.weapon[i][8]).eq(1))
+                    {
+                        gain=gain.add(5)
+                    }
+                    else
+                    {
+                        newWeapon.push(player.equip.weapon[i])
+                    }
+                }
+                player.equip.weapon=newWeapon
+            },
+        },
+        "Sell 2":
+        {
+            display()
+            {
+                return '一键卖出<br>'+quality[2]
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                var newWeapon=[]
+                var gain=n(0)
+                for(var i=0;i<player.equip.weapon.length;i++)
+                {
+                    if(n(player.equip.weapon[i][8]).eq(2))
+                    {
+                        gain=gain.add(15)
+                    }
+                    else
+                    {
+                        newWeapon.push(player.equip.weapon[i])
+                    }
+                }
+                player.equip.weapon=newWeapon
+            },
+        },
+        "Sell 3":
+        {
+            display()
+            {
+                return '一键卖出<br>'+quality[3]
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                var newWeapon=[]
+                var gain=n(0)
+                for(var i=0;i<player.equip.weapon.length;i++)
+                {
+                    if(n(player.equip.weapon[i][8]).eq(3))
+                    {
+                        gain=gain.add(50)
+                    }
+                    else
+                    {
+                        newWeapon.push(player.equip.weapon[i])
+                    }
+                }
+                player.equip.weapon=newWeapon
+            },
+        },
     },
-
     tabFormat:
     {
         "属性":
@@ -331,31 +413,31 @@ addLayer("stat",
                 "blank",
                 ["display-text",
                     function() {
-                        return '<text style="color:#FF000099">攻击 : </text><text style="color:#FF0000">'+format(player[this.layer].atk)+'</text>'
+                        return '<text style="color:#FF0000c0">攻击 : </text><text style="color:#FF0000">'+format(player[this.layer].atk)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
                 ["display-text",
                     function() {
-                        return '<text style="color:#0000FF99">防御 : </text><text style="color:lightblue">'+format(player[this.layer].def)+'</text>'
+                        return '<text style="color:#0000FFc0">防御 : </text><text style="color:lightblue">'+format(player[this.layer].def)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
                 ["display-text",
                     function() {
-                        return '<text style="color:#00FF0099">生命 : </text><text style="color:#00FF00">'+format(player[this.layer].hp)+'</text>'
+                        return '<text style="color:#00FF00c0">生命 : </text><text style="color:#00FF00">'+format(player[this.layer].hp)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
                 ["display-text",
                     function() {
-                        return '<text style="color:#FF00FF99">速度 : </text><text style="color:#FF00FF">'+format(player[this.layer].spd)+'</text>'
+                        return '<text style="color:#FF00FFc0">速度 : </text><text style="color:#FF00FF">'+format(player[this.layer].spd)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
                 ["display-text",
                     function() {
-                        return '<text style="color:#FFFF0099">幸运 : </text><text style="color:#FFFF00">'+format(player[this.layer].luck)+'</text>'
+                        return '<text style="color:#FFFF00c0">幸运 : </text><text style="color:#FFFF00">'+format(player[this.layer].luck)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
@@ -369,346 +451,16 @@ addLayer("stat",
             },
             content:[
                 "blank",
-                ["row",[["clickable","Sell 0"]]]
+                ["row",[["clickable","Sell 0"],["clickable","Sell 1"],["clickable","Sell 2"],["clickable","Sell 3"],]]
             ],
         },
     },
     row: "side",
     layerShown(){return true},
 })
-var monster={
-    slime:{
-        name(){return "幼年史莱姆"},
-        src(){return '史莱姆'},
-        unlocked(){return n(player.battle.currentLvl).gte(1)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(1).max(0))},
-        hp(){return n(5).mul(monster['slime'].mult())},
-        atk(){return n(1).mul(monster['slime'].mult())},
-        def(){return n(0).mul(monster['slime'].mult())},
-        spd(){return n(2000)},
-        EXP_gain(){return n(1)},
-        MONEY_gain(){return n(1)},
-    },
-    slime_zhanshi:{
-        name(){return "史莱姆<text style='color:#FF0000'>战士</text>"},
-        src(){return '史莱姆战士'},
-        unlocked(){return n(player.battle.currentLvl).gte(2)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(2).max(0))},
-        hp(){return n(20).mul(monster['slime_zhanshi'].mult())},
-        atk(){return n(5).mul(monster['slime_zhanshi'].mult())},
-        def(){return n(2).mul(monster['slime_zhanshi'].mult())},
-        spd(){return n(2000)},
-        EXP_gain(){return n(2)},
-        MONEY_gain(){return n(3)},
-    },
-    slime_gongshou:{
-        name(){return "史莱姆<text style='color:#00FF00'>弓手</text>"},
-        src(){return '史莱姆弓手'},
-        unlocked(){return n(player.battle.currentLvl).gte(4)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(4).max(0))},
-        hp(){return n(40).mul(monster['slime_gongshou'].mult())},
-        atk(){return n(10).mul(monster['slime_gongshou'].mult())},
-        def(){return n(5).mul(monster['slime_gongshou'].mult())},
-        spd(){return n(2500)},
-        EXP_gain(){return n(4)},
-        MONEY_gain(){return n(6)},
-    },
-    slime_fashi:{
-        name(){return "史莱姆<text style='color:#0000FF'>法师</text>"},
-        src(){return '史莱姆法师'},
-        unlocked(){return n(player.battle.currentLvl).gte(6)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(6).max(0))},
-        hp(){return n(50).mul(monster['slime_fashi'].mult())},
-        atk(){return n(15).mul(monster['slime_fashi'].mult())},
-        def(){return n(10).mul(monster['slime_fashi'].mult())},
-        spd(){return n(2500)},
-        EXP_gain(){return n(8)},
-        MONEY_gain(){return n(15)},
-    },
-    slime_jingying:{
-        name(){return "史莱姆<text style='color:#00FFFF'>精英</text>"},
-        src(){return '史莱姆精英'},
-        unlocked(){return n(player.battle.currentLvl).gte(10)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(10).max(0))},
-        hp(){return n(100).mul(monster['slime_jingying'].mult())},
-        atk(){return n(25).mul(monster['slime_jingying'].mult())},
-        def(){return n(15).mul(monster['slime_jingying'].mult())},
-        spd(){return n(1500)},
-        EXP_gain(){return n(15)},
-        MONEY_gain(){return n(30)},
-    },
-}
-const map_img_src=[
-    "<img src='js/img/地图-草.png' alt=''>",
-]
-//`<img src="js/img/`+moster[]+`.png" alt="">`
-function re_calc(lvl)//重新生成怪物属性
-{
-    var level=n(lvl)
-    var canSummon=[]
-
-    for(i in monster)
-    {//是否可以生成这一种怪物
-        if(monster[i].unlocked())
-        {
-            canSummon.push(i)
-        }
-    }
-    var x=n(0).add(Math.random()).mul(canSummon.length).floor()
-    var y=canSummon[x]
-    player.battle.monsterID=y
-    player.battle.monsterHPmx=monster[y].hp()
-    player.battle.monsterHPnow=monster[y].hp()
-    player.battle.monsterATK=monster[y].atk()
-    player.battle.monsterDEF=monster[y].def()
-    player.battle.monsterSPD=monster[y].spd()
-    return
-}
-addLayer("battle",
-{
-    symbol: "B",
-    row: 0,
-    position: 0,
-    startData()
-    {
-        return {
-            unlocked: true,
-            points: new ExpantaNum(0),
-            currentDoingProgress:0,//现在干的进度
-            currentDoingStage:0,//现在在干啥
-            //stage=0:找怪
-            //stage=1:打怪
-            inFight:0,//在战斗中?
-            currentLvl:n(1),
-            monsterID:'slime',
-            monsterHPmx:n(0),monsterHPnow:n(0),
-            monsterATK:n(0),monsterDEF:n(0),
-            monsterSPD:n(0),
-            monsterProgress:n(0),
-            stringstringstring:"",
-        }
-    },
-    color: "white",
-    type: "none",
-    tooltip:"战场",
-
-    update(diff)
-    {//现在在干嘛
-        if (player[this.layer].currentDoingProgress>=1)
-        {
-            if(player.battle.inFight==0)
-            {
-                if(player.battle.currentDoingStage==0)
-                {
-                    player.battle.inFight=1
-                    player.stat.hpnow=player.stat.hp
-                    player.battle.stringstringstring=""
-                    player.battle.monsterProgress=n(0)
-                    player.stat.playerProgress=n(0)
-                    re_calc(player.battle.currentLvl)
-                }
-                else
-                {
-                    player[this.layer].currentDoingProgress=0
-                }
-                player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
-            }
-        }
-        if(player.battle.inFight==1)
-        {
-            player.battle.monsterProgress=player.battle.monsterProgress.add(player.battle.monsterSPD.div(5000).mul(diff))
-            if(player.battle.monsterProgress.gte(1))
-            {
-                player.battle.monsterProgress=n(0)
-                //产生一次攻击
-                player.stat.hpnow=player.stat.hpnow.sub(player.battle.monsterATK.sub(player.stat.def).max(0))
-            }
-            player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.div(5000).mul(diff))
-            if(player.stat.playerProgress.gte(1))
-            {
-                player.stat.playerProgress=n(0)
-                //产生一次攻击
-                player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
-            }
-            if(player.stat.hpnow.lte(0.001))
-            {
-                player.battle.stringstringstring="<text style='color:red'>你死了</text>"
-                player.battle.inFight=0
-            }
-            else if(player.battle.monsterHPnow.lte(0.001))
-            {
-                player.battle.stringstringstring="<text style='color:gold'>你赢了</text>"
-                player.battle.inFight=0
-                //计算掉落
-                //注意 , 掉落是需要显示的 , 即加到stringstringstring里
-                var EXPgain=monster[player.battle.monsterID].EXP_gain()
-                var MONEYgain=monster[player.battle.monsterID].MONEY_gain()
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
-                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(EXPgain)+' 点经验'
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
-                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(MONEYgain)+' 金币'
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
-                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
-                player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
-                player.stat.money=player.stat.money.add(MONEYgain)
-                var wea=summon()
-                player.equip.weapon.push(wea)
-            }
-        }
-        //下面开始处理！
-        if (player[this.layer].currentDoingStage==0)
-        {//stage=0:找怪
-            player[this.layer].currentDoingProgress+=player.stat.spd.div(5000).mul(diff).toNumber()
-            // return ['找怪',player[this.layer].currentDoingProgress]
-        }
-        if (player[this.layer].currentDoingStage==1)
-        {//stage=1:打怪
-            // player[this.layer].currentDoingProgress+=0.01
-            // return ['打怪',player[this.layer].currentDoingProgress]
-        }
-    },
-
-    clickables:
-    {
-        "SUB":
-        {
-            display()
-            {
-                return '←'
-            },
-            unlocked(){return true},
-            style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.gte(2)},
-            onClick(){
-                player.battle.currentLvl=player.battle.currentLvl.sub(1)
-            },
-        },
-        "ADD":
-        {
-            display()
-            {
-                return '→'
-            },
-            unlocked(){return true},
-            style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.lte(999)},
-            onClick(){
-                player.battle.currentLvl=player.battle.currentLvl.add(1)
-            },
-        },
-    },
-
-    bars:
-    {
-        thatBar:
-        {
-            direction: RIGHT,
-            width: 400,
-            height: 25,
-            progress()
-            {
-                return player[this.layer].currentDoingProgress
-            },
-            fillStyle()
-            {
-                if (player[this.layer].inFight==0) return {"background-color":"#00FF00"}
-                return {"background-color":"#FF0000"}
-            },
-        },
-        monsterHPbar:{
-            direction: RIGHT,
-            width: 400,
-            height: 20,
-            progress()
-            {
-                return player.battle.monsterHPnow.div(player.battle.monsterHPmx)
-            },
-            fillStyle()
-            {
-                return {"background-color":"#FF0000"}
-            },
-            display()
-            {
-                return "HP "+format(player.battle.monsterHPnow)+' / '+format(player.battle.monsterHPmx)
-            }
-        },
-        playerHPbar:{
-            direction: RIGHT,
-            width: 400,
-            height: 20,
-            progress()
-            {
-                return player.stat.hpnow.div(player.stat.hp)
-            },
-            fillStyle()
-            {
-                return {"background-color":"#FF0000"}
-            },
-            display()
-            {
-                return "HP "+format(player.stat.hpnow)+' / '+format(player.stat.hp)
-            }
-        },
-        monsterSPDbar:{
-            direction: RIGHT,
-            width: 400,
-            height: 20,
-            progress() {
-                return player.battle.monsterProgress
-            },
-            fillStyle(){
-                return {"background-color":"#FFFF00"}
-            },
-            display()
-            {
-                return ""
-            }
-        },
-        playerSPDbar:{
-            direction: RIGHT,
-            width: 400,
-            height: 20,
-            progress() {
-                return player.stat.playerProgress
-            },
-            fillStyle(){
-                return {"background-color":"#FFFF00"}
-            },
-            display()
-            {
-                return ""
-            }
-        },
-    },
-
-    tabFormat:[
-        ["row",[["clickable","SUB"],"blank",
-                                    ["display-text",function(){return 'Level : '+format(player.battle.currentLvl)}],
-                                    ,"blank",["clickable","ADD"],]],
-        "blank",
-        ["display-text",function(){return `正在${player[this.layer].currentDoingStage==1?'打怪':'找怪'}中...`}],
-        ["bar","thatBar"],
-        "blank",
-        "blank",
-        ["display-text",function(){return "<h2>怪物 : "+monster[player.battle.monsterID].name()}],
-        ["display-text",function(){return `<img src="js/img/`+monster[player.battle.monsterID].src()+`.png" alt="">`+'<br>'+map_img_src[0]}],
-        "blank",
-        ["bar","monsterHPbar"],
-        ["bar","monsterSPDbar"],
-        "blank",
-        ["display-text",function(){return player.battle.stringstringstring}],
-        "blank",
-        ["bar","playerHPbar"],
-        ["bar","playerSPDbar"],
-    ],
-
-    layerShown(){return true},
-})
 addLayer("equip",
 {
-    symbol: "Z",
+    symbol: "<h1>W",
     position: 1,
     startData()
     {
@@ -733,7 +485,10 @@ addLayer("equip",
     },
     color: "white",
     type: "none",
-    tooltip:"装备",
+    tooltip:"武器",
+    nodeStyle(){
+        return {"border-radius":"0 0 20px 20px","background-color":"blue"}
+    },
     update(diff)
     {
         player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
@@ -748,7 +503,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
+               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPage.gte(1.5)},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.sub(1)
@@ -762,7 +517,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
+               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
             canClick(){return player.equip.currentPage.lte(player.equip.maxPage.sub(0.5))},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.add(1)
@@ -825,7 +580,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","transition-duration":"0s",}},
+               return {"border-radius":"20px","width":"100px","height":"100px","min-height":"100px","transition-duration":"0s",}},
             canClick(){return true},
             onClick(){
                 var l=player.equip.currentID
@@ -1100,5 +855,430 @@ addLayer("equip",
         },
     },
     row: "side",
+    layerShown(){return true},
+})
+var monster={
+    slime:{
+        name(){return "幼年史莱姆"},
+        src(){return '史莱姆'},
+        unlocked(){return n(player.battle.currentLvl).gte(1)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(1).max(0))},
+        hp(){return n(5).mul(monster['slime'].mult())},
+        atk(){return n(1).mul(monster['slime'].mult())},
+        def(){return n(0).mul(monster['slime'].mult())},
+        spd(){return n(2000)},
+        EXP_gain(){return n(1)},
+        MONEY_gain(){return n(1)},
+    },
+    slime_zhanshi:{
+        name(){return "史莱姆<text style='color:#FF0000'>战士</text>"},
+        src(){return '史莱姆战士'},
+        unlocked(){return n(player.battle.currentLvl).gte(2)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(2).max(0))},
+        hp(){return n(20).mul(monster['slime_zhanshi'].mult())},
+        atk(){return n(5).mul(monster['slime_zhanshi'].mult())},
+        def(){return n(2).mul(monster['slime_zhanshi'].mult())},
+        spd(){return n(2000)},
+        EXP_gain(){return n(2)},
+        MONEY_gain(){return n(3)},
+    },
+    slime_gongshou:{
+        name(){return "史莱姆<text style='color:#00FF00'>弓手</text>"},
+        src(){return '史莱姆弓手'},
+        unlocked(){return n(player.battle.currentLvl).gte(4)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(4).max(0))},
+        hp(){return n(40).mul(monster['slime_gongshou'].mult())},
+        atk(){return n(10).mul(monster['slime_gongshou'].mult())},
+        def(){return n(5).mul(monster['slime_gongshou'].mult())},
+        spd(){return n(2500)},
+        EXP_gain(){return n(4)},
+        MONEY_gain(){return n(6)},
+    },
+    slime_fashi:{
+        name(){return "史莱姆<text style='color:#0000FF'>法师</text>"},
+        src(){return '史莱姆法师'},
+        unlocked(){return n(player.battle.currentLvl).gte(6)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(6).max(0))},
+        hp(){return n(50).mul(monster['slime_fashi'].mult())},
+        atk(){return n(15).mul(monster['slime_fashi'].mult())},
+        def(){return n(10).mul(monster['slime_fashi'].mult())},
+        spd(){return n(2500)},
+        EXP_gain(){return n(8)},
+        MONEY_gain(){return n(15)},
+    },
+    slime_jingying:{
+        name(){return "史莱姆<text style='color:#00FFFF'>精英</text>"},
+        src(){return '史莱姆精英'},
+        unlocked(){return n(player.battle.currentLvl).gte(10)},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(10).max(0))},
+        hp(){return n(100).mul(monster['slime_jingying'].mult())},
+        atk(){return n(25).mul(monster['slime_jingying'].mult())},
+        def(){return n(15).mul(monster['slime_jingying'].mult())},
+        spd(){return n(1500)},
+        EXP_gain(){return n(15)},
+        MONEY_gain(){return n(30)},
+    },
+}
+const map_img_src=[
+    "<img src='js/img/地图-草.png' alt=''>",
+]
+//`<img src="js/img/`+moster[]+`.png" alt="">`
+function re_calc(lvl)//重新生成怪物属性
+{
+    var level=n(lvl)
+    var canSummon=[]
+
+    for(i in monster)
+    {//是否可以生成这一种怪物
+        if(monster[i].unlocked())
+        {
+            canSummon.push(i)
+        }
+    }
+    var x=n(0).add(Math.random()).mul(canSummon.length).floor()
+    var y=canSummon[x]
+    player.battle.monsterID=y
+    player.battle.monsterHPmx=monster[y].hp()
+    player.battle.monsterHPnow=monster[y].hp()
+    player.battle.monsterATK=monster[y].atk()
+    player.battle.monsterDEF=monster[y].def()
+    player.battle.monsterSPD=monster[y].spd()
+    return
+}
+addLayer("battle",
+{
+    symbol: "<text style='color:black'>B",
+    row: 0,
+    position: 0,
+    startData()
+    {
+        return {
+            unlocked: true,
+            points: new ExpantaNum(0),
+            currentDoingProgress:0,//现在干的进度
+            currentDoingStage:0,//现在在干啥
+            //stage=0:找怪
+            //stage=1:打怪
+            inFight:0,//在战斗中?
+            currentLvl:n(1),
+            monsterID:'slime',
+            monsterHPmx:n(0),monsterHPnow:n(0),
+            monsterATK:n(0),monsterDEF:n(0),
+            monsterSPD:n(0),
+            monsterProgress:n(0),
+            stringstringstring:"",
+        }
+    },
+    color: "white",
+    type: "none",
+    tooltip:"战斗",
+
+    update(diff)
+    {//现在在干嘛
+        if (player[this.layer].currentDoingProgress>=1)
+        {
+            if(player.battle.inFight==0)
+            {
+                if(player.battle.currentDoingStage==0)
+                {
+                    player.battle.inFight=1
+                    player.stat.hpnow=player.stat.hp
+                    player.battle.stringstringstring=""
+                    player.battle.monsterProgress=n(0)
+                    player.stat.playerProgress=n(0)
+                    re_calc(player.battle.currentLvl)
+                }
+                else
+                {
+                    player[this.layer].currentDoingProgress=0
+                }
+                player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
+            }
+        }
+        if(player.battle.inFight==1)
+        {
+            player.battle.monsterProgress=player.battle.monsterProgress.add(player.battle.monsterSPD.div(5000).mul(diff))
+            if(player.battle.monsterProgress.gte(1))
+            {
+                player.battle.monsterProgress=n(0)
+                //产生一次攻击
+                player.stat.hpnow=player.stat.hpnow.sub(player.battle.monsterATK.sub(player.stat.def).max(0))
+            }
+            player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.div(5000).mul(diff))
+            if(player.stat.playerProgress.gte(1))
+            {
+                player.stat.playerProgress=n(0)
+                //产生一次攻击
+                player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
+            }
+            if(player.stat.hpnow.lte(0.001))
+            {
+                player.battle.stringstringstring="<text style='color:red'>你死了</text>"
+                player.battle.inFight=0
+            }
+            else if(player.battle.monsterHPnow.lte(0.001))
+            {
+                player.battle.stringstringstring="<text style='color:gold'>你赢了</text>"
+                player.battle.inFight=0
+                //计算掉落
+                //注意 , 掉落是需要显示的 , 即加到stringstringstring里
+                var EXPgain=monster[player.battle.monsterID].EXP_gain()
+                var MONEYgain=monster[player.battle.monsterID].MONEY_gain()
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
+                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(EXPgain)+' 点经验'
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
+                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(MONEYgain)+' 金币'
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
+                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
+                player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
+                player.stat.money=player.stat.money.add(MONEYgain)
+                var wea=summon()
+                player.equip.weapon.push(wea)
+            }
+        }
+        //下面开始处理！
+        if (player[this.layer].currentDoingStage==0)
+        {//stage=0:找怪
+            player[this.layer].currentDoingProgress+=player.stat.spd.div(5000).mul(diff).toNumber()
+            // return ['找怪',player[this.layer].currentDoingProgress]
+        }
+        if (player[this.layer].currentDoingStage==1)
+        {//stage=1:打怪
+            // player[this.layer].currentDoingProgress+=0.01
+            // return ['打怪',player[this.layer].currentDoingProgress]
+        }
+    },
+    nodeStyle(){
+        // return {"clip-path":"polygon(50% 0%,60% 10%,60% 60%,80% 60%,80% 70%,60% 70% 60% 100%,40% 100%,40% 70%,20% 70%,20% 60%,40% 60%,40% 10%)"}
+        return {
+            "border-radius":"0px",
+            "height":"200px",
+            "width":"100px",
+            "border-width":"0px",
+            "clip-path":"polygon(50% 0%,70% 10%,70% 60%,90% 60%,90% 75%,60% 75%,60% 100%,40% 100%,40% 75%,10% 75%,10% 60%,30% 60%,30% 10%)"}
+            // "clip-path":"polygon(80% 0%,80% 20%,60% 60%,80% 70%,70% 90%,50% 80%,40% 100%,20% 90%,30% 70%,10% 60%,20% 40%,40% 50%,60% 10%)"}
+    },
+    clickables:
+    {
+        "SUB":
+        {
+            display()
+            {
+                return '←'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.battle.currentLvl.gte(2)},
+            onClick(){
+                player.battle.currentLvl=player.battle.currentLvl.sub(1)
+                if(player.battle.inFight==1)
+                {
+                    player.stat.hpnow=player.stat.hp
+                    player.battle.stringstringstring=""
+                    player.battle.monsterProgress=n(0)
+                    player.stat.playerProgress=n(0)
+                    re_calc(player.battle.currentLvl)
+                }
+            },
+        },
+        "ADD":
+        {
+            display()
+            {
+                return '→'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.battle.currentLvl.lte(999)},
+            onClick(){
+                player.battle.currentLvl=player.battle.currentLvl.add(1)
+                if(player.battle.inFight==1)
+                {
+                    player.stat.hpnow=player.stat.hp
+                    player.battle.stringstringstring=""
+                    player.battle.monsterProgress=n(0)
+                    player.stat.playerProgress=n(0)
+                    re_calc(player.battle.currentLvl)
+                }
+            },
+        },
+    },
+
+    bars:
+    {
+        thatBar:
+        {
+            direction: RIGHT,
+            width: 400,
+            height: 25,
+            progress()
+            {
+                return player[this.layer].currentDoingProgress
+            },
+            fillStyle()
+            {
+                if (player[this.layer].inFight==0) return {"background-color":"#00FF00"}
+                return {"background-color":"#FF0000"}
+            },
+        },
+        monsterHPbar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress()
+            {
+                return player.battle.monsterHPnow.div(player.battle.monsterHPmx)
+            },
+            fillStyle()
+            {
+                return {"background-color":"#FF0000"}
+            },
+            display()
+            {
+                return "HP "+format(player.battle.monsterHPnow)+' / '+format(player.battle.monsterHPmx)
+            }
+        },
+        playerHPbar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress()
+            {
+                return player.stat.hpnow.div(player.stat.hp)
+            },
+            fillStyle()
+            {
+                return {"background-color":"#FF0000"}
+            },
+            display()
+            {
+                return "HP "+format(player.stat.hpnow)+' / '+format(player.stat.hp)
+            }
+        },
+        monsterSPDbar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress() {
+                return player.battle.monsterProgress
+            },
+            fillStyle(){
+                return {"background-color":"#FFFF00"}
+            },
+            display()
+            {
+                return ""
+            }
+        },
+        playerSPDbar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            progress() {
+                return player.stat.playerProgress
+            },
+            fillStyle(){
+                return {"background-color":"#FFFF00"}
+            },
+            display()
+            {
+                return ""
+            }
+        },
+    },
+
+    tabFormat:[
+        ["row",[["clickable","SUB"],"blank",
+                                    ["display-text",function(){return 'Level : '+format(player.battle.currentLvl)}],
+                                    ,"blank",["clickable","ADD"],]],
+        "blank",
+        ["display-text",function(){return `正在${player[this.layer].currentDoingStage==1?'打怪':'找怪'}中...`}],
+        ["bar","thatBar"],
+        "blank",
+        "blank",
+        ["display-text",function(){return "<h2>怪物 : "+monster[player.battle.monsterID].name()}],
+        ["display-text",function(){return `<img src="js/img/`+monster[player.battle.monsterID].src()+`.png" alt="">`+'<br>'+map_img_src[0]}],
+        "blank",
+        ["bar","monsterHPbar"],
+        ["bar","monsterSPDbar"],
+        "blank",
+        ["display-text",function(){return player.battle.stringstringstring}],
+        "blank",
+        ["bar","playerHPbar"],
+        ["bar","playerSPDbar"],
+    ],
+    // branches:["challenge"],
+    layerShown(){return true},
+})
+addLayer("challenge",
+{
+    symbol: "<text style='color:black;border:solid black;border-radius:100%;border-width:5px'>├C┤",
+    row: 0,
+    position: 2,
+    startData()
+    {
+        return {
+            unlocked: true,
+            points: new ExpantaNum(0),
+        }
+    },
+    color: "#AF9B60",
+    type: "none",
+    tooltip:"挑战",
+
+    nodeStyle(){
+        return {
+            "border-radius":"100px",
+            "border-width":"0px",
+            "height":"150px",
+            "width":"150px",}
+            //10% 10%,90% 10%,90% 30%,80% 60%,70% 80%,50% 90%,30% 80%,20% 60%,10% 30%
+    },
+    update(diff)
+    {
+    },
+
+    clickables:
+    {
+        "SUB":
+        {
+            display()
+            {
+                return '←'
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.battle.currentLvl.gte(2)},
+            onClick(){
+                player.battle.currentLvl=player.battle.currentLvl.sub(1)
+            },
+        },
+    },
+
+    bars:
+    {
+        thatBar:
+        {
+            direction: RIGHT,
+            width: 400,
+            height: 25,
+            progress()
+            {
+                return player[this.layer].currentDoingProgress
+            },
+            fillStyle()
+            {
+                if (player[this.layer].inFight==0) return {"background-color":"#00FF00"}
+                return {"background-color":"#FF0000"}
+            },
+        },
+    },
+
+    tabFormat:[
+    ],
+
     layerShown(){return true},
 })

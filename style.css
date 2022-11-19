@@ -321,8 +321,10 @@ h1, h2, h3, b, input {
 }
 
 #points {
-	color: var(--points);
-	text-shadow: 0 0 10px var(--points);
+	/* color: var(--points); */
+	color:gold;
+	/* text-shadow: 0 0 10px var(--points); */
+	text-shadow: 0 0 10px gold;
 }
 
 #optionWheel {
