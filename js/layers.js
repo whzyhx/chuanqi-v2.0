@@ -534,6 +534,9 @@ addLayer("equip",
     update(diff)
     {
         player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
+
+        //对不起 , 陌尘
+        player.devSpeed=1
     },
     clickables:
     {
