@@ -1111,8 +1111,11 @@ addLayer("battle",
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
-                var wea=summon()
-                player.equip.weapon.push(wea)
+                if(player.equip.weapon.length<200)
+                {
+                    var wea=summon()
+                    player.equip.weapon.push(wea)
+                }
             }
         }
         //下面开始处理！
