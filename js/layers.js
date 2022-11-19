@@ -235,13 +235,14 @@ addLayer("stat",
                 //计算词缀对属性的影响
                 for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
                 {
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(7))mult=mult.mul(1.1)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(8))mult=mult.mul(1.2)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(9))mult=mult.mul(1.3)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(10))mult=mult.mul(1.4)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(11))mult=mult.mul(1.5)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(12))mult=mult.mul(1.6)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(13))mult=mult.mul(1.7)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(14))mult=mult.mul(1.1)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(15))mult=mult.mul(1.2)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(16))mult=mult.mul(1.3)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(17))mult=mult.mul(1.4)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(18))mult=mult.mul(1.5)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(19))mult=mult.mul(1.6)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(20))mult=mult.mul(1.7)
+                    
                 }
             }
             player.stat.def=result.mul(mult)//返回
@@ -260,13 +261,13 @@ addLayer("stat",
                 //计算词缀对属性的影响
                 for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
                 {
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(14))mult=mult.mul(1.1)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(15))mult=mult.mul(1.2)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(16))mult=mult.mul(1.3)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(17))mult=mult.mul(1.4)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(18))mult=mult.mul(1.5)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(19))mult=mult.mul(1.6)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(20))mult=mult.mul(1.7)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(7))mult=mult.mul(1.1)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(8))mult=mult.mul(1.2)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(9))mult=mult.mul(1.3)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(10))mult=mult.mul(1.4)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(11))mult=mult.mul(1.5)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(12))mult=mult.mul(1.6)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(13))mult=mult.mul(1.7)
                 }
             }
             player.stat.hp=result.mul(mult)//返回
