@@ -30,7 +30,7 @@ addLayer("tree-tab", {
             },
             fillStyle()
             {
-                return {"background-color":"#00FF00"}
+                return {"background-color":"green"}
             },
             display()
             {

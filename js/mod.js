@@ -1,5 +1,5 @@
 ﻿let modInfo = {
-	name: "大概是传奇树？",
+	name: "传奇II",
 	id: "Maybe_Fantacy_Tree_2",
 	author: "匿_名 和 ajchen",
 	pointsName: "金币",
@@ -19,7 +19,9 @@ let VERSION = {
 let changelog = `<h1>更新记录:</h1><br>
 <br><h3>v0.01</h3><br>
 		- 添加内容.<br>
-		- 因为匿名没写存档id，被迫删除旧存档.<br>
+<br><h3>v0.03 2022-11-19</h3><br>
+		- 重做界面.<br>
+		- 增加战斗日志显示.<br>
 		`
 
 let winText = `恭喜通关!您已经完成了这个游戏.`

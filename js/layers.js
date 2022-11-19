@@ -170,9 +170,47 @@ function output(data)//根据数据打印装备
     return s
 }
 // ------------ END -------------\\
+
+function challenge_save()
+{
+    player.data.playerProgress=player.stat.playerProgress
+    player.data.level=player.stat.level
+    player.data.EXPneed=player.stat.EXPneed
+    player.data.EXPnow=player.stat.EXPnow
+    player.data.money=player.stat.money
+    player.data.weapon=player.equip.weapon
+    player.data.weaponCurrent=player.equip.weaponCurrent
+    layerDataReset("stat")
+    layerDataReset("equip")
+}
+function challenge_load()
+{
+    player.stat.playerProgress=player.data.playerProgress
+    player.stat.level=player.data.level
+    player.stat.EXPneed=player.data.EXPneed
+    player.stat.EXPnow=player.data.EXPnow
+    player.stat.money=player.data.money
+    player.equip.weapon=player.data.weapon
+    player.equip.weaponCurrent=player.data.weaponCurrent
+}
+
+addLayer("data",
+{
+    startData()
+    {
+        return{
+            unlocked: true,
+            points: new ExpantaNum(0),
+            playerProgress:n(0),
+            level:n(1),EXPneed:n(10),EXPnow:n(0),
+            money:n(0),
+            weapon:[],weaponCurrent:[],
+        }
+    },
+})
 addLayer("stat",
 {
-    symbol: "<h1>M",
+    symbol: "<h2>M",
     position: 0,
     startData()
     {
@@ -235,13 +273,13 @@ addLayer("stat",
                 //计算词缀对属性的影响
                 for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
                 {
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(7))mult=mult.mul(1.1)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(8))mult=mult.mul(1.2)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(9))mult=mult.mul(1.3)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(10))mult=mult.mul(1.4)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(11))mult=mult.mul(1.5)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(12))mult=mult.mul(1.6)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(13))mult=mult.mul(1.7)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(14))mult=mult.mul(1.1)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(15))mult=mult.mul(1.2)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(16))mult=mult.mul(1.3)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(17))mult=mult.mul(1.4)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(18))mult=mult.mul(1.5)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(19))mult=mult.mul(1.6)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(20))mult=mult.mul(1.7)
                 }
             }
             player.stat.def=result.mul(mult)//返回
@@ -260,13 +298,13 @@ addLayer("stat",
                 //计算词缀对属性的影响
                 for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
                 {
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(14))mult=mult.mul(1.1)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(15))mult=mult.mul(1.2)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(16))mult=mult.mul(1.3)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(17))mult=mult.mul(1.4)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(18))mult=mult.mul(1.5)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(19))mult=mult.mul(1.6)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(20))mult=mult.mul(1.7)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(7))mult=mult.mul(1.1)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(8))mult=mult.mul(1.2)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(9))mult=mult.mul(1.3)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(10))mult=mult.mul(1.4)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(11))mult=mult.mul(1.5)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(12))mult=mult.mul(1.6)
+                    if(n(player.equip.weaponCurrent[i][6][j]).eq(13))mult=mult.mul(1.7)
                 }
             }
             player.stat.hp=result.mul(mult)//返回
@@ -317,6 +355,7 @@ addLayer("stat",
                     }
                 }
                 player.equip.weapon=newWeapon
+                player.stat.money=player.stat.money.add(gain)
             },
         },
         "Sell 1":
@@ -344,6 +383,7 @@ addLayer("stat",
                     }
                 }
                 player.equip.weapon=newWeapon
+                player.stat.money=player.stat.money.add(gain)
             },
         },
         "Sell 2":
@@ -371,6 +411,7 @@ addLayer("stat",
                     }
                 }
                 player.equip.weapon=newWeapon
+                player.stat.money=player.stat.money.add(gain)
             },
         },
         "Sell 3":
@@ -398,6 +439,7 @@ addLayer("stat",
                     }
                 }
                 player.equip.weapon=newWeapon
+                player.stat.money=player.stat.money.add(gain)
             },
         },
     },
@@ -454,13 +496,13 @@ addLayer("stat",
                 ["row",[["clickable","Sell 0"],["clickable","Sell 1"],["clickable","Sell 2"],["clickable","Sell 3"],]]
             ],
         },
-    },
+       },
     row: "side",
     layerShown(){return true},
 })
 addLayer("equip",
 {
-    symbol: "<h1>W",
+    symbol: "<h2>W",
     position: 1,
     startData()
     {
@@ -615,7 +657,8 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+               "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -635,7 +678,8 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+               "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -655,7 +699,8 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+               "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -675,7 +720,8 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+               "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -695,7 +741,8 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+               "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -715,7 +762,8 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+               "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -735,7 +783,8 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",}},
+               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
+               "border-width":"5px","border-color":"white"}},
             canClick(){return false},
             onClick(){
             },
@@ -789,7 +838,7 @@ addLayer("equip",
     },
     tabFormat:
     {
-        "Player":
+        "玩家":
         {
             buttonStyle()
             {
@@ -797,12 +846,34 @@ addLayer("equip",
             },
             content:[
                 "blank",
-                ["row",[["clickable","Weapon-5"],["clickable","Weapon-6"],]],
-                ["row",[["clickable","Weapon-0"],["clickable","Weapon-1"],["clickable","Weapon-2"],]],
-                ["row",[["clickable","Weapon-3"],["clickable","Weapon-4"],]],
+                ["row",[["clickable","Weapon-5"],"blank","blank",["clickable","Weapon-6"],]],
+                "blank",
+                ["row",[["clickable","Weapon-0"],"blank","blank",["clickable","Weapon-1"],"blank","blank",["clickable","Weapon-2"],]],
+                "blank",
+                ["row",[["clickable","Weapon-3"],"blank","blank",["clickable","Weapon-4"],]],
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
             ],
         },
-        "Bag":
+        "背包":
         {
             buttonStyle()
             {
@@ -821,34 +892,33 @@ addLayer("equip",
                         "blank",
                         "blank",
                         ["clickable","Player"],]],
-                // ["row",[["clickable","Equip"]]],
-                // ["row",[["clickable","Now"],["clickable","Player"],]],
                 "blank",
                 "blank",
                 "blank",
                 "blank",
-                // ["display-text",function(){
-                //     var l=player.equip.currentPage.sub(1).mul(10)
-                //     var r=player.equip.maxPos.add(l).sub(1)
-                //     // console.log(l)
-                //     // console.log(r)
-                //     var rt=''
-                //     for(var i=l;i.lte(r);i=i.add(1))
-                //     {
-                //         if(n(player.equip.weapon.length).lte(i))
-                //         {
-                //             break
-                //         }
-                //         if(i.eq(player.equip.currentPos.add(l).sub(1)))
-                //         {
-                //             rt=rt+'<br><h1>'+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'</h1><br><br>'
-                //         }
-                //         else
-                //         rt=rt+'LV.'+format(player.equip.weapon[i][7])+' '+player.equip.weapon[i][0]+'<br>'
-                //     }
-                //     return rt
-                // }],
+                ["display-text",function(){return '<h2>背包容量 '+format(player.equip.weapon.length)+'/200'}],
+                "blank",
                 "grid",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
+                "blank",
                 "blank",
                 "blank",
             ],
@@ -862,7 +932,7 @@ var monster={
         name(){return "幼年史莱姆"},
         src(){return '史莱姆'},
         unlocked(){return n(player.battle.currentLvl).gte(1)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(1).max(0))},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
         hp(){return n(5).mul(monster['slime'].mult())},
         atk(){return n(1).mul(monster['slime'].mult())},
         def(){return n(0).mul(monster['slime'].mult())},
@@ -874,8 +944,8 @@ var monster={
         name(){return "史莱姆<text style='color:#FF0000'>战士</text>"},
         src(){return '史莱姆战士'},
         unlocked(){return n(player.battle.currentLvl).gte(2)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(2).max(0))},
-        hp(){return n(20).mul(monster['slime_zhanshi'].mult())},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
+        hp(){return n(10).mul(monster['slime_zhanshi'].mult())},
         atk(){return n(5).mul(monster['slime_zhanshi'].mult())},
         def(){return n(2).mul(monster['slime_zhanshi'].mult())},
         spd(){return n(2000)},
@@ -886,10 +956,10 @@ var monster={
         name(){return "史莱姆<text style='color:#00FF00'>弓手</text>"},
         src(){return '史莱姆弓手'},
         unlocked(){return n(player.battle.currentLvl).gte(4)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(4).max(0))},
-        hp(){return n(40).mul(monster['slime_gongshou'].mult())},
-        atk(){return n(10).mul(monster['slime_gongshou'].mult())},
-        def(){return n(5).mul(monster['slime_gongshou'].mult())},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
+        hp(){return n(15).mul(monster['slime_gongshou'].mult())},
+        atk(){return n(8).mul(monster['slime_gongshou'].mult())},
+        def(){return n(4).mul(monster['slime_gongshou'].mult())},
         spd(){return n(2500)},
         EXP_gain(){return n(4)},
         MONEY_gain(){return n(6)},
@@ -898,10 +968,10 @@ var monster={
         name(){return "史莱姆<text style='color:#0000FF'>法师</text>"},
         src(){return '史莱姆法师'},
         unlocked(){return n(player.battle.currentLvl).gte(6)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(6).max(0))},
-        hp(){return n(50).mul(monster['slime_fashi'].mult())},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
+        hp(){return n(25).mul(monster['slime_fashi'].mult())},
         atk(){return n(15).mul(monster['slime_fashi'].mult())},
-        def(){return n(10).mul(monster['slime_fashi'].mult())},
+        def(){return n(8).mul(monster['slime_fashi'].mult())},
         spd(){return n(2500)},
         EXP_gain(){return n(8)},
         MONEY_gain(){return n(15)},
@@ -910,9 +980,9 @@ var monster={
         name(){return "史莱姆<text style='color:#00FFFF'>精英</text>"},
         src(){return '史莱姆精英'},
         unlocked(){return n(player.battle.currentLvl).gte(10)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl).sub(10).max(0))},
-        hp(){return n(100).mul(monster['slime_jingying'].mult())},
-        atk(){return n(25).mul(monster['slime_jingying'].mult())},
+        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
+        hp(){return n(30).mul(monster['slime_jingying'].mult())},
+        atk(){return n(20).mul(monster['slime_jingying'].mult())},
         def(){return n(15).mul(monster['slime_jingying'].mult())},
         spd(){return n(1500)},
         EXP_gain(){return n(15)},
@@ -967,6 +1037,8 @@ addLayer("battle",
             monsterSPD:n(0),
             monsterProgress:n(0),
             stringstringstring:"",
+
+            zhandourizhi:[],
         }
     },
     color: "white",
@@ -986,6 +1058,7 @@ addLayer("battle",
                     player.battle.stringstringstring=""
                     player.battle.monsterProgress=n(0)
                     player.stat.playerProgress=n(0)
+                    player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
                 else
@@ -1002,7 +1075,10 @@ addLayer("battle",
             {
                 player.battle.monsterProgress=n(0)
                 //产生一次攻击
-                player.stat.hpnow=player.stat.hpnow.sub(player.battle.monsterATK.sub(player.stat.def).max(0))
+                player.stat.hpnow=player.stat.hpnow.sub(player.battle.monsterATK.sub(player.stat.def).max(0)).max(0)
+                player.battle.zhandourizhi.push(
+                    monster[player.battle.monsterID].name()+' 对 你 造成了 <text style="color:red">'
+                    +format(player.battle.monsterATK.sub(player.stat.def).max(0))+'</text> 伤害')
             }
             player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.div(5000).mul(diff))
             if(player.stat.playerProgress.gte(1))
@@ -1010,6 +1086,9 @@ addLayer("battle",
                 player.stat.playerProgress=n(0)
                 //产生一次攻击
                 player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
+                player.battle.zhandourizhi.push(
+                    '你 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
+                    +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
             }
             if(player.stat.hpnow.lte(0.001))
             {
@@ -1078,6 +1157,7 @@ addLayer("battle",
                     player.battle.stringstringstring=""
                     player.battle.monsterProgress=n(0)
                     player.stat.playerProgress=n(0)
+                    player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
             },
@@ -1100,6 +1180,7 @@ addLayer("battle",
                     player.battle.stringstringstring=""
                     player.battle.monsterProgress=n(0)
                     player.stat.playerProgress=n(0)
+                    player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
             },
@@ -1208,6 +1289,15 @@ addLayer("battle",
         "blank",
         ["bar","playerHPbar"],
         ["bar","playerSPDbar"],
+        "blank",
+        ["display-text",function(){
+            var s=''
+            var touming=['ff','ee','dd','cc','bb','aa','99','88','77','66','55','44','33','22','11','00','00','00']
+            for(var i=player.battle.zhandourizhi.length-1;i>=0;i--)
+            {
+                s=s+'<text style="color:#FFFFFF'+touming[Math.max(player.battle.zhandourizhi.length-1-i,0)]+'">'+(i+1)+'. '+player.battle.zhandourizhi[i]+'<br>'
+            }
+            return s}],
     ],
     // branches:["challenge"],
     layerShown(){return true},
@@ -1277,8 +1367,21 @@ addLayer("challenge",
         },
     },
 
-    tabFormat:[
-    ],
+    tabFormat:{
+        "挑战":{
+            unlocked(){return true},
+            buttonStyle(){return {"border-radius":"0px"}},
+            content:[
+            ]
+        },
+        "天赋":{
+            unlocked(){return true},
+            buttonStyle(){return {"border-radius":"0px"}},
+            content:[
+                
+            ]
+        }
+    },
 
     layerShown(){return true},
 })
