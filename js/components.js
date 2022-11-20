@@ -558,6 +558,25 @@ function loadVue() {
 				v-bind:class="{ longUpg: true, can: player[layer].unlocked, locked: !player[layer].unlocked }">{{tmp[layer].buyables.sellAllText ? tmp[layer].buyables.sellAllText : "Sell All"}}</button>
 	`
 	})
+	// 匿名添加 ///////////////
+
+	Vue.component('challenge-challenge', {
+		props: ['layer'],
+		template: `
+			<div class='battleChallenge'>
+			<clickable :layer = "layer" :data = "11" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			<clickable :layer = "layer" :data = "12" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			<clickable :layer = "layer" :data = "13" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			<clickable :layer = "layer" :data = "14" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			<clickable :layer = "layer" :data = "15" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			<clickable :layer = "layer" :data = "16" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			<clickable :layer = "layer" :data = "17" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			<clickable :layer = "layer" :data = "18" v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
+			</div>	
+		`
+	})
+
+	//////////////////////////
 
 	// SYSTEM COMPONENTS
 	Vue.component('node-mark', systemComponents['node-mark'])

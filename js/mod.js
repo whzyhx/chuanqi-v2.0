@@ -12,7 +12,7 @@
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.01",
+	num: "0.04",
 	name: "暂时还没名字",
 }
 
@@ -22,6 +22,8 @@ let changelog = `<h1>更新记录:</h1><br>
 <br><h3>v0.03 2022-11-19</h3><br>
 		- 重做界面.<br>
 		- 增加战斗日志显示.<br>
+<br><h3>v0.04 2022-11-20</h3><br>
+		- 制作挑战界面.<br>
 		`
 
 let winText = `恭喜通关!您已经完成了这个游戏.`

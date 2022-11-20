@@ -10,7 +10,7 @@ const quality=[//这个看不懂就砍死你丫的(?
     "<text style='color:red'>神话的</text>",
 ]
 const possibility=[
-    n(1),
+    n(1000000),
     n(0.1),
     n(0.01),
     n(0.001),
@@ -82,7 +82,7 @@ function getAffix()
     xx=xx.mul(affix.length).floor()
     return xx
 }
-function summon()
+function summon(baolv)
 {
     var data=[]
     var affixku=[]
@@ -96,6 +96,8 @@ function summon()
     //神话:0.0001%
     var x=n(0).add(Math.random())//随机品质
     // x=n(0.0000000001) // 匿名专属爆率 , ajchen不许用(?)
+    x=x.div(player.stat.luck).div(baolv)
+    // console.log(baolv)
     var which=0
     var name=''
     for(var i=0;i<possibility.length;i++)
@@ -171,28 +173,6 @@ function output(data)//根据数据打印装备
 }
 // ------------ END -------------\\
 
-function challenge_save()
-{
-    player.data.playerProgress=player.stat.playerProgress
-    player.data.level=player.stat.level
-    player.data.EXPneed=player.stat.EXPneed
-    player.data.EXPnow=player.stat.EXPnow
-    player.data.money=player.stat.money
-    player.data.weapon=player.equip.weapon
-    player.data.weaponCurrent=player.equip.weaponCurrent
-    layerDataReset("stat")
-    layerDataReset("equip")
-}
-function challenge_load()
-{
-    player.stat.playerProgress=player.data.playerProgress
-    player.stat.level=player.data.level
-    player.stat.EXPneed=player.data.EXPneed
-    player.stat.EXPnow=player.data.EXPnow
-    player.stat.money=player.data.money
-    player.equip.weapon=player.data.weapon
-    player.equip.weaponCurrent=player.data.weaponCurrent
-}
 
 addLayer("data",
 {
@@ -204,7 +184,18 @@ addLayer("data",
             playerProgress:n(0),
             level:n(1),EXPneed:n(10),EXPnow:n(0),
             money:n(0),
-            weapon:[],weaponCurrent:[],
+            kill_boss_1:n(0),
+            weapon:[],
+            weaponCurrent:[
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+                [1,1],
+            ],
         }
     },
 })
@@ -324,7 +315,15 @@ addLayer("stat",
         },
         luck(){
             var base = n(1)
-            var result = base
+            var result = base  
+            if(_inChallenge(1))
+            {
+                result=result.mul(5)
+            }
+            else
+            {
+                if(_finishChallenge(1))result=result.mul(1.1)
+            }
             player.stat.luck=result
         },
     },
@@ -536,7 +535,15 @@ addLayer("equip",
         player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
 
         //对不起 , 陌尘
-        player.devSpeed=1
+        if(_inChallenge(0))
+        {
+            player.devSpeed=5
+        }
+        else
+        {
+            if(_finishChallenge(0))player.devSpeed=1.1
+            else player.devSpeed=1
+        }
     },
     clickables:
     {
@@ -548,7 +555,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
+               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",}},
             canClick(){return player.equip.currentPage.gte(1.5)},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.sub(1)
@@ -562,7 +569,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s",}},
+               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px",}},
             canClick(){return player.equip.currentPage.lte(player.equip.maxPage.sub(0.5))},
             onClick(){
                 player.equip.currentPage=player.equip.currentPage.add(1)
@@ -625,7 +632,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"20px","width":"100px","height":"100px","min-height":"100px","transition-duration":"0s",}},
+               return {"border-radius":"20px","width":"100px","height":"100px","min-height":"100px",}},
             canClick(){return true},
             onClick(){
                 var l=player.equip.currentID
@@ -637,7 +644,7 @@ addLayer("equip",
                 if(n(player.equip.weaponCurrent[x].length).lte(3))
                 {
                     player.equip.weaponCurrent[x]=player.equip.weapon[l]
-                    player.equip.weapon.slice(l,1)
+                    player.equip.weapon.splice(l,1)
                     return
                 }
                 var tmp=player.equip.weapon[l]
@@ -942,6 +949,7 @@ var monster={
         spd(){return n(2000)},
         EXP_gain(){return n(1)},
         MONEY_gain(){return n(1)},
+        BaoLv(){return n(1)},
     },
     slime_zhanshi:{
         name(){return "史莱姆<text style='color:#FF0000'>战士</text>"},
@@ -954,6 +962,7 @@ var monster={
         spd(){return n(2000)},
         EXP_gain(){return n(2)},
         MONEY_gain(){return n(3)},
+        BaoLv(){return n(2)},
     },
     slime_gongshou:{
         name(){return "史莱姆<text style='color:#00FF00'>弓手</text>"},
@@ -966,6 +975,7 @@ var monster={
         spd(){return n(2500)},
         EXP_gain(){return n(4)},
         MONEY_gain(){return n(6)},
+        BaoLv(){return n(3)},
     },
     slime_fashi:{
         name(){return "史莱姆<text style='color:#0000FF'>法师</text>"},
@@ -978,6 +988,7 @@ var monster={
         spd(){return n(2500)},
         EXP_gain(){return n(8)},
         MONEY_gain(){return n(15)},
+        BaoLv(){return n(5)},
     },
     slime_jingying:{
         name(){return "史莱姆<text style='color:#00FFFF'>精英</text>"},
@@ -990,6 +1001,20 @@ var monster={
         spd(){return n(1500)},
         EXP_gain(){return n(15)},
         MONEY_gain(){return n(30)},
+        BaoLv(){return n(10)},
+    },
+    slime_guowang:{
+        name(){return "史莱姆<text style='color:gold'>国王</text>"},
+        src(){return '史莱姆国王'},
+        unlocked(){return false},
+        mult(){return n(1)},
+        hp(){return n(3000).mul(monster['slime_guowang'].mult())},
+        atk(){return n(1000).mul(monster['slime_guowang'].mult())},
+        def(){return n(750).mul(monster['slime_guowang'].mult())},
+        spd(){return n(1750)},
+        EXP_gain(){return n(150)},
+        MONEY_gain(){return n(300)},
+        BaoLv(){return n(100)},
     },
 }
 const map_img_src=[
@@ -1018,7 +1043,7 @@ function re_calc(lvl)//重新生成怪物属性
     player.battle.monsterSPD=monster[y].spd()
     return
 }
-addLayer("battle",
+addLayer("battle",  
 {
     symbol: "<text style='color:black'>B",
     row: 0,
@@ -1042,6 +1067,8 @@ addLayer("battle",
             stringstringstring:"",
 
             zhandourizhi:[],
+
+            kill_boss_1:n(0),
         }
     },
     color: "white",
@@ -1100,6 +1127,17 @@ addLayer("battle",
             }
             else if(player.battle.monsterHPnow.lte(0.001))
             {
+                //计算 击杀boss
+                if(player.battle.monsterID=="slime_guowang")
+                {
+                    alert("你一剑击碎了史莱姆国王的王冠")
+                    alert('"#$%^@$!"')
+                    alert("奇怪的是 , 国王的眼神里 , 没有悲哀")
+                    alert("仅仅有一丝遗憾和一点点的释然")
+                    alert("它最后的话你并没有听懂 , 但你隐约觉得哪里不太对")
+                    player.battle.kill_boss_1=n(1)
+                }
+                //
                 player.battle.stringstringstring="<text style='color:gold'>你赢了</text>"
                 player.battle.inFight=0
                 //计算掉落
@@ -1116,7 +1154,7 @@ addLayer("battle",
                 player.stat.money=player.stat.money.add(MONEYgain)
                 if(player.equip.weapon.length<200)
                 {
-                    var wea=summon()
+                    var wea=summon(monster[player.battle.monsterID].BaoLv())
                     player.equip.weapon.push(wea)
                 }
             }
@@ -1177,7 +1215,7 @@ addLayer("battle",
             unlocked(){return true},
             style(){
                return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.lte(999)},
+            canClick(){return player.battle.currentLvl.add(1).lte(49)},
             onClick(){
                 player.battle.currentLvl=player.battle.currentLvl.add(1)
                 if(player.battle.inFight==1)
@@ -1189,6 +1227,33 @@ addLayer("battle",
                     player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
+            },
+        },
+        "BOSS-1":
+        {
+            display()
+            {
+                return '挑战<br>Lv.50 史莱姆国王'
+            },
+            unlocked(){return player.battle.currentLvl.eq(49) && player.battle.kill_boss_1.eq(0)},
+            style(){
+               return {"width":"150px","height":"50px","min-height":"50px","border-radius":"10px"}},
+            canClick(){return player.battle.currentLvl.eq(49)},
+            onClick(){
+                player.battle.inFight=1
+                player.currentDoingProgress=1
+                player.stat.hpnow=player.stat.hp
+                player.battle.stringstringstring=""
+                player.battle.monsterProgress=n(0)
+                player.stat.playerProgress=n(0)
+                player.battle.zhandourizhi=[]
+                var y="slime_guowang"
+                player.battle.monsterID=y
+                player.battle.monsterHPmx=monster[y].hp()
+                player.battle.monsterHPnow=monster[y].hp()
+                player.battle.monsterATK=monster[y].atk()
+                player.battle.monsterDEF=monster[y].def()
+                player.battle.monsterSPD=monster[y].spd()
             },
         },
     },
@@ -1279,7 +1344,7 @@ addLayer("battle",
     tabFormat:[
         ["row",[["clickable","SUB"],"blank",
                                     ["display-text",function(){return 'Level : '+format(player.battle.currentLvl)}],
-                                    ,"blank",["clickable","ADD"],]],
+                                    ,"blank",["clickable","ADD"],"blank",["clickable","BOSS-1"],]],
         "blank",
         ["display-text",function(){return `正在${player[this.layer].currentDoingStage==1?'打怪':'找怪'}中...`}],
         ["bar","thatBar"],
@@ -1308,6 +1373,92 @@ addLayer("battle",
     // branches:["challenge"],
     layerShown(){return true},
 })
+
+function challenge_save()
+{
+    player.data.playerProgress=player.stat.playerProgress
+    player.data.level=player.stat.level
+    player.data.EXPneed=player.stat.EXPneed
+    player.data.EXPnow=player.stat.EXPnow
+    player.data.money=player.stat.money
+    player.data.weapon=player.equip.weapon
+    player.data.weaponCurrent=player.equip.weaponCurrent
+    player.data.kill_boss_1=player.battle.kill_boss_1
+
+    player.stat.playerProgress=n(0)
+    player.stat.level=n(1)
+    player.stat.EXPneed=n(10)
+    player.stat.EXPnow=n(0)
+    player.stat.money=n(0)
+    player.equip.weapon=[]
+    player.equip.weaponCurrent=[
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+    ]
+    player.battle.kill_boss_1=n(0)
+}
+function challenge_load()
+{
+    player.stat.playerProgress=player.data.playerProgress
+    player.stat.level=player.data.level
+    player.stat.EXPneed=player.data.EXPneed
+    player.stat.EXPnow=player.data.EXPnow
+    player.stat.money=player.data.money
+    player.equip.weapon=player.data.weapon
+    player.equip.weaponCurrent=player.data.weaponCurrent
+    player.battle.kill_boss_1=player.data.kill_boss_1
+
+    player.data.playerProgress=n(0)
+    player.data.level=n(1)
+    player.data.EXPneed=n(10)
+    player.data.EXPnow=n(0)
+    player.data.money=n(0)
+    player.data.weapon=[]
+    player.data.weaponCurrent=[
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+        [1,1],
+    ]
+    player.data.kill_boss_1=n(0)
+}
+function _inChallenge(x)
+{
+    return player.challenge.in_challenge.eq(1) && player.challenge.challenge_num[0]==x
+}
+function _finishChallenge(x)
+{
+    return player.challenge.finish_challenge[x]
+}
+function huanhang(s,x)
+{
+    var rt=''
+    for(var i=0;i<s.length;i++)
+    {
+        if(s[i]=='<')
+        {
+            x--;
+            x=Math.max(x,0)
+            // rt=rt+'\n'
+        }
+    }
+    for(var i=0;i<x;i++)
+    {
+        rt=rt+'\n'
+    }
+    return rt
+}
+
 addLayer("challenge",
 {
     symbol: "<text style='color:black;border:solid black;border-radius:100%;border-width:5px'>├C┤",
@@ -1318,6 +1469,63 @@ addLayer("challenge",
         return {
             unlocked: true,
             points: new ExpantaNum(0),
+            challenge_num:[0,1,2,3,4,5,6,7],
+            challenge_text:[
+                "挑战1 - 极速<br><br>时间流逝速度x5",
+                "挑战2 - 强运<br><br>运气x5",
+                "挑战3",
+                "挑战4",
+                "挑战5",
+                "挑战6",
+                "挑战7",
+                "挑战8",
+                "挑战9",
+                "挑战10",
+                "挑站11",
+                "挑战12",
+                "挑战13",
+                "挑战14",
+                "挑战15",
+                "挑战16",
+                "挑战17",
+                "挑战18",
+            ],
+            complete_challenge_text:[
+"<div class='kuang1'>当前选中 : 挑战1 - 极速</div><br>"
++"<div class='kuang2'>效果<br>时间流逝速度x5</div><br>"
++"<div class='kuang2'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang3'>奖励<br><h3>1</h3> 天赋点<br>时间流逝速度永久x1.1</div>",
+"<div class='kuang1'>当前选中 : 挑战2 - 强运</div><br>"
++"<div class='kuang2'>效果<br>运气x5</div><br>"
++"<div class='kuang2'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang3'>奖励<br><h3>1</h3> 天赋点<br>运气永久x1.1</div>",
+                "挑战3",
+                "挑战4",
+                "挑战5",
+                "挑战6",
+                "挑战7",
+                "挑战8",
+                "挑战9",
+                "挑战10",
+                "挑站11",
+                "挑战12",
+                "挑战13",
+                "挑战14",
+                "挑战15",
+                "挑战16",
+                "挑战17",
+                "挑战18",
+            ],
+            finish_challenge:[
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+            ],
+            in_challenge:n(0),
+
+            choose_one_tab:false,
         }
     },
     color: "#AF9B60",
@@ -1334,11 +1542,197 @@ addLayer("challenge",
     },
     update(diff)
     {
+        if(player.tab=="challenge")
+        {
+            options.forceOneTab=true
+        }
+        else
+        {
+            options.forceOneTab=player.challenge.choose_one_tab
+        }
     },
-
+    //奇数 : 32个换行
+    //偶数 : 21个换行
+    //"background-color":"#AF9B60"
     clickables:
     {
-        "SUB":
+        11:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(0deg);font-size:12px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[0]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[0]],32)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(33% 0%,66% 0%,50% 50%)",
+                    "left":"0px","top":"0px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[0]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        12:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(45deg);font-size:16px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[1]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[1]],21)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(66% 0%,100% 33%,50% 50%)",
+                    "left":"-400px","top":"0px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[1]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        13:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(90deg);font-size:12px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[2]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[2]],32)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(100% 33%,100% 66%,50% 50%)",
+                    "left":"-200px","top":"-400px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[2]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        14:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(135deg);font-size:16px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[3]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[3]],21)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(100% 66%,66% 100%,50% 50%)",
+                    "left":"-400px","top":"-800px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[3]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        15:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(180deg);font-size:12px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[4]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[4]],32)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(66% 100%,33% 100%,50% 50%)",
+                    "left":"0px","top":"-800px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[4]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        16:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(225deg);font-size:16px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[5]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[5]],21)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(33% 100%,0% 66%,50% 50%)",
+                    "left":"400px","top":"-800px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[5]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        17:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(270deg);font-size:12px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[6]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[6]],32)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(0% 66%,0% 33%,50% 50%)",
+                    "left":"200px","top":"-400px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[6]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        18:
+        {
+            display()
+            {
+                return '<p style="transform:rotate(315deg);font-size:16px;">'
+                +player.challenge.challenge_text[player.challenge.challenge_num[7]]
+                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[7]],21)
+            },
+            unlocked(){return true},
+            style(){
+               return {"width":"400px","height":"400px","min-height":"400px",
+                    "clip-path":"polygon(0% 33%,33% 0%,50% 50%)",
+                    "left":"400px","top":"0px",
+                    "position":"relative",
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[8]]?"lime":"#AF9B60")
+                    // "border-color":"blue","border-width":"5px",
+                }
+                },
+            canClick(){return false},
+            onClick(){
+            },
+        },
+        "Left":
         {
             display()
             {
@@ -1346,10 +1740,83 @@ addLayer("challenge",
             },
             unlocked(){return true},
             style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.gte(2)},
+               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",
+            
+               "left":"0px","top":"-800px",
+               "position":"relative",}},
+            canClick(){return player.challenge.in_challenge.eq(0)},
             onClick(){
-                player.battle.currentLvl=player.battle.currentLvl.sub(1)
+                var new_array=[]
+                new_array.push(player.challenge.challenge_num[player.challenge.challenge_num.length-1])
+                for(var i=0;i<player.challenge.challenge_num.length-1;i++)
+                {
+                    new_array.push(player.challenge.challenge_num[i])
+                }
+                player.challenge.challenge_num=new_array
+
+                layerDataReset("challenge")
+            },
+        },
+        "Right":
+        {
+            display()
+            {
+                return '→'
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px",
+            
+               "left":"0px","top":"-800px",
+               "position":"relative",
+            }},
+            canClick(){return player.challenge.in_challenge.eq(0)},
+            onClick(){
+                player.challenge.challenge_num.push(player.challenge.challenge_num[0])
+                player.challenge.challenge_num.splice(0,1)
+            },
+        },
+        "Enter":
+        {
+            canComplete()
+            {
+                if(player.challenge.challenge_num[0]==0 || player.challenge.challenge_num[0]==1)
+                return player.battle.kill_boss_1.eq(1)
+                return false
+            },
+            display()
+            {
+                if(player.challenge.in_challenge.eq(0))
+                return "进入挑战"
+                if(this.canComplete())
+                {
+                    return '完成挑战'
+                }
+                return "退出挑战"
+            },
+            unlocked(){return true},
+            style(){
+               return {
+                "left":"0px","top":"-800px",
+                "position":"relative",
+                }
+                },
+            canClick(){return player.challenge.in_challenge.eq(1) || !player.challenge.finish_challenge[player.challenge.challenge_num[0]]},
+            onClick(){
+                if(player.challenge.in_challenge.eq(0))
+                {
+                    player.challenge.in_challenge=n(1)
+                    challenge_save()
+                }
+                else
+                {
+                    if(this.canComplete())
+                    {
+                        player.challenge.finish_challenge[player.challenge.challenge_num[0]]=true
+                    }
+                    player.challenge.in_challenge=n(0)
+                    challenge_load()
+                }
             },
         },
     },
@@ -1378,6 +1845,15 @@ addLayer("challenge",
             unlocked(){return true},
             buttonStyle(){return {"border-radius":"0px"}},
             content:[
+                ["row",[["clickable",18],["clickable",11],["clickable",12],]],
+                ["row",[["clickable",17],["clickable",13],]],
+                ["row",[["clickable",16],["clickable",15],["clickable",14],]],
+                "blank",
+                ["row",[["clickable","Left"],["clickable","Enter"],["clickable","Right"],]],
+                "blank",
+                ["display-text",function(){
+                    return player.challenge.complete_challenge_text[player.challenge.challenge_num[0]]
+                },{"top":"-800px","position":"relative"}],
             ]
         },
         "天赋":{

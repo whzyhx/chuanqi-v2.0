@@ -11,7 +11,7 @@ function getStartOptions() {
 		offlineProd: true,
 		hideChallenges: false,
 		showStory: true,
-		forceOneTab: false,
+		forceOneTab: true,
 		oldStyle: false,
 	}
 }
@@ -21,6 +21,10 @@ function toggleOpt(name) {
 		return;
 
 	options[name] = !options[name];
+	if(name=="forceOneTab")
+	{
+		player.challenge.choose_one_tab=!player.challenge.choose_one_tab
+	}
 	if (name == "hqTree")
 		changeTreeQuality();
 	if (name == "oldStyle")
