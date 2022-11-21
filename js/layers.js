@@ -4,7 +4,7 @@ const quality=[//这个看不懂就砍死你丫的(?
     "<text style='color:grey'>破损的</text>",
     "<text style='color:white'>普通的</text>",
     "<text style='color:lime'>优秀的</text>",
-    "<text style='color:blue'>精良的</text>",
+    "<text style='color:lightblue'>精良的</text>",
     "<text style='color:magenta'>史诗的</text>",
     "<text style='color:gold'>传奇的</text>",
     "<text style='color:red'>神话的</text>",
@@ -42,7 +42,7 @@ const affix=[
     ["<text style='color:grey'>力量I"  , "攻击+10%"],
     ["<text style='color:white'>力量II" ,"攻击+20%"],
     ["<text style='color:lime'>力量III" ,"攻击+30%"],
-    ["<text style='color:blue'>力量IV" , "攻击+40%"],
+    ["<text style='color:lightblue'>力量IV" , "攻击+40%"],
     ["<text style='color:magenta'>力量V","攻击+50%"],
     ["<text style='color:gold'>力量VI" , "攻击+60%"],
     ["<text style='color:red'>力量VII" , "攻击+70%"],
@@ -50,7 +50,7 @@ const affix=[
     ["<text style='color:grey'>强壮I"  , "生命+10%"],
     ["<text style='color:white'>强壮II" ,"生命+20%"],
     ["<text style='color:lime'>强壮III" ,"生命+30%"],
-    ["<text style='color:blue'>强壮IV" , "生命+40%"],
+    ["<text style='color:lightblue'>强壮IV" , "生命+40%"],
     ["<text style='color:magenta'>强壮V","生命+50%"],
     ["<text style='color:gold'>强壮VI" , "生命+60%"],
     ["<text style='color:red'>强壮VII" , "生命+70%"],
@@ -58,7 +58,7 @@ const affix=[
     ["<text style='color:grey'>韧性I"  , "防御+10%"],
     ["<text style='color:white'>韧性II" ,"防御+20%"],
     ["<text style='color:lime'>韧性III" ,"防御+30%"],
-    ["<text style='color:blue'>韧性IV" , "防御+40%"],
+    ["<text style='color:lightblue'>韧性IV" , "防御+40%"],
     ["<text style='color:magenta'>韧性V","防御+50%"],
     ["<text style='color:gold'>韧性VI" , "防御+60%"],
     ["<text style='color:red'>韧性VII" , "防御+70%"],
@@ -460,7 +460,7 @@ addLayer("stat",
                 ],
                 ["display-text",
                     function() {
-                        return '<text style="color:#0000FFc0">防御 : </text><text style="color:lightblue">'+format(player[this.layer].def)+'</text>'
+                        return '<text style="color:#ADD8E6c0">防御 : </text><text style="color:lightblue">'+format(player[this.layer].def)+'</text>'
                     },
                     { "color": "white", "font-size": "32px",}
                 ],
@@ -1458,7 +1458,11 @@ function huanhang(s,x)
     }
     return rt
 }
-
+//天赋CSS
+const meijiesuo={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"grey",}
+const jiesuo={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"red",}
+const keyimai={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"blue",}
+const yimai={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"limec",}
 addLayer("challenge",
 {
     symbol: "<text style='color:black;border:solid black;border-radius:100%;border-width:5px'>├C┤",
@@ -1491,14 +1495,14 @@ addLayer("challenge",
                 "挑战18",
             ],
             complete_challenge_text:[
-"<div class='kuang1'>当前选中 : 挑战1 - 极速</div><br>"
-+"<div class='kuang2'>效果<br>时间流逝速度x5</div><br>"
-+"<div class='kuang2'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
-+"<div class='kuang3'>奖励<br><h3>1</h3> 天赋点<br>时间流逝速度永久x1.1</div>",
-"<div class='kuang1'>当前选中 : 挑战2 - 强运</div><br>"
-+"<div class='kuang2'>效果<br>运气x5</div><br>"
-+"<div class='kuang2'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
-+"<div class='kuang3'>奖励<br><h3>1</h3> 天赋点<br>运气永久x1.1</div>",
+"<div class='kuang' style='height:20px'>当前选中 : 挑战1 - 极速</div><br>"
++"<div class='kuang' style='height:40px'>效果<br>时间流逝速度x5</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>时间流逝速度永久x1.1</div>",
+"<div class='kuang' style='height:20px'>当前选中 : 挑战2 - 强运</div><br>"
++"<div class='kuang' style='height:40px'>效果<br>运气x5</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>运气永久x1.1</div>",
                 "挑战3",
                 "挑战4",
                 "挑战5",
@@ -1525,6 +1529,26 @@ addLayer("challenge",
             ],
             in_challenge:n(0),
 
+            complete_tianfu_text:[
+"",
+"<div class='kuang' style='width:200px;height:160px'><h2>天赋 - 开始</h2>"
++"<br><br><i>从此踏上征途</i>"
++"<br><br>开启你的天赋树<br>花费 : 0天赋点</div>",
+"<div class='kuang' style='width:250px;height:160px'><h2>天赋 - 幸运儿</h2>"
++"<br><br>你的运气有点令别人羡慕<br><text style='color:yellow'>运气x3</text><br>花费 : 0.5天赋点</div>",
+"<div class='kuang' style='width:300px;height:160px'><h2>天赋 - 战士</h2>"
++"<br><br><i>战士守则 : 坚韧不屈 , 屹立不倒</i>"
++"<br><br>学习怎么成为一名战士<br><text style='color:lightblue'>防御x1.3</text><br><text style='color:lime'>生命x1.3</text><br>花费 : 1天赋点</div>",
+"<div class='kuang' style='width:300px;height:160px'><h2>天赋 - 法师</h2>"
++"<br><br><i>法师守则 : 想在战场上活下去 , 时刻留意你的四周</i>"
++"<br><br>学习怎么成为一名法师<br><text style='color:red'>攻击x1.5</text><br>花费 : 1天赋点</div>",
+"<div class='kuang' style='width:300px;height:160px'><h2>天赋 - 弓手</h2>"
++"<br><br><i>弓手守则 : 敏捷 , 隐蔽</i>"
++"<br><br>学习怎么成为一名弓手<br><text style='color:red'>攻击x1.2</text><br><text style='color:magenta'>初始速度+500</text><br>花费 : 1天赋点</div>",
+            ],
+            choose_tianfu_id:1,
+            tianfudianMax:n(0),tianfudianNow:n(0),
+
             choose_one_tab:false,
         }
     },
@@ -1549,6 +1573,17 @@ addLayer("challenge",
         else
         {
             options.forceOneTab=player.challenge.choose_one_tab
+        }
+        for (layer in layers){
+            for(id in layers[layer].clickables) {
+                if (tmp[layer].clickables[id].branches) {
+                    for (branch in tmp[layer].clickables[id].branches)
+                    {
+                        drawTreeBranch(id, tmp[layer].clickables[id].branches[branch], "clickable-" + layer + "-")
+                    }
+    
+                }
+            }
         }
     },
     //奇数 : 32个换行
@@ -1742,7 +1777,7 @@ addLayer("challenge",
             style(){
                return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",
             
-               "left":"0px","top":"-800px",
+            //    "left":"0px","top":"-800px",
                "position":"relative",}},
             canClick(){return player.challenge.in_challenge.eq(0)},
             onClick(){
@@ -1819,6 +1854,47 @@ addLayer("challenge",
                 }
             },
         },
+        "T1":
+        {
+            display(){return ''},
+            unlocked(){return true},
+            style(){return meijiesuo},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=1},
+            branches:["T2","T3","T4","T5"],
+        },
+        "T2":
+        {
+            display(){return ''},
+            unlocked(){return true},
+            style(){return meijiesuo},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=2},
+        },
+        "T3":
+        {
+            display(){return ''},
+            unlocked(){return true},
+            style(){return meijiesuo},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=3},
+        },
+        "T4":
+        {
+            display(){return ''},
+            unlocked(){return true},
+            style(){return meijiesuo},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=4},
+        },
+        "T5":
+        {
+            display(){return ''},
+            unlocked(){return true},
+            style(){return meijiesuo},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=5},
+        },
     },
 
     bars:
@@ -1860,7 +1936,24 @@ addLayer("challenge",
             unlocked(){return true},
             buttonStyle(){return {"border-radius":"0px"}},
             content:[
-                
+                ["display-text",function(){
+                    return player.challenge.complete_tianfu_text[player.challenge.choose_tianfu_id]
+                }],
+                "blank",
+                ["row",[
+                    ["column",[["clickable","T2"]]],
+                    "blank",
+                    "blank",
+                    ["column",[["clickable","T3"],
+                               "blank",
+                               ["clickable","T1"],
+                               "blank",
+                               ["clickable","T4"]]],
+                    "blank",
+                    "blank",
+                    ["column",[["clickable","T5"]]]]
+                ],
+                ["clickable","Left"],
             ]
         }
     },

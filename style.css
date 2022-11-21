@@ -809,30 +809,6 @@ button > * {
 	height: 400px;
 	/* background-size: cover; */
 }
-.kuang1{
+.kuang{
 	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:20px
-}
-.kuang2{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:40px
-}
-.kuang3{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:60px
-}
-.kuang4{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:80px
-}
-.kuang5{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:100px
-}
-.kuang6{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:120px
-}
-.kuang7{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:140px
-}
-.kuang8{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:160px
-}
-.kuang9{
-	border:solid #AF9B60;border-radius:0px;border-width:5px;width:300px;height:180px
 }

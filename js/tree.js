@@ -64,7 +64,7 @@ addLayer("tree-tab", {
         ],
         ["display-text",
             function() {
-                return '<text style="color:#0000FFc0">防御 : </text><text style="color:lightblue">'+format(player.stat.def)+'</text>'
+                return '<text style="color:#ADD8E6c0">防御 : </text><text style="color:lightblue">'+format(player.stat.def)+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],

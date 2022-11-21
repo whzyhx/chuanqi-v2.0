@@ -54,6 +54,15 @@ function drawTree() {
 
 			}
 		}
+		for(id in layers[layer].clickables) {
+			if (tmp[layer].clickables[id].branches) {
+				for (branch in tmp[layer].clickables[id].branches)
+				{
+					drawTreeBranch(id, tmp[layer].clickables[id].branches[branch], "clickable-" + layer + "-")
+				}
+
+			}
+		}
 	}
 }
 
