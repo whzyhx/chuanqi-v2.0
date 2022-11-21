@@ -248,6 +248,8 @@ addLayer("stat",
                     if(n(player.equip.weaponCurrent[i][6][j]).eq(6))mult=mult.mul(1.7)
                 }
             }
+            if(HAS(5))mult=mult.mul(1.2)
+            if(HAS(4))mult=mult.mul(1.5)
             player.stat.atk=result.mul(mult)//返回
         },
         def(){
@@ -273,6 +275,7 @@ addLayer("stat",
                     if(n(player.equip.weaponCurrent[i][6][j]).eq(20))mult=mult.mul(1.7)
                 }
             }
+            if(HAS(3))mult=mult.mul(1.3)
             player.stat.def=result.mul(mult)//返回
         },
         hp(){
@@ -298,10 +301,12 @@ addLayer("stat",
                     if(n(player.equip.weaponCurrent[i][6][j]).eq(13))mult=mult.mul(1.7)
                 }
             }
+            if(HAS(3))mult=mult.mul(1.3)
             player.stat.hp=result.mul(mult)//返回
         },
         spd(){
             var base = n(1000)
+            if(HAS(5))base=base.add(500)
             var result = base
             for(var i=0;i<7;i++)
             {
@@ -324,6 +329,7 @@ addLayer("stat",
             {
                 if(_finishChallenge(1))result=result.mul(1.1)
             }
+            if(HAS(2))result=result.mul(3)
             player.stat.luck=result
         },
     },
@@ -493,6 +499,31 @@ addLayer("stat",
             content:[
                 "blank",
                 ["row",[["clickable","Sell 0"],["clickable","Sell 1"],["clickable","Sell 2"],["clickable","Sell 3"],]]
+            ],
+        },
+        "说明":
+        {
+            buttonStyle()
+            {
+                return {"border-radius":"0px"}
+            },
+            content:[
+                ["display-text",function(){
+                    return "<h1>欢迎来到 传奇-v2.0</h1>"
+                    +"<br><br>上一款 传奇-v1.0 由于质量过差 , 已被废弃<br>网址 : https://whzyhx.github.io/Ni-Ming/"
+                    +"<br><br>本游戏打怪是全程自动的 , 只需要手动调整等级<br>(其中 , 找怪需要花费5秒的时间)"
+                    +"<br>爆出的装备有以下品质"
+                    +"<br><br>"+quality[0]+" : 概率 90%"
+                    +"<br>"+quality[1]+" : 概率 9%"
+                    +"<br>"+quality[2]+" : 概率 0.9%"
+                    +"<br>"+quality[3]+" : 概率 0.09%"
+                    +"<br>"+quality[4]+" : 概率 0.009%"
+                    +"<br>"+quality[5]+" : 概率 0.0009%"
+                    +"<br>"+quality[6]+" : 概率 0.00009%"
+                    +"<br><br>但这是初始爆率 , 最后的概率还会乘上你的幸运"
+                    +"<br>同时怪物的种类也会影响爆率 (例如 , 史莱姆精英会让你爆率x10)"
+                    +"<br><br>挑战会在你10级的时候解锁"
+                }]
             ],
         },
        },
@@ -1458,11 +1489,10 @@ function huanhang(s,x)
     }
     return rt
 }
-//天赋CSS
-const meijiesuo={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"grey",}
-const jiesuo={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"red",}
-const keyimai={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"blue",}
-const yimai={"width":"100px","height":"100px","min-height":"100px","border-radius":"0px","border-width":"10px","border-color":"limec",}
+function HAS(x)
+{
+    return player.challenge.has_tianfu[x]
+}
 addLayer("challenge",
 {
     symbol: "<text style='color:black;border:solid black;border-radius:100%;border-width:5px'>├C┤",
@@ -1473,6 +1503,7 @@ addLayer("challenge",
         return {
             unlocked: true,
             points: new ExpantaNum(0),
+            unlock_challenge:false,
             challenge_num:[0,1,2,3,4,5,6,7],
             challenge_text:[
                 "挑战1 - 极速<br><br>时间流逝速度x5",
@@ -1528,6 +1559,14 @@ addLayer("challenge",
                 false,false,false,false,false,false,false,false,false,false,false,false,false,false,
             ],
             in_challenge:n(0),
+            has_tianfu:[
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+            ],
+            cost:[0,0,1,1,1,1,],
 
             complete_tianfu_text:[
 "",
@@ -1535,7 +1574,7 @@ addLayer("challenge",
 +"<br><br><i>从此踏上征途</i>"
 +"<br><br>开启你的天赋树<br>花费 : 0天赋点</div>",
 "<div class='kuang' style='width:250px;height:160px'><h2>天赋 - 幸运儿</h2>"
-+"<br><br>你的运气有点令别人羡慕<br><text style='color:yellow'>运气x3</text><br>花费 : 0.5天赋点</div>",
++"<br><br>你的运气有点令别人羡慕<br><text style='color:yellow'>运气x3</text><br>花费 : 1天赋点</div>",
 "<div class='kuang' style='width:300px;height:160px'><h2>天赋 - 战士</h2>"
 +"<br><br><i>战士守则 : 坚韧不屈 , 屹立不倒</i>"
 +"<br><br>学习怎么成为一名战士<br><text style='color:lightblue'>防御x1.3</text><br><text style='color:lime'>生命x1.3</text><br>花费 : 1天赋点</div>",
@@ -1566,6 +1605,8 @@ addLayer("challenge",
     },
     update(diff)
     {
+        if(player.stat.level.gte(10))player.challenge.unlock_challenge=true
+
         if(player.tab=="challenge")
         {
             options.forceOneTab=true
@@ -1574,17 +1615,11 @@ addLayer("challenge",
         {
             options.forceOneTab=player.challenge.choose_one_tab
         }
-        for (layer in layers){
-            for(id in layers[layer].clickables) {
-                if (tmp[layer].clickables[id].branches) {
-                    for (branch in tmp[layer].clickables[id].branches)
-                    {
-                        drawTreeBranch(id, tmp[layer].clickables[id].branches[branch], "clickable-" + layer + "-")
-                    }
-    
-                }
-            }
-        }
+
+        //计算天赋点
+        player.challenge.tianfudianMax=n(0)
+        if(_finishChallenge(0))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(1)
+        if(_finishChallenge(1))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(1)
     },
     //奇数 : 32个换行
     //偶数 : 21个换行
@@ -1759,7 +1794,7 @@ addLayer("challenge",
                     "clip-path":"polygon(0% 33%,33% 0%,50% 50%)",
                     "left":"400px","top":"0px",
                     "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[8]]?"lime":"#AF9B60")
+                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[7]]?"lime":"#AF9B60")
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1777,7 +1812,7 @@ addLayer("challenge",
             style(){
                return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",
             
-            //    "left":"0px","top":"-800px",
+               "left":"0px","top":"-800px",
                "position":"relative",}},
             canClick(){return player.challenge.in_challenge.eq(0)},
             onClick(){
@@ -1788,8 +1823,6 @@ addLayer("challenge",
                     new_array.push(player.challenge.challenge_num[i])
                 }
                 player.challenge.challenge_num=new_array
-
-                layerDataReset("challenge")
             },
         },
         "Right":
@@ -1858,7 +1891,16 @@ addLayer("challenge",
         {
             display(){return ''},
             unlocked(){return true},
-            style(){return meijiesuo},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu1.png)"
+                if(1){
+                    if(player.challenge.has_tianfu[1]==true)nw["border-color"]="yellow"
+                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(0))nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=1},
             branches:["T2","T3","T4","T5"],
@@ -1867,7 +1909,16 @@ addLayer("challenge",
         {
             display(){return ''},
             unlocked(){return true},
-            style(){return meijiesuo},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu2.png)"
+                if(HAS(1)){
+                    if(player.challenge.has_tianfu[2]==true)nw["border-color"]="yellow"
+                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=2},
         },
@@ -1875,7 +1926,16 @@ addLayer("challenge",
         {
             display(){return ''},
             unlocked(){return true},
-            style(){return meijiesuo},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu3.png)"
+                if(HAS(1)){
+                    if(player.challenge.has_tianfu[3]==true)nw["border-color"]="yellow"
+                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=3},
         },
@@ -1883,7 +1943,16 @@ addLayer("challenge",
         {
             display(){return ''},
             unlocked(){return true},
-            style(){return meijiesuo},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu4.png)"
+                if(HAS(1)){
+                    if(player.challenge.has_tianfu[4]==true)nw["border-color"]="yellow"
+                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=4},
         },
@@ -1891,9 +1960,54 @@ addLayer("challenge",
         {
             display(){return ''},
             unlocked(){return true},
-            style(){return meijiesuo},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu5.png)"
+                if(HAS(1)){
+                    if(player.challenge.has_tianfu[5]==true)nw["border-color"]="yellow"
+                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=5},
+        },
+        "ChongXi":
+        {
+            display()
+            {
+                return '重洗'
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return true},
+            onClick(){
+                player.challenge.has_tianfu=[
+                    false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                    false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                    false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                    false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                    false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+                ]
+                player.challenge.tianfudianNow=n(0)
+            },
+        },
+        "GouMai":
+        {
+            display()
+            {
+                return '点亮'
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(player.challenge.cost[player.challenge.choose_tianfu_id])},
+            onClick(){
+                player.challenge.tianfudianNow=player.challenge.tianfudianNow.add(player.challenge.cost[player.challenge.choose_tianfu_id])
+                player.challenge.has_tianfu[player.challenge.choose_tianfu_id]=true
+            },
         },
     },
 
@@ -1936,6 +2050,10 @@ addLayer("challenge",
             unlocked(){return true},
             buttonStyle(){return {"border-radius":"0px"}},
             content:[
+                ["row",[["clickable","ChongXi"],"blank",["display-text",function(){
+                    return '<h1>你有 '+format(player.challenge.tianfudianNow)+' / '+format(player.challenge.tianfudianMax)+' 天赋点'
+                }],"blank",["clickable","GouMai"],]],
+                "blank",
                 ["display-text",function(){
                     return player.challenge.complete_tianfu_text[player.challenge.choose_tianfu_id]
                 }],
@@ -1948,15 +2066,15 @@ addLayer("challenge",
                                "blank",
                                ["clickable","T1"],
                                "blank",
-                               ["clickable","T4"]]],
+                               ["clickable","T5"]]],
                     "blank",
                     "blank",
-                    ["column",[["clickable","T5"]]]]
+                    ["column",[["clickable","T4"]]]]
                 ],
                 ["clickable","Left"],
             ]
         }
     },
 
-    layerShown(){return true},
+    layerShown(){return player.challenge.unlock_challenge},
 })
