@@ -47,6 +47,11 @@ addLayer("tree-tab", {
             player.stat.level=player.stat.level.add(1)
             player.stat.EXPneed=player.stat.EXPneed.mul(1.1)
         }
+
+        niming_drawBranch(4,2)
+        niming_drawBranch(4,3)
+        niming_drawBranch(4,5)
+        niming_drawBranch(4,6)
     },
     tabFormat: [
         ["display-text",function(){return '<h1>等级 '+format(player.stat.level)}],

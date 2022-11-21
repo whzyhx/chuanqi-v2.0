@@ -511,7 +511,7 @@ addLayer("stat",
                 ["display-text",function(){
                     return "<h1>欢迎来到 传奇-v2.0</h1>"
                     +"<br><br>上一款 传奇-v1.0 由于质量过差 , 已被废弃<br>网址 : https://whzyhx.github.io/Ni-Ming/"
-                    +"<br><br>本游戏打怪是全程自动的 , 只需要手动调整等级<br>(其中 , 找怪需要花费5秒的时间)"
+                    +"<br><br>本游戏打怪是全程自动的 , 只需要手动调整等级<br>*可以长按快速调整等级*<br>(其中 , 找怪需要花费5秒的时间)"
                     +"<br>爆出的装备有以下品质"
                     +"<br><br>"+quality[0]+" : 概率 90%"
                     +"<br>"+quality[1]+" : 概率 9%"
@@ -1236,6 +1236,9 @@ addLayer("battle",
                     re_calc(player.battle.currentLvl)
                 }
             },
+            onHold(){
+                if(this.canClick())this.onClick()
+            },
         },
         "ADD":
         {
@@ -1258,6 +1261,9 @@ addLayer("battle",
                     player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
+            },
+            onHold(){
+                if(this.canClick())this.onClick()
             },
         },
         "BOSS-1":
@@ -1641,6 +1647,7 @@ addLayer("challenge",
                     "left":"0px","top":"0px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[0]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1663,6 +1670,7 @@ addLayer("challenge",
                     "left":"-400px","top":"0px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[1]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1685,6 +1693,7 @@ addLayer("challenge",
                     "left":"-200px","top":"-400px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[2]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1707,6 +1716,7 @@ addLayer("challenge",
                     "left":"-400px","top":"-800px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[3]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1729,6 +1739,7 @@ addLayer("challenge",
                     "left":"0px","top":"-800px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[4]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1751,6 +1762,7 @@ addLayer("challenge",
                     "left":"400px","top":"-800px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[5]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1773,6 +1785,7 @@ addLayer("challenge",
                     "left":"200px","top":"-400px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[6]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1795,6 +1808,7 @@ addLayer("challenge",
                     "left":"400px","top":"0px",
                     "position":"relative",
                     "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[7]]?"lime":"#AF9B60")
+                    ,"transition-duration":"0s"
                     // "border-color":"blue","border-width":"5px",
                 }
                 },
@@ -1903,7 +1917,11 @@ addLayer("challenge",
                 return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=1},
-            branches:["T2","T3","T4","T5"],
+            req:["T2","T3","T4","T5"],
+            branches() { 
+                let col = "white"
+                return this.req.map(x => [x, col]) 
+            },
         },
         "T2":
         {
@@ -1981,7 +1999,7 @@ addLayer("challenge",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",}},
+               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
             canClick(){return true},
             onClick(){
                 player.challenge.has_tianfu=[
@@ -2002,9 +2020,10 @@ addLayer("challenge",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(player.challenge.cost[player.challenge.choose_tianfu_id])},
+               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
+            canClick(){return true},
             onClick(){
+                if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).lt(player.challenge.cost[player.challenge.choose_tianfu_id]))return
                 player.challenge.tianfudianNow=player.challenge.tianfudianNow.add(player.challenge.cost[player.challenge.choose_tianfu_id])
                 player.challenge.has_tianfu[player.challenge.choose_tianfu_id]=true
             },

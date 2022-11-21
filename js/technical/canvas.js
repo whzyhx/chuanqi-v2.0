@@ -96,3 +96,20 @@ function drawTreeBranch(num1, data, prefix) { // taken from Antimatter Dimension
     ctx.lineTo(x2, y2);
     ctx.stroke();
 }
+function niming_drawBranch(x,y)
+{
+	if(player.tab!="challenge")return
+	if(document.getElementsByClassName("upg can").length<=4)return
+	let start = document.getElementsByClassName("upg can")[x].getBoundingClientRect();
+	let end = document.getElementsByClassName("upg can")[y].getBoundingClientRect();
+	let x1 = start.left + (start.width / 2) + document.body.scrollLeft;
+	let y1 = start.top + (start.height / 2) + document.body.scrollTop;
+	let x2 = end.left + (end.width / 2) + document.body.scrollLeft;
+	let y2 = end.top + (end.height / 2) + document.body.scrollTop;
+	ctx.lineWidth = 15;
+	ctx.beginPath();
+	ctx.strokeStyle = "white"
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
+}
