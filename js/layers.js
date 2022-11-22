@@ -161,7 +161,7 @@ function output(data)//根据数据打印装备
     s+='</h2><br>'
     var xxx=n(data[1])
     s+='部位 : '+part[xxx]
-    s+='<br><h1>---------</h1><br><h2>'
+    s+='<br><h1>─────────────</h1><br><h2>'
     if(n(data[2]).gte(0.001))
     s+='<text style="color:#FF0000">攻击+'+format(data[2])+'<br></text>'
     if(n(data[3]).gte(0.001))
@@ -187,6 +187,7 @@ addLayer("data",
         return{
             unlocked: true,
             points: new ExpantaNum(0),
+            hp:n(10),
             playerProgress:n(0),
             level:n(1),EXPneed:n(10),EXPnow:n(0),
             money:n(0),
@@ -914,13 +915,13 @@ addLayer("equip",
             {
                 var x=n(0)
                 var l=player.equip.currentID
-                var xx=n(player.equip.weapon[l][8])
                 if(n(player.equip.weapon.length).lte(l))
                 {
                     x=n(0)
                 }
                 else
                 {
+                    var xx=n(player.equip.weapon[l][8])
                     x=n(sell_price[xx])
                 }
                 return x
@@ -1761,6 +1762,7 @@ addLayer("battle",
 
 function challenge_save()
 {
+    player.data.hp=player.stat.hp
     player.data.playerProgress=player.stat.playerProgress
     player.data.level=player.stat.level
     player.data.EXPneed=player.stat.EXPneed
@@ -1770,6 +1772,8 @@ function challenge_save()
     player.data.weaponCurrent=player.equip.weaponCurrent
     player.data.kill_boss_1=player.battle.kill_boss_1
 
+    player.stat.hp=n(10)
+    player.stat.hpnow=n(!0)
     player.stat.playerProgress=n(0)
     player.stat.level=n(1)
     player.stat.EXPneed=n(10)
@@ -1790,6 +1794,8 @@ function challenge_save()
 }
 function challenge_load()
 {
+    player.stat.hpnow=player.data.hp
+    player.stat.hp=player.data.hp
     player.stat.playerProgress=player.data.playerProgress
     player.stat.level=player.data.level
     player.stat.EXPneed=player.data.EXPneed
@@ -1799,6 +1805,7 @@ function challenge_load()
     player.equip.weaponCurrent=player.data.weaponCurrent
     player.battle.kill_boss_1=player.data.kill_boss_1
 
+    player.data.hp=n(10)
     player.data.playerProgress=n(0)
     player.data.level=n(1)
     player.data.EXPneed=n(10)
