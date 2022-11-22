@@ -2205,7 +2205,7 @@ addLayer("challenge",
         {
             canComplete()
             {
-                if(player.challenge.challenge_num[0]==0 || player.challenge.challenge_num[0]==1)
+                if(player.challenge.challenge_num[0]==0 || player.challenge.challenge_num[0]==1 || player.challenge.challenge_num[0]==2 || player.challenge.challenge_num[0]==3)
                 return player.battle.kill_boss_1.eq(1)
                 return false
             },
