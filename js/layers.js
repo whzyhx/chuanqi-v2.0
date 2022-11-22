@@ -888,7 +888,7 @@ addLayer("equip",
             },
             unlocked(){return true},
             style(){
-               return {"border-radius":"20px","width":"100px","height":"100px","min-height":"100px",}},
+               return {"border-radius":"20px 20px 0 0","width":"100px","height":"75px","min-height":"75px",}},
             canClick(){return true},
             onClick(){
                 var l=player.equip.currentID
@@ -906,6 +906,41 @@ addLayer("equip",
                 var tmp=player.equip.weapon[l]
                 player.equip.weapon[l]=player.equip.weaponCurrent[x]
                 player.equip.weaponCurrent[x]=tmp
+            },
+        },
+        "Sell":
+        {
+            GAIN()
+            {
+                var x=n(0)
+                var l=player.equip.currentID
+                var xx=n(player.equip.weapon[l][8])
+                if(n(player.equip.weapon.length).lte(l))
+                {
+                    x=n(0)
+                }
+                else
+                {
+                    x=n(sell_price[xx])
+                }
+                return x
+            },
+            display()
+            {
+                return '卖出<br>获得 '+format(this.GAIN())+' 金币'
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0 0 20px 20px","width":"100px","height":"75px","min-height":"75px",}},
+            canClick(){return true},
+            onClick(){
+                var l=player.equip.currentID
+                if(n(player.equip.weapon.length).lte(l))
+                {
+                    return
+                }
+                player.stat.money=player.stat.money.add(this.GAIN())
+                player.equip.weapon.splice(l,1)
             },
         },
         "Weapon-0":
@@ -1152,7 +1187,7 @@ addLayer("equip",
                         "blank",
                         "blank",
                         ["clickable","Left"],
-                        ["clickable","Equip"],
+                        ["column",[["clickable","Equip"],["clickable","Sell"],]],
                         ["clickable","Right"],
                         "blank",
                         "blank",
