@@ -48,11 +48,18 @@ addLayer("tree-tab", {
             player.stat.EXPneed=player.stat.EXPneed.mul(1.1)
         }
 
-        niming_drawBranch(5,3)
-        niming_drawBranch(2,3)
-        niming_drawBranch(5,4)
-        niming_drawBranch(5,6)
-        niming_drawBranch(5,7)
+        niming_drawBranch(8,4)
+        niming_drawBranch(4,2)
+        niming_drawBranch(4,3)
+        niming_drawBranch(8,7)
+        niming_drawBranch(7,6)
+        niming_drawBranch(8,9)
+        niming_drawBranch(8,11)
+        niming_drawBranch(11,13)
+        niming_drawBranch(11,14)
+        niming_drawBranch(9,5)
+        niming_drawBranch(9,10)
+        niming_drawBranch(9,12)
     },
     tabFormat: [
         ["display-text",function(){return '<h1>等级 '+format(player.stat.level)}],
@@ -82,7 +89,8 @@ addLayer("tree-tab", {
         ],
         ["display-text",
             function() {
-                return '<text style="color:#FF00FFc0">速度 : </text><text style="color:#FF00FF">'+format(player.stat.spd)+'</text>'
+                return '<text style="color:#FF00FFc0">速度 : </text><text style="color:#FF00FF">'+format(player.stat.spd)
+                +(HAS(13)?'x'+format(layers.challenge.clickables["T13"].EFFECT())+'='+format(player.stat.spd.mul(layers.challenge.clickables["T13"].EFFECT())):'')+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],

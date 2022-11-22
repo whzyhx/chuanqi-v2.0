@@ -224,6 +224,8 @@ addLayer("stat",
             money:n(0),
 
             guolv:[false,false,false,false,false,false,false,false,false],
+
+            playerFaProgress:n(0),
         }
     },
     color: "white",
@@ -284,6 +286,7 @@ addLayer("stat",
                 }
             }
             if(HAS(3))mult=mult.mul(1.3)
+            if(HAS(12))mult=mult.mul(1.5)
             player.stat.def=result.mul(mult)//返回
         },
         hp(){
@@ -315,6 +318,7 @@ addLayer("stat",
         spd(){
             var base = n(1000)
             if(HAS(5))base=base.add(500)
+            if(HAS(13))base=base.add(200)
             var result = base
             for(var i=0;i<7;i++)
             {
@@ -335,12 +339,9 @@ addLayer("stat",
             }
             else if(_inChallenge(2))
             {
-                result=result.mul(0.8)
+                result=result.mul(0.7)
             }
-            else
-            {
-                if(_finishChallenge(1))result=result.mul(1.1)
-            }
+            if(_finishChallenge(1))result=result.mul(1.1)
             if(HAS(2))result=result.mul(3)
             player.stat.luck=result
         },
@@ -775,19 +776,17 @@ addLayer("equip",
         player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
 
         //对不起 , 陌尘
+        var x=n(1)
         if(_inChallenge(0))
         {
-            player.devSpeed=5
+            x=n(5)
         }
         else if(_inChallenge(2))
         {
-            player.devSpeed=0.8
+            x=n(0.7)
         }
-        else
-        {
-            if(_finishChallenge(0))player.devSpeed=1.1
-            else player.devSpeed=1
-        }
+        if(_finishChallenge(0))x=x.mul(1.1)
+        player.devSpeed=x
 
         player.equip.weaponSizeMax=n(200)
         if(_inChallenge(3))
@@ -1300,6 +1299,59 @@ function re_calc(lvl)//重新生成怪物属性
     player.battle.monsterSPD=monster[y].spd()
     return
 }
+function beiAttack()
+{
+    var xxx=n(0).add(Math.random())
+    if(xxx.lt(0.2) && HAS(12))
+    {
+        player.battle.zhandourizhi.push(
+            monster[player.battle.monsterID].name()+' 对 你 造成了 <text style="color:red">'
+            +format(0)+'</text> 伤害 (被格挡)')
+        return
+    }
+    player.battle.monsterProgress=n(0)
+    player.stat.hpnow=player.stat.hpnow.sub(player.battle.monsterATK.sub(player.stat.def).max(0)).max(0)
+    player.battle.zhandourizhi.push(
+        monster[player.battle.monsterID].name()+' 对 你 造成了 <text style="color:red">'
+        +format(player.battle.monsterATK.sub(player.stat.def).max(0))+'</text> 伤害')
+}
+function Attack()
+{
+    if(HAS(11))
+    {
+        var xxxxx=player.stat.hpnow
+        player.stat.hpnow=player.stat.hpnow.add(player.stat.hp.mul(0.05)).min(player.stat.hp)
+        player.battle.zhandourizhi.push(
+            '你 使用 <text style="color:lime">恢复术 </text>恢复了 <text style="color:lime">'
+            +format(player.stat.hpnow.sub(xxxxx))+'</text> 血量')
+    }
+    player.stat.playerProgress=n(0)
+    player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
+    player.battle.zhandourizhi.push(
+        '你 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
+        +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
+    if(HAS(8))//淬毒
+    {
+        player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
+        player.battle.zhandourizhi.push(
+            '弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
+            +format(player.stat.atk.mul(0.3))+'</text> 伤害')
+    }
+    if(HAS(7))//双发弓手
+    {
+        player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
+        player.battle.zhandourizhi.push(
+            '另一支弓箭 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
+            +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
+        if(HAS(8))//淬毒
+        {
+            player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
+            player.battle.zhandourizhi.push(
+                '另一支弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
+                +format(player.stat.atk.mul(0.3))+'</text> 伤害')
+        }
+    }
+}
 addLayer("battle",  
 {
     symbol: "<text style='color:black'>B",
@@ -1345,6 +1397,7 @@ addLayer("battle",
                     player.battle.stringstringstring=""
                     player.battle.monsterProgress=n(0)
                     player.stat.playerProgress=n(0)
+                    player.stat.playerFaProgress=n(0)
                     player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
@@ -1358,24 +1411,30 @@ addLayer("battle",
         if(player.battle.inFight==1)
         {
             player.battle.monsterProgress=player.battle.monsterProgress.add(player.battle.monsterSPD.div(5000).mul(diff))
-            if(player.battle.monsterProgress.gte(1))
+            if(player.battle.monsterProgress.gte(1))beiAttack()
+            player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.mul(layers.challenge.clickables["T13"].EFFECT()).div(5000).mul(diff))
+            if(player.stat.playerProgress.gte(1))Attack()
+            if(HAS(9) || HAS(10))
             {
-                player.battle.monsterProgress=n(0)
-                //产生一次攻击
-                player.stat.hpnow=player.stat.hpnow.sub(player.battle.monsterATK.sub(player.stat.def).max(0)).max(0)
-                player.battle.zhandourizhi.push(
-                    monster[player.battle.monsterID].name()+' 对 你 造成了 <text style="color:red">'
-                    +format(player.battle.monsterATK.sub(player.stat.def).max(0))+'</text> 伤害')
-            }
-            player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.div(5000).mul(diff))
-            if(player.stat.playerProgress.gte(1))
-            {
-                player.stat.playerProgress=n(0)
-                //产生一次攻击
-                player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
-                player.battle.zhandourizhi.push(
-                    '你 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
-                    +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
+                player.stat.playerFaProgress=player.stat.playerFaProgress.add((HAS(9)?n(0.1):n(0.5)).mul(diff))
+                if(player.stat.playerFaProgress.gte(1))
+                {
+                    player.stat.playerFaProgress=n(0)
+                    if(HAS(9))
+                    {
+                        player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(2).sub(player.battle.monsterDEF).max(0)).max(0)
+                        player.battle.zhandourizhi.push(
+                            '你 使用 <text style="color:orange">火球术</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
+                            +format(player.stat.atk.mul(2).sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
+                    }
+                    else
+                    {
+                        player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.2)).max(0)
+                        player.battle.zhandourizhi.push(
+                            '你 使用 <text style="color:cyan">雷电术</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
+                            +format(player.stat.atk.mul(0.2))+'</text> 伤害')
+                    }
+                }
             }
             if(player.stat.hpnow.lte(0.001))
             {
@@ -1410,6 +1469,12 @@ addLayer("battle",
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
                 if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax))
+                {
+                    var wea=summon(monster[player.battle.monsterID].BaoLv())
+                    if(Array.isArray(wea))
+                    player.equip.weapon.push(wea)
+                }
+                if(HAS(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax))
                 {
                     var wea=summon(monster[player.battle.monsterID].BaoLv())
                     if(Array.isArray(wea))
@@ -1459,6 +1524,7 @@ addLayer("battle",
                     player.battle.stringstringstring=""
                     player.battle.monsterProgress=n(0)
                     player.stat.playerProgress=n(0)
+                    player.stat.playerFaProgress=n(0)
                     player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
@@ -1485,6 +1551,7 @@ addLayer("battle",
                     player.battle.stringstringstring=""
                     player.battle.monsterProgress=n(0)
                     player.stat.playerProgress=n(0)
+                    player.stat.playerFaProgress=n(0)
                     player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
@@ -1603,6 +1670,24 @@ addLayer("battle",
                 return ""
             }
         },
+        playerFashubar:{
+            direction: RIGHT,
+            width: 400,
+            height: 20,
+            unlocked(){
+                return HAS(9) || HAS(10)
+            },
+            progress() {
+                return player.stat.playerFaProgress
+            },
+            fillStyle(){
+                return {"background-color":(HAS(9)?"orange":"cyan")}
+            },
+            display()
+            {
+                return ""
+            }
+        },
     },
 
     tabFormat:[
@@ -1624,11 +1709,12 @@ addLayer("battle",
         "blank",
         ["bar","playerHPbar"],
         ["bar","playerSPDbar"],
+        ["bar","playerFashubar"],
         "blank",
         ["display-text",function(){
             var s=''
             var touming=['ff','ee','dd','cc','bb','aa','99','88','77','66','55','44','33','22','11','00','00','00']
-            for(var i=player.battle.zhandourizhi.length-1;i>=0;i--)
+            for(var i=player.battle.zhandourizhi.length-1;i>=Math.max(0,player.battle.zhandourizhi.length-16);i--)
             {
                 s=s+'<text style="color:#FFFFFF'+touming[Math.max(player.battle.zhandourizhi.length-1-i,0)]+'">'+(i+1)+'. '+player.battle.zhandourizhi[i]+'<br>'
             }
@@ -1741,7 +1827,7 @@ addLayer("challenge",
             challenge_text:[
                 "挑战1 - 极速<br><br>时速x5",
                 "挑战2 - 强运<br><br>运气x5",
-                "挑战3 - 困难模式<br><br>时速x0.8<br>运气x0.8",
+                "挑战3 - 困难模式<br><br>时速x0.7<br>运气x0.7",
                 "挑战4 - 无处存储<br><br>背包只有10格",
                 "挑战5",
                 "挑战6",
@@ -1770,7 +1856,7 @@ addLayer("challenge",
 +"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>运气永久x1.1</div>",
 
 "<div class='kuang' style='height:20px'>当前选中 : 挑战3 - 困难模式</div><br>"
-+"<div class='kuang' style='height:60px'>效果<br>运气x0.8<br>时速x0.8</div><br>"
++"<div class='kuang' style='height:60px'>效果<br>运气x0.7<br>时速x0.7</div><br>"
 +"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
 +"<div class='kuang' style='height:40px'>奖励<br><h3>2</h3> 天赋点</div>",
 
@@ -1808,24 +1894,43 @@ addLayer("challenge",
                 false,false,false,false,false,false,false,false,false,false,false,false,false,false,
                 false,false,false,false,false,false,false,false,false,false,false,false,false,false,
             ],
-            cost:[0,0,1,1,1,1,],
+            cost:[0,0,1,1,1,1,1,2,2,2,2,2,2,2],
 
             complete_tianfu_text:[
 "",
-"<div class='kuang' style='width:200px;height:160px'><h2>天赋 - 开始</h2>"
+"<div class='kuang'><h2>天赋 - 开始</h2>"
 +"<br><br><i>从此踏上征途</i>"
 +"<br><br>开启你的天赋树<br>花费 : 0天赋点</div>",
-"<div class='kuang' style='width:250px;height:160px'><h2>天赋 - 幸运儿</h2>"
+"<div class='kuang'><h2>天赋 - 幸运儿</h2>"
 +"<br><br>你的运气有点令别人羡慕<br><text style='color:yellow'>运气x3</text><br>花费 : 1天赋点</div>",
-"<div class='kuang' style='width:300px;height:160px'><h2>天赋 - 战士</h2>"
+"<div class='kuang'><h2>天赋 - 战士</h2>"
 +"<br><br><i>战士守则 : 坚韧不屈 , 屹立不倒</i>"
 +"<br><br>学习怎么成为一名战士<br><text style='color:lightblue'>防御x1.3</text><br><text style='color:lime'>生命x1.3</text><br>花费 : 1天赋点</div>",
-"<div class='kuang' style='width:300px;height:160px'><h2>天赋 - 法师</h2>"
+"<div class='kuang'><h2>天赋 - 法师</h2>"
 +"<br><br><i>法师守则 : 想在战场上活下去 , 时刻留意你的四周</i>"
 +"<br><br>学习怎么成为一名法师<br><text style='color:red'>攻击x1.5</text><br>花费 : 1天赋点</div>",
-"<div class='kuang' style='width:300px;height:160px'><h2>天赋 - 弓手</h2>"
+"<div class='kuang'><h2>天赋 - 弓手</h2>"
 +"<br><br><i>弓手守则 : 敏捷 , 隐蔽</i>"
 +"<br><br>学习怎么成为一名弓手<br><text style='color:red'>攻击x1.2</text><br><text style='color:magenta'>初始速度+500</text><br>花费 : 1天赋点</div>",
+"<div class='kuang'><h2>天赋 - 买一送一</h2>"
++"<br><br><i>当你捡起一件装备时 , 惊奇的发现地上还有一件</i>"
++"<br><br>你的运气已经不能用好来形容了<br>现在每只怪物掉落两件装备<br>花费 : 1天赋点</div>",
+"<div class='kuang'><h2>弓手专属天赋 - 双发弓手</h2>"
++"<br><br>现在你攻击一次 , 可以发出两支箭<br><text style='color:red'>攻击x0.75</text><br><text style='color:magenta'>速度x0.8</text><br>额外射出一支弓箭<br>花费 : 2天赋点</div>",
+"<div class='kuang'><h2>弓手专属天赋 - 淬毒</h2>"
++"<br><br>你的弓箭被淬上了毒<br><text style='color:pink'>每次攻击额外造成 30% 攻击的真实毒伤</text><br>花费 : 2天赋点</div>",
+"<div class='kuang'><h2>法师专属天赋 - 火球术</h2>"
++"<br><br>你学会了法术 - 火球 !<br>你每10秒可以发射一枚火球<br>火球造成的伤害=<text style='color:red'>200%攻击</text>-<text style='color:lightblue'>敌人防御</text><br>花费 : 2天赋点</div>",
+"<div class='kuang'><h2>法师专属天赋 - 雷电术</h2>"
++"<br><br>你学会了法术 - 雷电 !<br>你每2秒可以释放一道闪电<br>雷电造成的伤害=<text style='color:red'>25%攻击</text><br>花费 : 2天赋点</div>",
+"<div class='kuang'><h2>法师专属天赋 - 恢复术</h2>"
++"<br><br>你学会了法术 - 恢复 !<br>每次攻击恢复 <text style='color:lime'>5%最大生命值</text><br>花费 : 2天赋点</div>",
+"<div class='kuang'><h2>战士专属天赋 - 盾牌</h2>"
++"<br><br><i>坚如磐石</i>"
++"<br><br>左手持剑 , 右手持盾<br><text style='color:lightblue'>防御x1.5</text><br>你有20%的概率格挡住敌人的攻击<br>花费 : 2天赋点</div>",
+"<div class='kuang'><h2>战士专属天赋 - 狂战士</h2>"
++"<br><br><i><text style='color:red'>嗜血</text></i>"
++"<br><br>失去的血量越多 , 攻速越高<br><text style='color:magenta'>初始速度+200</text><br>花费 : 2天赋点</div>",
             ],
             choose_tianfu_id:1,
             tianfudianMax:n(0),tianfudianNow:n(0),
@@ -2167,7 +2272,7 @@ addLayer("challenge",
         "T2":
         {
             canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1)
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && HAS(1)
             },
             display(){return ''},
             unlocked(){return true},
@@ -2187,7 +2292,7 @@ addLayer("challenge",
         "T3":
         {
             canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(5))
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(5)) && HAS(1)
             },
             display(){return ''},
             unlocked(){return true},
@@ -2207,7 +2312,7 @@ addLayer("challenge",
         "T4":
         {
             canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(3) || !HAS(5))
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(3) || !HAS(5)) && HAS(1)
             },
             display(){return ''},
             unlocked(){return true},
@@ -2227,7 +2332,7 @@ addLayer("challenge",
         "T5":
         {
             canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(3))
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(3)) && HAS(1)
             },
             display(){return ''},
             unlocked(){return true},
@@ -2247,7 +2352,7 @@ addLayer("challenge",
         "T6":
         {
             canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1)
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && HAS(2)
             },
             display(){return ''},
             unlocked(){return true},
@@ -2263,6 +2368,149 @@ addLayer("challenge",
                 return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=6},
+        },
+        "T7":
+        {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(5)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu7.png)"
+                if(HAS(5)){
+                    if(player.challenge.has_tianfu[7]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=7},
+        },
+        "T8":
+        {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(5)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu8.png)"
+                if(HAS(5)){
+                    if(player.challenge.has_tianfu[8]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=8},
+        },
+        "T9":
+        {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(4) && !HAS(10)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu9.png)"
+                if(HAS(4) && !HAS(10)){
+                    if(player.challenge.has_tianfu[9]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=9},
+        },
+        "T10":
+        {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(4) && !HAS(9)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu10.png)"
+                if(HAS(4) && !HAS(9)){
+                    if(player.challenge.has_tianfu[10]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=10},
+        },
+        "T11":
+        {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(4)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu11.png)"
+                if(HAS(4)){
+                    if(player.challenge.has_tianfu[11]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=11},
+        },
+        "T12":
+        {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(3)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu12.png)"
+                if(HAS(3)){
+                    if(player.challenge.has_tianfu[12]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=12},
+        },
+        "T13":
+        {
+            EFFECT(){
+                if(!HAS(13))return n(1)
+                return player.stat.hp.sub(player.stat.hpnow).div(player.stat.hp).add(1)},
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(3)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu13.png)"
+                if(HAS(3)){
+                    if(player.challenge.has_tianfu[13]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=13},
         },
         "ChongXi":
         {
@@ -2296,6 +2544,7 @@ addLayer("challenge",
                return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
             canClick(){return true},
             onClick(){
+                if(HAS(player.challenge.choose_tianfu_id))return
                 if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).lt(player.challenge.cost[player.challenge.choose_tianfu_id]))return
                 if(!layers.challenge.clickables["T"+player.challenge.choose_tianfu_id].canBUY())return
                 player.challenge.tianfudianNow=player.challenge.tianfudianNow.add(player.challenge.cost[player.challenge.choose_tianfu_id])
@@ -2351,23 +2600,88 @@ addLayer("challenge",
                     return player.challenge.complete_tianfu_text[player.challenge.choose_tianfu_id]
                 }],
                 "blank",
-                ["row",[
-                    ["column",[["clickable","T6"]]],
+                ["column",[
+                    ["row",[
+                            ["clickable","T12"],
+                            "blank","blank","blank",
+                            ["clickable","T13"],
+                    ]],
                     "blank",
+                    ["row",["blank","blank","blank",
+                            ["blank",["100px","17px"]],
+                            "blank","blank","blank",
+                            ["blank",["100px","17px"]],
+                            ["clickable","T3"],
+                            "blank","blank","blank",
+                            ["blank",["100px","17px"]],
+                            "blank","blank","blank",
+                            ["clickable","T9"],
+                    ]],
                     "blank",
-                    ["column",[["clickable","T2"]]],
+                    ["row",[["clickable","T6"],
+                            "blank","blank","blank",
+                            ["clickable","T2"],
+                            "blank","blank","blank",
+                            ["clickable","T1"],
+                            "blank","blank","blank",
+                            ["clickable","T4"],
+                            "blank","blank","blank",
+                            ["clickable","T10"],]],
                     "blank",
+                    ["row",["blank","blank","blank",
+                            ["blank",["100px","17px"]],
+                            "blank","blank","blank",
+                            ["blank",["100px","17px"]],
+                            ["clickable","T5"],
+                            "blank","blank","blank",
+                            ["blank",["100px","17px"]],
+                            "blank","blank","blank",
+                            ["clickable","T11"],
+                    ]],
                     "blank",
-                    ["column",[["clickable","T3"],
-                               "blank",
-                               ["clickable","T1"],
-                               "blank",
-                               ["clickable","T5"]]],
-                    "blank",
-                    "blank",
-                    ["column",[["clickable","T4"]]]]
-                ],
-                ["clickable","Left"],
+                    ["row",[["clickable","T7"],
+                            "blank","blank","blank",
+                            ["clickable","T8"],]],
+                ]],
+                // ["row",[
+                //     ["column",[["clickable","T6"],
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",]],
+                //     "blank",
+                //     "blank",
+                //     ["column",[["clickable","T2"],
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",
+                //                 "blank",]],
+                //     "blank",
+                //     "blank",
+                //     ["column",[["clickable","T3"],
+                //                "blank",
+                //                ["clickable","T1"],
+                //                "blank",
+                //                ["clickable","T5"],
+                //                "blank",
+                //                ["clickable","T7"]]],
+                //     "blank",
+                //     "blank",
+                //     ["column",[["clickable","T4"],
+                //                "blank",
+                //                "blank",
+                //                "blank",
+                //                "blank",
+                //                "blank",
+                //                "blank",
+                //                "blank",]]]
+                // ],
             ]
         }
     },
