@@ -342,6 +342,10 @@ addLayer("stat",
             {
                 result=result.mul(0.7)
             }
+            else if(_inChallenge(7))
+            {
+                result=result.mul(1000000)
+            }
             if(_finishChallenge(1))result=result.mul(1.1)
             if(HAS(2))result=result.mul(3)
             player.stat.luck=result
@@ -785,6 +789,10 @@ addLayer("equip",
         else if(_inChallenge(2))
         {
             x=n(0.7)
+        }
+        else if(_inChallenge(7))
+        {
+            x=n(10)
         }
         if(_finishChallenge(0))x=x.mul(1.1)
         player.devSpeed=x
@@ -1874,7 +1882,7 @@ addLayer("challenge",
                 "挑战5",
                 "挑战6",
                 "挑战7",
-                "挑战8",
+                "挑战8 - 外挂<br>?????<br>????<br>???<br>??<br>?",
                 "挑战9",
                 "挑战10",
                 "挑站11",
@@ -1909,7 +1917,11 @@ addLayer("challenge",
                 "挑战5",
                 "挑战6",
                 "挑战7",
-                "挑战8",
+
+"<div class='kuang' style='height:40px'>当前选中 : 挑战8 - 外挂<br>应玩家要求 , 特加此项挑战</div><br>"
++"<div class='kuang' style='height:60px'>效果<br>时速x10<br>运气x1000000</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>爆出 "+quality[0]+" 装备</div><br>"
++"<div class='kuang' style='height:40px'>奖励<br><h3>100</h3> 天赋点</div>",
                 "挑战9",
                 "挑战10",
                 "挑站11",
@@ -2011,6 +2023,64 @@ addLayer("challenge",
         if(_finishChallenge(1))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(1)
         if(_finishChallenge(2))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(2)
         if(_finishChallenge(3))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(1)
+
+        player.challenge.challenge_text=[
+            "挑战1 - 极速<br><br>时速x5",
+            "挑战2 - 强运<br><br>运气x5",
+            "挑战3 - 困难模式<br><br>时速x0.7<br>运气x0.7",
+            "挑战4 - 无处存储<br><br>背包只有10格",
+            "挑战5",
+            "挑战6",
+            "挑战7",
+            "挑战8 - 外挂<br>?????<br>????<br>???<br>??<br>?",
+            "挑战9",
+            "挑战10",
+            "挑站11",
+            "挑战12",
+            "挑战13",
+            "挑战14",
+            "挑战15",
+            "挑战16",
+            "挑战17",
+            "挑战18",]
+        player.challenge.complete_challenge_text=[
+"<div class='kuang' style='height:20px'>当前选中 : 挑战1 - 极速</div><br>"
++"<div class='kuang' style='height:40px'>效果<br>时速x5</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>时速永久x1.1</div>",
+
+"<div class='kuang' style='height:20px'>当前选中 : 挑战2 - 强运</div><br>"
++"<div class='kuang' style='height:40px'>效果<br>运气x5</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>运气永久x1.1</div>",
+
+"<div class='kuang' style='height:20px'>当前选中 : 挑战3 - 困难模式</div><br>"
++"<div class='kuang' style='height:60px'>效果<br>运气x0.7<br>时速x0.7</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:40px'>奖励<br><h3>2</h3> 天赋点</div>",
+
+"<div class='kuang' style='height:20px'>当前选中 : 挑战4 - 无处存储</div><br>"
++"<div class='kuang' style='height:40px'>效果<br>背包只有10格子</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>背包格子永久+200</div>",
+            "挑战5",
+            "挑战6",
+            "挑战7",
+
+"<div class='kuang' style='height:40px'>当前选中 : 挑战8 - 外挂<br>应玩家要求 , 特加此项挑战</div><br>"
++"<div class='kuang' style='height:60px'>效果<br>时速x10<br>运气x1000000</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>爆出 "+quality[0]+" 装备</div><br>"
++"<div class='kuang' style='height:40px'>奖励<br><h3>100</h3> 天赋点</div>",
+            "挑战9",
+            "挑战10",
+            "挑站11",
+            "挑战12",
+            "挑战13",
+            "挑战14",
+            "挑战15",
+            "挑战16",
+            "挑战17",
+            "挑战18",]
     },
     //奇数 : 32个换行
     //偶数 : 21个换行
