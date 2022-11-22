@@ -76,6 +76,7 @@ const affixPoss=[
 //[名字,部位,att,def,hp,spd,(...),[ , , ],level,quality]-后面的数组是用来存放词缀的
 //                           |
 //              这个是给以后更多的属性预留的地方
+const sell_price=[1,5,15,50,150,500,1500]
 function getAffix()
 {
     var xx=n(0).add(Math.random())
@@ -107,6 +108,11 @@ function summon(baolv)
             name=quality[i]
             which=i
         }
+    }
+    if(player.stat.guolv[which])
+    {
+        player.stat.money=player.stat.money.add(sell_price[which])
+        return 1
     }
     var xxx=n(0).add(Math.random())//随机词缀
     var xxxx=n(which)
@@ -216,6 +222,8 @@ addLayer("stat",
             playerProgress:n(0),
             level:n(1),EXPneed:n(10),EXPnow:n(0),
             money:n(0),
+
+            guolv:[false,false,false,false,false,false,false,false,false],
         }
     },
     color: "white",
@@ -324,6 +332,10 @@ addLayer("stat",
             if(_inChallenge(1))
             {
                 result=result.mul(5)
+            }
+            else if(_inChallenge(2))
+            {
+                result=result.mul(0.8)
             }
             else
             {
@@ -447,6 +459,188 @@ addLayer("stat",
                 player.stat.money=player.stat.money.add(gain)
             },
         },
+        "Sell 4":
+        {
+            display()
+            {
+                return '一键卖出<br>'+quality[4]
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                var newWeapon=[]
+                var gain=n(0)
+                for(var i=0;i<player.equip.weapon.length;i++)
+                {
+                    if(n(player.equip.weapon[i][8]).eq(4))
+                    {
+                        gain=gain.add(150)
+                    }
+                    else
+                    {
+                        newWeapon.push(player.equip.weapon[i])
+                    }
+                }
+                player.equip.weapon=newWeapon
+                player.stat.money=player.stat.money.add(gain)
+            },
+        },
+        "Sell 5":
+        {
+            display()
+            {
+                return '一键卖出<br>'+quality[5]
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                var newWeapon=[]
+                var gain=n(0)
+                for(var i=0;i<player.equip.weapon.length;i++)
+                {
+                    if(n(player.equip.weapon[i][8]).eq(5))
+                    {
+                        gain=gain.add(500)
+                    }
+                    else
+                    {
+                        newWeapon.push(player.equip.weapon[i])
+                    }
+                }
+                player.equip.weapon=newWeapon
+                player.stat.money=player.stat.money.add(gain)
+            },
+        },
+        "Sell 6":
+        {
+            display()
+            {
+                return '一键卖出<br>'+quality[6]
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                var newWeapon=[]
+                var gain=n(0)
+                for(var i=0;i<player.equip.weapon.length;i++)
+                {
+                    if(n(player.equip.weapon[i][8]).eq(6))
+                    {
+                        gain=gain.add(1500)
+                    }
+                    else
+                    {
+                        newWeapon.push(player.equip.weapon[i])
+                    }
+                }
+                player.equip.weapon=newWeapon
+                player.stat.money=player.stat.money.add(gain)
+            },
+        },
+        "AutoSell 0":
+        {
+            display()
+            {
+                return '自动卖出<br>'+quality[0]+'<br><br>'+(player.stat.guolv[0]?'启用':"禁用")
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                player.stat.guolv[0]=!player.stat.guolv[0]
+            },
+        },
+        "AutoSell 1":
+        {
+            display()
+            {
+                return '自动卖出<br>'+quality[1]+'<br><br>'+(player.stat.guolv[1]?'启用':"禁用")
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                player.stat.guolv[1]=!player.stat.guolv[1]
+            },
+        },
+        "AutoSell 2":
+        {
+            display()
+            {
+                return '自动卖出<br>'+quality[2]+'<br><br>'+(player.stat.guolv[2]?'启用':"禁用")
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                player.stat.guolv[2]=!player.stat.guolv[2]
+            },
+        },
+        "AutoSell 3":
+        {
+            display()
+            {
+                return '自动卖出<br>'+quality[3]+'<br><br>'+(player.stat.guolv[3]?'启用':"禁用")
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                player.stat.guolv[3]=!player.stat.guolv[3]
+            },
+        },
+        "AutoSell 4":
+        {
+            display()
+            {
+                return '自动卖出<br>'+quality[4]+'<br><br>'+(player.stat.guolv[4]?'启用':"禁用")
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                player.stat.guolv[4]=!player.stat.guolv[4]
+            },
+        },
+        "AutoSell 5":
+        {
+            display()
+            {
+                return '自动卖出<br>'+quality[5]+'<br><br>'+(player.stat.guolv[5]?'启用':"禁用")
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                player.stat.guolv[5]=!player.stat.guolv[5]
+            },
+        },
+        "AutoSell 6":
+        {
+            display()
+            {
+                return '自动卖出<br>'+quality[6]+'<br><br>'+(player.stat.guolv[6]?'启用':"禁用")
+            },
+            unlocked(){return true},
+            style(){
+               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            canClick(){return true},
+            onClick(){
+                player.stat.guolv[6]=!player.stat.guolv[6]
+            },
+        },
     },
     tabFormat:
     {
@@ -498,7 +692,12 @@ addLayer("stat",
             },
             content:[
                 "blank",
-                ["row",[["clickable","Sell 0"],["clickable","Sell 1"],["clickable","Sell 2"],["clickable","Sell 3"],]]
+                ["row",[["clickable","Sell 0"],["clickable","Sell 1"],["clickable","Sell 2"]
+                ,["clickable","Sell 3"],["clickable","Sell 4"],["clickable","Sell 5"],["clickable","Sell 6"],]],
+                "blank",
+                "blank",
+                ["row",[["clickable","AutoSell 0"],["clickable","AutoSell 1"],["clickable","AutoSell 2"]
+                ,["clickable","AutoSell 3"],["clickable","AutoSell 4"],["clickable","AutoSell 5"],["clickable","AutoSell 6"],]]
             ],
         },
         "说明":
@@ -523,6 +722,14 @@ addLayer("stat",
                     +"<br><br>但这是初始爆率 , 最后的概率还会乘上你的幸运"
                     +"<br>同时怪物的种类也会影响爆率 (例如 , 史莱姆精英会让你爆率x10)"
                     +"<br><br>挑战会在你10级的时候解锁"
+                    +"<br>进行挑战时 , 数据会被保存 , 退出挑战后仍然是原来的进度"
+                    +"<br><br>天赋系统说明 : "
+                    +"<br><br>每个天赋有4种边框"
+                    +"<br><text style='color:grey'>灰色</text> 未达到解锁条件"
+                    +"<br><text style='color:red'>红色</text> 达到解锁条件 , 但是天赋点不足"
+                    +"<br><text style='color:lightblue'>蓝色</text> 可以点亮"
+                    +"<br><text style='color:gold'>金色</text> 已点亮"
+                    +"<br><br><h2>*注意 : 三种职业最多只能同时激活两种*</h2>"
                 }]
             ],
         },
@@ -553,6 +760,8 @@ addLayer("equip",
                 [1,1],
                 [1,1],
             ],
+
+            weaponSizeMax:n(200),
         }
     },
     color: "white",
@@ -570,10 +779,27 @@ addLayer("equip",
         {
             player.devSpeed=5
         }
+        else if(_inChallenge(2))
+        {
+            player.devSpeed=0.8
+        }
         else
         {
             if(_finishChallenge(0))player.devSpeed=1.1
             else player.devSpeed=1
+        }
+
+        player.equip.weaponSizeMax=n(200)
+        if(_inChallenge(3))
+        {
+            player.equip.weaponSizeMax=n(10)
+        }
+        else
+        {
+            if(_finishChallenge(3))
+            {
+                player.equip.weaponSizeMax=player.equip.weaponSizeMax.add(200)
+            }
         }
     },
     clickables:
@@ -937,7 +1163,7 @@ addLayer("equip",
                 "blank",
                 "blank",
                 "blank",
-                ["display-text",function(){return '<h2>背包容量 '+format(player.equip.weapon.length)+'/200'}],
+                ["display-text",function(){return '<h2>背包容量 '+format(player.equip.weapon.length)+' / '+format(player.equip.weaponSizeMax)}],
                 "blank",
                 "grid",
                 "blank",
@@ -1183,9 +1409,10 @@ addLayer("battle",
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
-                if(player.equip.weapon.length<200)
+                if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax))
                 {
                     var wea=summon(monster[player.battle.monsterID].BaoLv())
+                    if(Array.isArray(wea))
                     player.equip.weapon.push(wea)
                 }
             }
@@ -1512,10 +1739,10 @@ addLayer("challenge",
             unlock_challenge:false,
             challenge_num:[0,1,2,3,4,5,6,7],
             challenge_text:[
-                "挑战1 - 极速<br><br>时间流逝速度x5",
+                "挑战1 - 极速<br><br>时速x5",
                 "挑战2 - 强运<br><br>运气x5",
-                "挑战3",
-                "挑战4",
+                "挑战3 - 困难模式<br><br>时速x0.8<br>运气x0.8",
+                "挑战4 - 无处存储<br><br>背包只有10格",
                 "挑战5",
                 "挑战6",
                 "挑战7",
@@ -1533,15 +1760,24 @@ addLayer("challenge",
             ],
             complete_challenge_text:[
 "<div class='kuang' style='height:20px'>当前选中 : 挑战1 - 极速</div><br>"
-+"<div class='kuang' style='height:40px'>效果<br>时间流逝速度x5</div><br>"
++"<div class='kuang' style='height:40px'>效果<br>时速x5</div><br>"
 +"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
-+"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>时间流逝速度永久x1.1</div>",
++"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>时速永久x1.1</div>",
+
 "<div class='kuang' style='height:20px'>当前选中 : 挑战2 - 强运</div><br>"
 +"<div class='kuang' style='height:40px'>效果<br>运气x5</div><br>"
 +"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
 +"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>运气永久x1.1</div>",
-                "挑战3",
-                "挑战4",
+
+"<div class='kuang' style='height:20px'>当前选中 : 挑战3 - 困难模式</div><br>"
++"<div class='kuang' style='height:60px'>效果<br>运气x0.8<br>时速x0.8</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:40px'>奖励<br><h3>2</h3> 天赋点</div>",
+
+"<div class='kuang' style='height:20px'>当前选中 : 挑战4 - 无处存储</div><br>"
++"<div class='kuang' style='height:40px'>效果<br>背包只有10格子</div><br>"
++"<div class='kuang' style='height:40px'>目标<br>击败 史莱姆<text style='color:gold'>国王</text></div><br>"
++"<div class='kuang' style='height:60px'>奖励<br><h3>1</h3> 天赋点<br>背包格子永久+200</div>",
                 "挑战5",
                 "挑战6",
                 "挑战7",
@@ -1626,6 +1862,8 @@ addLayer("challenge",
         player.challenge.tianfudianMax=n(0)
         if(_finishChallenge(0))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(1)
         if(_finishChallenge(1))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(1)
+        if(_finishChallenge(2))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(2)
+        if(_finishChallenge(3))player.challenge.tianfudianMax=player.challenge.tianfudianMax.add(1)
     },
     //奇数 : 32个换行
     //偶数 : 21个换行
@@ -1903,6 +2141,9 @@ addLayer("challenge",
         },
         "T1":
         {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(0)
+            },
             display(){return ''},
             unlocked(){return true},
             style(){
@@ -1911,7 +2152,7 @@ addLayer("challenge",
                 nw["background-image"]="url(js/tianfu/tianfu1.png)"
                 if(1){
                     if(player.challenge.has_tianfu[1]==true)nw["border-color"]="yellow"
-                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(0))nw["border-color"]="lightblue"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
                     else nw["border-color"]="red"
                 }
                 return nw},
@@ -1925,6 +2166,9 @@ addLayer("challenge",
         },
         "T2":
         {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1)
+            },
             display(){return ''},
             unlocked(){return true},
             style(){
@@ -1933,7 +2177,7 @@ addLayer("challenge",
                 nw["background-image"]="url(js/tianfu/tianfu2.png)"
                 if(HAS(1)){
                     if(player.challenge.has_tianfu[2]==true)nw["border-color"]="yellow"
-                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
                     else nw["border-color"]="red"
                 }
                 return nw},
@@ -1942,15 +2186,18 @@ addLayer("challenge",
         },
         "T3":
         {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(5))
+            },
             display(){return ''},
             unlocked(){return true},
             style(){
                 var nw={"width":"100px","height":"100px","min-height":"100px"
                 ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
                 nw["background-image"]="url(js/tianfu/tianfu3.png)"
-                if(HAS(1)){
+                if(HAS(1) && (!HAS(4) || !HAS(5))){
                     if(player.challenge.has_tianfu[3]==true)nw["border-color"]="yellow"
-                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
                     else nw["border-color"]="red"
                 }
                 return nw},
@@ -1959,15 +2206,18 @@ addLayer("challenge",
         },
         "T4":
         {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(3) || !HAS(5))
+            },
             display(){return ''},
             unlocked(){return true},
             style(){
                 var nw={"width":"100px","height":"100px","min-height":"100px"
                 ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
                 nw["background-image"]="url(js/tianfu/tianfu4.png)"
-                if(HAS(1)){
+                if(HAS(1) && (!HAS(3) || !HAS(5))){
                     if(player.challenge.has_tianfu[4]==true)nw["border-color"]="yellow"
-                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
                     else nw["border-color"]="red"
                 }
                 return nw},
@@ -1976,20 +2226,43 @@ addLayer("challenge",
         },
         "T5":
         {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(3))
+            },
             display(){return ''},
             unlocked(){return true},
             style(){
                 var nw={"width":"100px","height":"100px","min-height":"100px"
                 ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
                 nw["background-image"]="url(js/tianfu/tianfu5.png)"
-                if(HAS(1)){
+                if(HAS(1) && (!HAS(4) || !HAS(3))){
                     if(player.challenge.has_tianfu[5]==true)nw["border-color"]="yellow"
-                    else if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1))nw["border-color"]="lightblue"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
                     else nw["border-color"]="red"
                 }
                 return nw},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=5},
+        },
+        "T6":
+        {
+            canBUY(){
+                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1)
+            },
+            display(){return ''},
+            unlocked(){return true},
+            style(){
+                var nw={"width":"100px","height":"100px","min-height":"100px"
+                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+                nw["background-image"]="url(js/tianfu/tianfu6.png)"
+                if(HAS(2)){
+                    if(player.challenge.has_tianfu[6]==true)nw["border-color"]="yellow"
+                    else if(this.canBUY())nw["border-color"]="lightblue"
+                    else nw["border-color"]="red"
+                }
+                return nw},
+            canClick(){return true},
+            onClick(){player.challenge.choose_tianfu_id=6},
         },
         "ChongXi":
         {
@@ -2024,6 +2297,7 @@ addLayer("challenge",
             canClick(){return true},
             onClick(){
                 if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).lt(player.challenge.cost[player.challenge.choose_tianfu_id]))return
+                if(!layers.challenge.clickables["T"+player.challenge.choose_tianfu_id].canBUY())return
                 player.challenge.tianfudianNow=player.challenge.tianfudianNow.add(player.challenge.cost[player.challenge.choose_tianfu_id])
                 player.challenge.has_tianfu[player.challenge.choose_tianfu_id]=true
             },
@@ -2078,6 +2352,9 @@ addLayer("challenge",
                 }],
                 "blank",
                 ["row",[
+                    ["column",[["clickable","T6"]]],
+                    "blank",
+                    "blank",
                     ["column",[["clickable","T2"]]],
                     "blank",
                     "blank",
