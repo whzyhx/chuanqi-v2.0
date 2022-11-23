@@ -224,8 +224,8 @@ addLayer("stat",{
                         mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]).mul(0.1).add(1.1))
                 }
             }
-            if(HAS(5))mult=mult.mul(1.2)
-            if(HAS(4))mult=mult.mul(1.5)
+            if(hasTalent(5))mult=mult.mul(1.2)
+            if(hasTalent(4))mult=mult.mul(1.5)
             player.stat.atk=result.mul(mult)//返回
         },
         def(){
@@ -241,8 +241,8 @@ addLayer("stat",{
                         mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]-13).mul(0.1).add(1.1))
                 }
             }
-            if(HAS(3))mult=mult.mul(1.3)
-            if(HAS(12))mult=mult.mul(1.5)
+            if(hasTalent(3))mult=mult.mul(1.3)
+            if(hasTalent(12))mult=mult.mul(1.5)
             player.stat.def=result.mul(mult)//返回
         },
         hp(){
@@ -258,13 +258,13 @@ addLayer("stat",{
                         mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]-6).mul(0.1).add(1.1))
                 }
             }
-            if(HAS(3))mult=mult.mul(1.3)
+            if(hasTalent(3))mult=mult.mul(1.3)
             player.stat.hp=result.mul(mult)//返回
         },
         spd(){
             var base = n(1000)
-            if(HAS(5))base=base.add(500)
-            if(HAS(13))base=base.add(200)
+            if(hasTalent(5))base=base.add(500)
+            if(hasTalent(13))base=base.add(200)
             var result = base
             for(var i=0;i<7;i++){
                 if(n(player.equip.weaponCurrent[i].length).lte(3)) continue
@@ -279,7 +279,7 @@ addLayer("stat",{
             else if(_inChallenge(2)) result=result.mul(0.7)
             else if(_inChallenge(7)) result=result.mul(1000000)
             if(_finishChallenge(1))result=result.mul(1.1)
-            if(HAS(2))result=result.mul(3)
+            if(hasTalent(2))result=result.mul(3)
             player.stat.luck=result
         },
     },
@@ -833,7 +833,7 @@ function re_calc(lvl,is_teshu,namE){//重新生成怪物属性
 }
 function beiAttack(){
     var xxx=n(0).add(Math.random())
-    if(xxx.lt(0.2) && HAS(12)){
+    if(xxx.lt(0.2) && hasTalent(12)){
         player.battle.zhandourizhi.push(
             monster[player.battle.monsterID].name()+' 对 你 造成了 <text style="color:red">'
             +format(0)+'</text> 伤害 (被格挡)')
@@ -846,7 +846,7 @@ function beiAttack(){
         +format(player.battle.monsterATK.sub(player.stat.def).max(0))+'</text> 伤害')
 }
 function Attack(){
-    if(HAS(11)){//恢复术
+    if(hasTalent(11)){//恢复术
         var xxxxx=player.stat.hpnow
         player.stat.hpnow=player.stat.hpnow.add(player.stat.hp.mul(0.05)).min(player.stat.hp)
         player.battle.zhandourizhi.push(
@@ -858,18 +858,18 @@ function Attack(){
     player.battle.zhandourizhi.push(
         '你 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
         +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
-    if(HAS(8)){//淬毒
+    if(hasTalent(8)){//淬毒
         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
         player.battle.zhandourizhi.push(
             '弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
             +format(player.stat.atk.mul(0.3))+'</text> 伤害')
     }
-    if(HAS(7)){//双发弓手
+    if(hasTalent(7)){//双发弓手
         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
         player.battle.zhandourizhi.push(
             '另一支弓箭 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
             +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
-        if(HAS(8)){//淬毒
+        if(hasTalent(8)){//淬毒
             player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
             player.battle.zhandourizhi.push(
                 '另一支弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
@@ -923,11 +923,11 @@ addLayer("battle",  {
             if(player.battle.monsterProgress.gte(1))beiAttack()
             player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.mul(layers.challenge.clickables["T13"].EFFECT()).div(5000).mul(diff))
             if(player.stat.playerProgress.gte(1))Attack()
-            if(HAS(9) || HAS(10)){
-                player.stat.playerFaProgress=player.stat.playerFaProgress.add((HAS(9)?n(0.1):n(0.5)).mul(diff))
+            if(hasTalent(9) || hasTalent(10)){
+                player.stat.playerFaProgress=player.stat.playerFaProgress.add((hasTalent(9)?n(0.1):n(0.5)).mul(diff))
                 if(player.stat.playerFaProgress.gte(1)){
                     player.stat.playerFaProgress=n(0)
-                    if(HAS(9)){
+                    if(hasTalent(9)){
                         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(2).sub(player.battle.monsterDEF).max(0)).max(0)
                         player.battle.zhandourizhi.push(
                             '你 使用 <text style="color:orange">火球术</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
@@ -979,7 +979,7 @@ addLayer("battle",  {
                         player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了一件装备，但是被自动售出了`       
                     }
                 }
-                if(HAS(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
+                if(hasTalent(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
                     if(Array.isArray(wea)){
                         player.equip.weapon.push(wea)
                         player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了${wea[0]} !`       
@@ -1078,9 +1078,9 @@ addLayer("battle",  {
             direction: RIGHT,
             width: 400,
             height: 20,
-            unlocked(){return HAS(9) || HAS(10)},
+            unlocked(){return hasTalent(9) || hasTalent(10)},
             progress(){return player.stat.playerFaProgress},
-            fillStyle(){return {"background-color":(HAS(9)?"orange":"cyan")}},
+            fillStyle(){return {"background-color":(hasTalent(9)?"orange":"cyan")}},
             display(){return ""}
         },
     },
@@ -1181,7 +1181,7 @@ function challenge_load(){
 }
 function _inChallenge(x){return player.challenge.in_challenge.eq(1) && player.challenge.challenge_num[0]==x}
 function _finishChallenge(x){return player.challenge.finish_challenge[x]}
-function HAS(x){return player.challenge.has_tianfu[x]}
+function hasTalent(x){return player.challenge.has_tianfu[x]}
 function huanhang(s,x){
     var rt=''
     for(var i=0;i<s.length;i++)if(s[i]=='<')x=Math.max(x-1,0)
@@ -1557,7 +1557,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=1},
         },
         "T2":{
-            UNlock(){return HAS(1)},
+            UNlock(){return hasTalent(1)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1566,7 +1566,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=2},
         },
         "T3":{
-            UNlock(){return (!HAS(4) || !HAS(5)) && HAS(1)},
+            UNlock(){return (!hasTalent(4) || !hasTalent(5)) && hasTalent(1)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1575,7 +1575,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=3},
         },
         "T4":{
-            UNlock(){return (!HAS(3) || !HAS(5)) && HAS(1)},
+            UNlock(){return (!hasTalent(3) || !hasTalent(5)) && hasTalent(1)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1584,7 +1584,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=4},
         },
         "T5":{
-            UNlock(){return (!HAS(4) || !HAS(3)) && HAS(1)},
+            UNlock(){return (!hasTalent(4) || !hasTalent(3)) && hasTalent(1)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1593,7 +1593,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=5},
         },
         "T6":{
-            UNlock(){return HAS(2)},
+            UNlock(){return hasTalent(2)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1602,7 +1602,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=6},
         },
         "T7":{
-            UNlock(){return HAS(5)},
+            UNlock(){return hasTalent(5)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1611,7 +1611,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=7},
         },
         "T8":{
-            UNlock(){return HAS(5)},
+            UNlock(){return hasTalent(5)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1620,7 +1620,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=8},
         },
         "T9":{
-            UNlock(){return HAS(4) && !HAS(10)},
+            UNlock(){return hasTalent(4) && !hasTalent(10)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1629,7 +1629,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=9},
         },
         "T10":{
-            UNlock(){return HAS(4) && !HAS(9)},
+            UNlock(){return hasTalent(4) && !hasTalent(9)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1638,7 +1638,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=10},
         },
         "T11":{
-            UNlock(){return HAS(4)},
+            UNlock(){return hasTalent(4)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1647,7 +1647,7 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=11},
         },
         "T12":{
-            UNlock(){return HAS(3)},
+            UNlock(){return hasTalent(3)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1656,8 +1656,8 @@ addLayer("challenge",{
             onClick(){player.challenge.choose_tianfu_id=12},
         },
         "T13":{
-            EFFECT(){return (!HAS(13)?n(1):player.stat.hp.sub(player.stat.hpnow).div(player.stat.hp).add(1))},
-            UNlock(){return HAS(3)},
+            EFFECT(){return (!hasTalent(13)?n(1):player.stat.hp.sub(player.stat.hpnow).div(player.stat.hp).add(1))},
+            UNlock(){return hasTalent(3)},
             canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
@@ -1687,7 +1687,7 @@ addLayer("challenge",{
             style(){return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
             canClick(){return true},
             onClick(){
-                if(HAS(player.challenge.choose_tianfu_id))return
+                if(hasTalent(player.challenge.choose_tianfu_id))return
                 if(player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).lt(player.challenge.cost[player.challenge.choose_tianfu_id]))return
                 if(!layers.challenge.clickables["T"+player.challenge.choose_tianfu_id].canBUY())return
                 player.challenge.tianfudianNow=player.challenge.tianfudianNow.add(player.challenge.cost[player.challenge.choose_tianfu_id])

@@ -90,7 +90,7 @@ addLayer("tree-tab", {
         ["display-text",
             function() {
                 return '<text style="color:#FF00FF">速度 : </text><text style="color:#FF00FF">'+format(player.stat.spd)
-                +(HAS(13)?'x'+format(layers.challenge.clickables["T13"].EFFECT())+'='+format(player.stat.spd.mul(layers.challenge.clickables["T13"].EFFECT())):'')+'</text>'
+                +(hasTalent(13)?'x'+format(layers.challenge.clickables["T13"].EFFECT())+'='+format(player.stat.spd.mul(layers.challenge.clickables["T13"].EFFECT())):'')+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],
