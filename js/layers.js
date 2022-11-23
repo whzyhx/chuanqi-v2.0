@@ -712,6 +712,9 @@ addLayer("equip",{
                 "blank",
                 "blank",
                 ["display-text",function(){return '<h2>背包容量 '+format(player.equip.weapon.length)+' / '+format(player.equip.weaponSizeMax)}],
+                "blank",
+                "blank",
+                "grid",
                 ["blank",["8px","400px"]],
             ],
         },
@@ -944,8 +947,7 @@ addLayer("battle",  {
             }
             else if(player.battle.monsterHPnow.lte(0.001)){
                 //计算 击杀boss
-                if(player.battle.monsterID=="slime_guowang")
-                {
+                if(player.battle.monsterID=="slime_guowang"){
                     alert("你一剑击碎了史莱姆国王的王冠")
                     alert('"#$%^@$!"')
                     alert("奇怪的是 , 国王的眼神里 , 没有悲哀")
@@ -1378,7 +1380,8 @@ addLayer("challenge",{
             "挑战15",
             "挑战16",
             "挑战17",
-            "挑战18",]
+            "挑战18",
+        ]
         player.challenge.complete_challenge_text=[
 "<div class='kuang' style='height:20px'>当前选中 : 挑战1 - 极速</div><br>"
 +"<div class='kuang' style='height:40px'>效果<br>时速x5</div><br>"
@@ -1416,7 +1419,8 @@ addLayer("challenge",{
             "挑战15",
             "挑战16",
             "挑战17",
-            "挑战18",]
+            "挑战18",
+        ]
     },
     //奇数 : 32个换行
     //偶数 : 21个换行
