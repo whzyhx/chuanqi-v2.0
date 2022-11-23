@@ -1,6 +1,4 @@
-//测试通讯编号 : YH-I
-// ------------ 装备轮子 -------------\\
-const quality=[//这个看不懂就砍死你丫的(?
+const quality=[
     "<text style='color:grey'>破损的</text>",
     "<text style='color:white'>普通的</text>",
     "<text style='color:lime'>优秀的</text>",
@@ -73,63 +71,39 @@ const affixPoss=[
     [n(1),n(1),n(0.8),n(0.6),n(0.2)]
 ]
 //每件装备格式如下
-//[名字,部位,att,def,hp,spd,(...),[ , , ],level,quality]-后面的数组是用来存放词缀的
-//                           |
-//              这个是给以后更多的属性预留的地方
+//[名字,部位,att,def,hp,spd,[ , , ],level,quality]
 const sell_price=[1,5,15,50,150,500,1500]
-function getAffix()
-{
+function getAffix(){
     var xx=n(0).add(Math.random())
     xx=xx.mul(affix.length).floor()
     return xx
 }
-function summon(baolv)
-{
+function summon(baolv){
     var data=[]
     var affixku=[]
-    //装备基础爆率 (显然 , 这个东西收到难度影响还有玩家自身属性)
-    //破损:90%
-    //普通:9%
-    //优秀:0.9%
-    //精良:0.09%
-    //史诗:0.009%
-    //传奇:0.0009%
-    //神话:0.0001%
     var x=n(0).add(Math.random())//随机品质
     // x=n(0.0000000001) // 匿名专属爆率 , ajchen不许用(?)
     x=x.div(player.stat.luck).div(baolv)
-    // console.log(baolv)
     var which=0
     var name=''
-    for(var i=0;i<possibility.length;i++)
-    {
-        if(x.lte(possibility[i]))
-        {
+    for(var i=0;i<possibility.length;i++){
+        if(x.lte(possibility[i])){
             name=quality[i]
             which=i
         }
     }
-    if(player.stat.guolv[which])
-    {
+    if(player.stat.guolv[which]){
         player.stat.money=player.stat.money.add(sell_price[which])
         return 1
     }
     var xxx=n(0).add(Math.random())//随机词缀
     var xxxx=n(which)
-    for(var j=0;j<7;j++)
-    {
-        if(xxxx.eq(j))
-        {
-            for(var i=0;i<5;i++)
-            {
-                var gailv=affixPoss[j][i]
-                if(xxx.lte(gailv))
-                {
-                    pos=getAffix()
-                    name=name+affix[pos][0]+'的</text>'
-                    affixku.push(pos)
-                }
-            }
+    for(var i=0;i<5;i++){
+        var gailv=affixPoss[xxxx][i]
+        if(xxx.lte(gailv)){
+            pos=getAffix()
+            name=name+affix[pos][0]+'的</text>'
+            affixku.push(pos)
         }
     }
     var xx=n(0).add(Math.random())//随机部位
@@ -139,13 +113,8 @@ function summon(baolv)
     data.push(xx)
     //计算装备等级对属性的影响
     var mult=n(1.05).pow(player.battle.currentLvl.sub(1))
-    //计算装备属性区域
-    for(var i=0;i<4;i++)
-    {
-        if(i==3)
-        {
-            mult=n(1)
-        }
+    for(var i=0;i<4;i++){
+        if(i==3)mult=n(1)
         data.push(n(base[i].mul(quality_base[xxxx]).mul(part_base[xx][i])).mul(mult))
     }
     /////////////////
@@ -154,8 +123,7 @@ function summon(baolv)
     data.push(xxxx)
     return data
 }
-function output(data)//根据数据打印装备
-{
+function output(data){
     var s='<h2>LV.'+format(data[7])+' '
     s+=data[0]
     s+='</h2><br>'
@@ -179,11 +147,20 @@ function output(data)//根据数据打印装备
 }
 // ------------ END -------------\\
 
-
-addLayer("data",
-{
-    startData()
-    {
+function auto_sell(which){
+    var newWeapon=[]
+    var gain=n(0)
+    for(var i=0;i<player.equip.weapon.length;i++){
+        if(n(player.equip.weapon[i][8]).eq(which)) gain=gain.add(sell_price[which])
+        else{
+            newWeapon.push(player.equip.weapon[i])
+        }
+    }
+    player.equip.weapon=newWeapon
+    player.stat.money=player.stat.money.add(gain)
+}
+addLayer("data",{
+    startData(){
         return{
             unlocked: true,
             points: new ExpantaNum(0),
@@ -206,12 +183,10 @@ addLayer("data",
         }
     },
 })
-addLayer("stat",
-{
+addLayer("stat",{
     symbol: "<h2>M",
     position: 0,
-    startData()
-    {
+    startData(){
         return{
             unlocked: true,
             points: new ExpantaNum(0),
@@ -240,23 +215,13 @@ addLayer("stat",
             var base = n(2)//坏也 , 我看不懂/kel/kel , ajchen救救我 , ajchen带带我 , ajchen涩涩我 (?(?(?(?))))
             var result = base//计算
             var mult=n(1)
-            for(var i=0;i<7;i++)
-            {
-                if(n(player.equip.weaponCurrent[i].length).lte(3))
-                {
-                    continue
-                }
+            for(var i=0;i<7;i++){
+                if(n(player.equip.weaponCurrent[i].length).lte(3)) continue
                 result=result.add(player.equip.weaponCurrent[i][2])
                 //计算词缀对属性的影响
-                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
-                {
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(0))mult=mult.mul(1.1)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(1))mult=mult.mul(1.2)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(2))mult=mult.mul(1.3)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(3))mult=mult.mul(1.4)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(4))mult=mult.mul(1.5)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(5))mult=mult.mul(1.6)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(6))mult=mult.mul(1.7)
+                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++){
+                    if(player.equip.weaponCurrent[i][6][j].array[0]>=0 && player.equip.weaponCurrent[i][6][j].array[0]<=6)
+                        mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]).mul(0.1).add(1.1))
                 }
             }
             if(HAS(5))mult=mult.mul(1.2)
@@ -267,23 +232,13 @@ addLayer("stat",
             var base = n(0)
             var result = base
             var mult=n(1)
-            for(var i=0;i<7;i++)
-            {
-                if(n(player.equip.weaponCurrent[i].length).lte(3))
-                {
-                    continue
-                }
+            for(var i=0;i<7;i++){
+                if(n(player.equip.weaponCurrent[i].length).lte(3)) continue
                 result=result.add(player.equip.weaponCurrent[i][3])
                 //计算词缀对属性的影响
-                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
-                {
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(14))mult=mult.mul(1.1)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(15))mult=mult.mul(1.2)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(16))mult=mult.mul(1.3)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(17))mult=mult.mul(1.4)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(18))mult=mult.mul(1.5)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(19))mult=mult.mul(1.6)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(20))mult=mult.mul(1.7)
+                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++){
+                    if(player.equip.weaponCurrent[i][6][j].array[0]>=14 && player.equip.weaponCurrent[i][6][j].array[0]<=20)
+                        mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]-13).mul(0.1).add(1.1))
                 }
             }
             if(HAS(3))mult=mult.mul(1.3)
@@ -294,23 +249,13 @@ addLayer("stat",
             var base = n(10)
             var result = base
             var mult=n(1)
-            for(var i=0;i<7;i++)
-            {
-                if(n(player.equip.weaponCurrent[i].length).lte(3))
-                {
-                    continue
-                }
+            for(var i=0;i<7;i++){
+                if(n(player.equip.weaponCurrent[i].length).lte(3)) continue
                 result=result.add(player.equip.weaponCurrent[i][4])
                 //计算词缀对属性的影响
-                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++)
-                {
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(7))mult=mult.mul(1.1)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(8))mult=mult.mul(1.2)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(9))mult=mult.mul(1.3)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(10))mult=mult.mul(1.4)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(11))mult=mult.mul(1.5)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(12))mult=mult.mul(1.6)
-                    if(n(player.equip.weaponCurrent[i][6][j]).eq(13))mult=mult.mul(1.7)
+                for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++){
+                    if(player.equip.weaponCurrent[i][6][j].array[0]>=7 && player.equip.weaponCurrent[i][6][j].array[0]<=13)
+                        mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]-6).mul(0.1).add(1.1))
                 }
             }
             if(HAS(3))mult=mult.mul(1.3)
@@ -321,12 +266,8 @@ addLayer("stat",
             if(HAS(5))base=base.add(500)
             if(HAS(13))base=base.add(200)
             var result = base
-            for(var i=0;i<7;i++)
-            {
-                if(n(player.equip.weaponCurrent[i].length).lte(3))
-                {
-                    continue
-                }
+            for(var i=0;i<7;i++){
+                if(n(player.equip.weaponCurrent[i].length).lte(3)) continue
                 result=result.add(player.equip.weaponCurrent[i][5])
             }
             player.stat.spd=result
@@ -334,368 +275,128 @@ addLayer("stat",
         luck(){
             var base = n(1)
             var result = base  
-            if(_inChallenge(1))
-            {
-                result=result.mul(5)
-            }
-            else if(_inChallenge(2))
-            {
-                result=result.mul(0.7)
-            }
-            else if(_inChallenge(7))
-            {
-                result=result.mul(1000000)
-            }
+            if(_inChallenge(1)) result=result.mul(5)
+            else if(_inChallenge(2)) result=result.mul(0.7)
+            else if(_inChallenge(7)) result=result.mul(1000000)
             if(_finishChallenge(1))result=result.mul(1.1)
             if(HAS(2))result=result.mul(3)
             player.stat.luck=result
         },
     },
-    clickables:
-    {
-        "Sell 0":
-        {
-            display()
-            {
-                return '一键卖出<br>'+quality[0]
-            },
+    clickables:{
+        "Sell 0":{
+            display(){return '一键卖出<br>'+quality[0]},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                var newWeapon=[]
-                var gain=n(0)
-                for(var i=0;i<player.equip.weapon.length;i++)
-                {
-                    if(n(player.equip.weapon[i][8]).eq(0))
-                    {
-                        gain=gain.add(1)
-                    }
-                    else
-                    {
-                        newWeapon.push(player.equip.weapon[i])
-                    }
-                }
-                player.equip.weapon=newWeapon
-                player.stat.money=player.stat.money.add(gain)
-            },
+            onClick(){auto_sell(0)},
         },
-        "Sell 1":
-        {
-            display()
-            {
-                return '一键卖出<br>'+quality[1]
-            },
+        "Sell 1":{
+            display(){return '一键卖出<br>'+quality[1]},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                var newWeapon=[]
-                var gain=n(0)
-                for(var i=0;i<player.equip.weapon.length;i++)
-                {
-                    if(n(player.equip.weapon[i][8]).eq(1))
-                    {
-                        gain=gain.add(5)
-                    }
-                    else
-                    {
-                        newWeapon.push(player.equip.weapon[i])
-                    }
-                }
-                player.equip.weapon=newWeapon
-                player.stat.money=player.stat.money.add(gain)
-            },
+            onClick(){auto_sell(1)},
         },
-        "Sell 2":
-        {
-            display()
-            {
-                return '一键卖出<br>'+quality[2]
-            },
+        "Sell 2":{
+            display(){return '一键卖出<br>'+quality[2]},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                var newWeapon=[]
-                var gain=n(0)
-                for(var i=0;i<player.equip.weapon.length;i++)
-                {
-                    if(n(player.equip.weapon[i][8]).eq(2))
-                    {
-                        gain=gain.add(15)
-                    }
-                    else
-                    {
-                        newWeapon.push(player.equip.weapon[i])
-                    }
-                }
-                player.equip.weapon=newWeapon
-                player.stat.money=player.stat.money.add(gain)
-            },
+            onClick(){auto_sell(2)},
         },
-        "Sell 3":
-        {
-            display()
-            {
-                return '一键卖出<br>'+quality[3]
-            },
+        "Sell 3":{
+            display(){return '一键卖出<br>'+quality[3]},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                var newWeapon=[]
-                var gain=n(0)
-                for(var i=0;i<player.equip.weapon.length;i++)
-                {
-                    if(n(player.equip.weapon[i][8]).eq(3))
-                    {
-                        gain=gain.add(50)
-                    }
-                    else
-                    {
-                        newWeapon.push(player.equip.weapon[i])
-                    }
-                }
-                player.equip.weapon=newWeapon
-                player.stat.money=player.stat.money.add(gain)
-            },
+            onClick(){auto_sell(3)},
         },
-        "Sell 4":
-        {
-            display()
-            {
-                return '一键卖出<br>'+quality[4]
-            },
+        "Sell 4":{
+            display(){return '一键卖出<br>'+quality[4]},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                var newWeapon=[]
-                var gain=n(0)
-                for(var i=0;i<player.equip.weapon.length;i++)
-                {
-                    if(n(player.equip.weapon[i][8]).eq(4))
-                    {
-                        gain=gain.add(150)
-                    }
-                    else
-                    {
-                        newWeapon.push(player.equip.weapon[i])
-                    }
-                }
-                player.equip.weapon=newWeapon
-                player.stat.money=player.stat.money.add(gain)
-            },
+            onClick(){auto_sell(4)},
         },
-        "Sell 5":
-        {
-            display()
-            {
-                return '一键卖出<br>'+quality[5]
-            },
+        "Sell 5":{
+            display(){return '一键卖出<br>'+quality[5]},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                var newWeapon=[]
-                var gain=n(0)
-                for(var i=0;i<player.equip.weapon.length;i++)
-                {
-                    if(n(player.equip.weapon[i][8]).eq(5))
-                    {
-                        gain=gain.add(500)
-                    }
-                    else
-                    {
-                        newWeapon.push(player.equip.weapon[i])
-                    }
-                }
-                player.equip.weapon=newWeapon
-                player.stat.money=player.stat.money.add(gain)
-            },
+            onClick(){auto_sell(5)},
         },
-        "Sell 6":
-        {
-            display()
-            {
-                return '一键卖出<br>'+quality[6]
-            },
+        "Sell 6":{
+            display(){return '一键卖出<br>'+quality[6]},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                var newWeapon=[]
-                var gain=n(0)
-                for(var i=0;i<player.equip.weapon.length;i++)
-                {
-                    if(n(player.equip.weapon[i][8]).eq(6))
-                    {
-                        gain=gain.add(1500)
-                    }
-                    else
-                    {
-                        newWeapon.push(player.equip.weapon[i])
-                    }
-                }
-                player.equip.weapon=newWeapon
-                player.stat.money=player.stat.money.add(gain)
-            },
+            onClick(){auto_sell(6)},
         },
-        "AutoSell 0":
-        {
-            display()
-            {
-                return '自动卖出<br>'+quality[0]+'<br><br>'+(player.stat.guolv[0]?'启用':"禁用")
-            },
+        "AutoSell 0":{
+            display(){return '自动卖出<br>'+quality[0]+'<br><br>'+(player.stat.guolv[0]?'启用':"禁用")},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                player.stat.guolv[0]=!player.stat.guolv[0]
-            },
+            onClick(){player.stat.guolv[0]=!player.stat.guolv[0]},
         },
-        "AutoSell 1":
-        {
-            display()
-            {
-                return '自动卖出<br>'+quality[1]+'<br><br>'+(player.stat.guolv[1]?'启用':"禁用")
-            },
+        "AutoSell 1":{
+            display(){return '自动卖出<br>'+quality[1]+'<br><br>'+(player.stat.guolv[1]?'启用':"禁用")},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                player.stat.guolv[1]=!player.stat.guolv[1]
-            },
+            onClick(){player.stat.guolv[1]=!player.stat.guolv[1]},
         },
-        "AutoSell 2":
-        {
-            display()
-            {
-                return '自动卖出<br>'+quality[2]+'<br><br>'+(player.stat.guolv[2]?'启用':"禁用")
-            },
+        "AutoSell 2":{
+            display(){return '自动卖出<br>'+quality[2]+'<br><br>'+(player.stat.guolv[2]?'启用':"禁用")},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                player.stat.guolv[2]=!player.stat.guolv[2]
-            },
+            onClick(){player.stat.guolv[2]=!player.stat.guolv[2]},
         },
-        "AutoSell 3":
-        {
-            display()
-            {
-                return '自动卖出<br>'+quality[3]+'<br><br>'+(player.stat.guolv[3]?'启用':"禁用")
-            },
+        "AutoSell 3":{
+            display(){return '自动卖出<br>'+quality[3]+'<br><br>'+(player.stat.guolv[3]?'启用':"禁用")},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                player.stat.guolv[3]=!player.stat.guolv[3]
-            },
+            onClick(){player.stat.guolv[3]=!player.stat.guolv[3]},
         },
-        "AutoSell 4":
-        {
-            display()
-            {
-                return '自动卖出<br>'+quality[4]+'<br><br>'+(player.stat.guolv[4]?'启用':"禁用")
-            },
+        "AutoSell 4":{
+            display(){return '自动卖出<br>'+quality[4]+'<br><br>'+(player.stat.guolv[4]?'启用':"禁用")},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                player.stat.guolv[4]=!player.stat.guolv[4]
-            },
+            onClick(){player.stat.guolv[4]=!player.stat.guolv[4]},
         },
-        "AutoSell 5":
-        {
-            display()
-            {
-                return '自动卖出<br>'+quality[5]+'<br><br>'+(player.stat.guolv[5]?'启用':"禁用")
-            },
+        "AutoSell 5":{
+            display(){return '自动卖出<br>'+quality[5]+'<br><br>'+(player.stat.guolv[5]?'启用':"禁用")},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                player.stat.guolv[5]=!player.stat.guolv[5]
-            },
+            onClick(){player.stat.guolv[5]=!player.stat.guolv[5]},
         },
-        "AutoSell 6":
-        {
-            display()
-            {
-                return '自动卖出<br>'+quality[6]+'<br><br>'+(player.stat.guolv[6]?'启用':"禁用")
-            },
+        "AutoSell 6":{
+            display(){return '自动卖出<br>'+quality[6]+'<br><br>'+(player.stat.guolv[6]?'启用':"禁用")},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
+            style(){return {"border-radius":"0px","width":"100px","height":"100px","min-height":"100px","background-color":"orange"}},
             canClick(){return true},
-            onClick(){
-                player.stat.guolv[6]=!player.stat.guolv[6]
-            },
+            onClick(){player.stat.guolv[6]=!player.stat.guolv[6]},
         },
     },
-    tabFormat:
-    {
-        "属性":
-        {
-            buttonStyle()
-            {
-                return {"border-radius":"0px"}
-            },
+    tabFormat:{
+        "属性":{
+            buttonStyle(){return {"border-radius":"0px"}},
             content:[
                 "blank",
-                ["display-text",
-                    function() {
-                        return '<text style="color:#FF0000c0">攻击 : </text><text style="color:#FF0000">'+format(player[this.layer].atk)+'</text>'
-                    },
-                    { "color": "white", "font-size": "32px",}
-                ],
-                ["display-text",
-                    function() {
-                        return '<text style="color:#ADD8E6c0">防御 : </text><text style="color:lightblue">'+format(player[this.layer].def)+'</text>'
-                    },
-                    { "color": "white", "font-size": "32px",}
-                ],
-                ["display-text",
-                    function() {
-                        return '<text style="color:#00FF00c0">生命 : </text><text style="color:#00FF00">'+format(player[this.layer].hp)+'</text>'
-                    },
-                    { "color": "white", "font-size": "32px",}
-                ],
-                ["display-text",
-                    function() {
-                        return '<text style="color:#FF00FFc0">速度 : </text><text style="color:#FF00FF">'+format(player[this.layer].spd)+'</text>'
-                    },
-                    { "color": "white", "font-size": "32px",}
-                ],
-                ["display-text",
-                    function() {
-                        return '<text style="color:#FFFF00c0">幸运 : </text><text style="color:#FFFF00">'+format(player[this.layer].luck)+'</text>'
-                    },
-                    { "color": "white", "font-size": "32px",}
-                ],
+                ["display-text",function(){return '<text style="color:#FF0000">攻击 : '+format(player[this.layer].atk)+'</text>'},{"font-size": "32px",}],
+                ["display-text",function(){return '<text style="color:lightblue">防御 : '+format(player[this.layer].def)+'</text>'},{"font-size": "32px",}],
+                ["display-text",function(){return '<text style="color:#00FF00">生命 : '+format(player[this.layer].hp)+'</text>'},{"font-size": "32px",}],
+                ["display-text",function(){return '<text style="color:#FF00FF">速度 : '+format(player[this.layer].spd)+'</text>'},{"font-size": "32px",}],
+                ["display-text",function(){return '<text style="color:#FFFF00">幸运 : '+format(player[this.layer].luck)+'</text>'},{"font-size": "32px",}],
             ],
         },
-        "选项":
-        {
-            buttonStyle()
-            {
-                return {"border-radius":"0px"}
-            },
+        "选项":{
+            buttonStyle(){return {"border-radius":"0px"}},
             content:[
                 "blank",
                 ["row",[["clickable","Sell 0"],["clickable","Sell 1"],["clickable","Sell 2"]
@@ -706,12 +407,8 @@ addLayer("stat",
                 ,["clickable","AutoSell 3"],["clickable","AutoSell 4"],["clickable","AutoSell 5"],["clickable","AutoSell 6"],]]
             ],
         },
-        "说明":
-        {
-            buttonStyle()
-            {
-                return {"border-radius":"0px"}
-            },
+        "说明":{
+            buttonStyle(){return {"border-radius":"0px"}},
             content:[
                 ["display-text",function(){
                     return "<h1>欢迎来到 传奇-v2.0</h1>"
@@ -739,12 +436,15 @@ addLayer("stat",
                 }]
             ],
         },
-       },
+    },
     row: "side",
     layerShown(){return true},
 })
-addLayer("equip",
-{
+function display_weapon(which){
+    if(n(player.equip.weaponCurrent[which].length).lte(3))return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
+    return '<text style="color:white">'+output(player.equip.weaponCurrent[which])+'</text>'
+}
+addLayer("equip",{
     symbol: "<h2>W",
     position: 1,
     startData()
@@ -779,81 +479,39 @@ addLayer("equip",
     update(diff)
     {
         player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
-
-        //对不起 , 陌尘
+        
         var x=n(1)
-        if(_inChallenge(0))
-        {
-            x=n(5)
-        }
-        else if(_inChallenge(2))
-        {
-            x=n(0.7)
-        }
-        else if(_inChallenge(7))
-        {
-            x=n(10)
-        }
+        if(_inChallenge(0))x=n(5)
+        else if(_inChallenge(2))x=n(0.7)
+        else if(_inChallenge(7))x=n(10)
         if(_finishChallenge(0))x=x.mul(1.1)
         player.devSpeed=x
 
-        player.equip.weaponSizeMax=n(200)
-        if(_inChallenge(3))
-        {
-            player.equip.weaponSizeMax=n(10)
-        }
-        else
-        {
-            if(_finishChallenge(3))
-            {
-                player.equip.weaponSizeMax=player.equip.weaponSizeMax.add(200)
-            }
-        }
+        var xx=n(200)
+        if(_inChallenge(3))xx=n(10)
+        if(_finishChallenge(3))xx=xx.add(200)
+        player.equip.weaponSizeMax=xx
     },
-    clickables:
-    {
-        "Left":
-        {
-            display()
-            {
-                return '←'
-            },
+    clickables:{
+        "Left":{
+            display(){return '←'},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.equip.currentPage.gte(1.5)},
-            onClick(){
-                player.equip.currentPage=player.equip.currentPage.sub(1)
-            },
+            style(){return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.equip.currentPage.gt(1)},
+            onClick(){player.equip.currentPage=player.equip.currentPage.sub(1)},
         },
-        "Right":
-        {
-            display()
-            {
-                return '→'
-            },
+        "Right":{
+            display(){return '→'},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.equip.currentPage.lte(player.equip.maxPage.sub(0.5))},
-            onClick(){
-                player.equip.currentPage=player.equip.currentPage.add(1)
-            },
+            style(){return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.equip.currentPage.lt(player.equip.maxPage)},
+            onClick(){player.equip.currentPage=player.equip.currentPage.add(1)},
         },
-        "Now":
-        {
-            display()
-            {
+        "Now":{
+            display(){
                 var s='<h1>当前的</h1><br><br>'
                 var l=player.equip.currentID
-                if(n(player.equip.weapon.length).lte(l))
-                {
-                    return "<text style='color:white'><h1>"+"无"
-                }
-                if(n(player.equip.weapon[l].length).lte(1))
-                {
-                    return "<text style='color:white'><h1>"+"无"
-                }
+                if(n(player.equip.weapon.length).lte(l) || n(player.equip.weapon[l].length).lte(1))return "<text style='color:white'><h1>"+"无"
                 return "<text style='color:white'>"+s+output(player.equip.weapon[l])
             },
             unlocked(){return true},
@@ -861,24 +519,15 @@ addLayer("equip",
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                         "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Player":
-        {
-            display()
-            {
+        "Player":{
+            display(){
                 var s='<h1>穿戴中</h1><br><br>'
                 var l=player.equip.currentID
-                if(n(player.equip.weapon.length).lte(l))
-                {
-                    return "<text style='color:white'><h1>"+"无"
-                }
+                if(n(player.equip.weapon.length).lte(l))return "<text style='color:white'><h1>"+"无"
                 var x=n(player.equip.weapon[l][1])
-                if(n(player.equip.weaponCurrent[x].length).lte(3))
-                {
-                    return "<text style='color:white'><h1>"+"无"
-                }
+                if(n(player.equip.weaponCurrent[x].length).lte(3))return "<text style='color:white'><h1>"+"无"
                 return "<text style='color:white'>"+s+output(player.equip.weaponCurrent[x])
             },
             unlocked(){return true},
@@ -886,28 +535,18 @@ addLayer("equip",
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                         "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Equip":
-        {
-            display()
-            {
-                return '装备<br>'+format(player.equip.currentPage)+' / '+format(player.equip.maxPage)
-            },
+        "Equip":{
+            display(){return '装备<br>'+format(player.equip.currentPage)+' / '+format(player.equip.maxPage)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"20px 20px 0 0","width":"100px","height":"75px","min-height":"75px",}},
+            style(){return {"border-radius":"20px 20px 0 0","width":"100px","height":"75px","min-height":"75px",}},
             canClick(){return true},
             onClick(){
                 var l=player.equip.currentID
-                if(n(player.equip.weapon.length).lte(l))
-                {
-                    return
-                }
+                if(n(player.equip.weapon.length).lte(l)) return
                 var x=n(player.equip.weapon[l][1])
-                if(n(player.equip.weaponCurrent[x].length).lte(3))
-                {
+                if(n(player.equip.weaponCurrent[x].length).lte(3)){
                     player.equip.weaponCurrent[x]=player.equip.weapon[l]
                     player.equip.weapon.splice(l,1)
                     return
@@ -917,187 +556,89 @@ addLayer("equip",
                 player.equip.weaponCurrent[x]=tmp
             },
         },
-        "Sell":
-        {
-            GAIN()
-            {
+        "Sell":{
+            GAIN(){
                 var x=n(0)
                 var l=player.equip.currentID
-                if(n(player.equip.weapon.length).lte(l))
-                {
-                    x=n(0)
-                }
-                else
-                {
+                if(n(player.equip.weapon.length).gt(l)){
                     var xx=n(player.equip.weapon[l][8])
                     x=n(sell_price[xx])
                 }
                 return x
             },
-            display()
-            {
-                return '卖出<br>获得 '+format(this.GAIN())+' 金币'
-            },
+            display(){return '卖出<br>获得 '+format(this.GAIN())+' 金币'},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0 0 20px 20px","width":"100px","height":"75px","min-height":"75px",}},
+            style(){return {"border-radius":"0 0 20px 20px","width":"100px","height":"75px","min-height":"75px",}},
             canClick(){return true},
             onClick(){
                 var l=player.equip.currentID
-                if(n(player.equip.weapon.length).lte(l))
-                {
-                    return
-                }
+                if(n(player.equip.weapon.length).lte(l)) return
                 player.stat.money=player.stat.money.add(this.GAIN())
                 player.equip.weapon.splice(l,1)
             },
         },
-        "Weapon-0":
-        {
-            display()
-            {
-                if(n(player.equip.weaponCurrent[0].length).lte(3))
-                {
-                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
-                }
-                else
-                {
-                    return '<text style="color:white">'+output(player.equip.weaponCurrent[0])+'</text>'
-                }
-            },
+        "Weapon-0":{
+            display(){return display_weapon(0)},
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Weapon-1":
-        {
-            display()
-            {
-                if(n(player.equip.weaponCurrent[1].length).lte(3))
-                {
-                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
-                }
-                else
-                {
-                    return '<text style="color:white">'+output(player.equip.weaponCurrent[1])+'</text>'
-                }
-            },
+        "Weapon-1":{
+            display(){return display_weapon(1)},
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Weapon-2":
-        {
-            display()
-            {
-                if(n(player.equip.weaponCurrent[2].length).lte(3))
-                {
-                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
-                }
-                else
-                {
-                    return '<text style="color:white">'+output(player.equip.weaponCurrent[2])+'</text>'
-                }
-            },
+        "Weapon-2":{
+            display(){return display_weapon(2)},
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Weapon-3":
-        {
-            display()
-            {
-                if(n(player.equip.weaponCurrent[3].length).lte(3))
-                {
-                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
-                }
-                else
-                {
-                    return '<text style="color:white">'+output(player.equip.weaponCurrent[3])+'</text>'
-                }
-            },
+        "Weapon-3":{
+            display(){return display_weapon(3)},
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Weapon-4":
-        {
-            display()
-            {
-                if(n(player.equip.weaponCurrent[4].length).lte(3))
-                {
-                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
-                }
-                else
-                {
-                    return '<text style="color:white">'+output(player.equip.weaponCurrent[4])+'</text>'
-                }
-            },
+        "Weapon-4":{
+            display(){return display_weapon(4)},
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Weapon-5":
-        {
-            display()
-            {
-                if(n(player.equip.weaponCurrent[5].length).lte(3))
-                {
-                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
-                }
-                else
-                {
-                    return '<text style="color:white">'+output(player.equip.weaponCurrent[5])+'</text>'
-                }
-            },
+        "Weapon-5":{
+            display(){return display_weapon(5)},
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Weapon-6":
-        {
-            display()
-            {
-                if(n(player.equip.weaponCurrent[6].length).lte(3))
-                {
-                    return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
-                }
-                else
-                {
-                    return '<text style="color:white">'+output(player.equip.weaponCurrent[6])+'</text>'
-                }
-            },
+        "Weapon-6":{
+            display(){return display_weapon(6)},
             unlocked(){return true},
             style(){
                return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
                "border-width":"5px","border-color":"white"}},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
     },
     grid: {
@@ -1112,19 +653,14 @@ addLayer("equip",
         getCanClick(data, id) {
             var x=n(id/100).floor(),y=n(id%100)
             var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
-            if(n(player.equip.weapon.length).lte(idd))
-            {
-                return false
-            }
+            if(n(player.equip.weapon.length).lte(idd)) return false
             return true
         },
         getStyle(data,id){
             var x=n(id/100).floor(),y=n(id%100)
             var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
             if(player.equip.currentID.eq(idd))
-            {
                 return {"height":"50px","min-height":"50px","width":"150px","background-color":"rgb(205,185,39)","border-radius":"0px","transition-duration":"0s"}
-            }
             return {"height":"50px","min-height":"50px","width":"150px","background-color":"black","border-radius":"0px","transition-duration":"0s"}
         },
         onClick(data, id) {
@@ -1135,19 +671,11 @@ addLayer("equip",
         getDisplay(data, id) {
             var x=n(id/100).floor(),y=n(id%100)
             var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
-            if(n(player.equip.weapon.length).lte(idd))
-            {
-                return ''
-            }
-            // if(player.equip.currentID.eq(idd))
-            // {
-            //     return '<text style="color:black">'+'LV.'+format(player.equip.weapon[idd][7])+' '+player.equip.weapon[idd][0]
-            // }
+            if(n(player.equip.weapon.length).lte(idd)) return ''
             return '<text style="color:white">'+'LV.'+format(player.equip.weapon[idd][7])+' '+player.equip.weapon[idd][0]
         },
     },
-    tabFormat:
-    {
+    tabFormat:{
         "玩家":
         {
             buttonStyle()
@@ -1161,34 +689,11 @@ addLayer("equip",
                 ["row",[["clickable","Weapon-0"],"blank","blank",["clickable","Weapon-1"],"blank","blank",["clickable","Weapon-2"],]],
                 "blank",
                 ["row",[["clickable","Weapon-3"],"blank","blank",["clickable","Weapon-4"],]],
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
+                ["blank",["8px","400px"]],
             ],
         },
-        "背包":
-        {
-            buttonStyle()
-            {
-                return {"border-radius":"0px"}
-            },
+        "背包":{
+            buttonStyle(){return {"border-radius":"0px"}},
             content:[
                 "blank",
                 ["row",[["clickable","Now"],
@@ -1207,36 +712,14 @@ addLayer("equip",
                 "blank",
                 "blank",
                 ["display-text",function(){return '<h2>背包容量 '+format(player.equip.weapon.length)+' / '+format(player.equip.weaponSizeMax)}],
-                "blank",
-                "grid",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
-                "blank",
+                ["blank",["8px","400px"]],
             ],
         },
     },
     row: "side",
     layerShown(){return true},
 })
+
 var monster={
     slime:{
         name(){return "幼年史莱姆"},
@@ -1321,20 +804,22 @@ const map_img_src=[
     "<img src='js/img/地图-草.png' alt=''>",
 ]
 //`<img src="js/img/`+moster[]+`.png" alt="">`
-function re_calc(lvl)//重新生成怪物属性
-{
+function re_calc(lvl,is_teshu,namE){//重新生成怪物属性
+    player.stat.hpnow=player.stat.hp
+    player.battle.stringstringstring=""
+    player.battle.monsterProgress=n(0)
+    player.stat.playerProgress=n(0)
+    player.stat.playerFaProgress=n(0)
+    player.battle.zhandourizhi=[]
+
     var level=n(lvl)
     var canSummon=[]
 
-    for(i in monster)
-    {//是否可以生成这一种怪物
-        if(monster[i].unlocked())
-        {
-            canSummon.push(i)
-        }
-    }
+    for(i in monster)if(monster[i].unlocked())canSummon.push(i)
+
     var x=n(0).add(Math.random()).mul(canSummon.length).floor()
     var y=canSummon[x]
+    if(is_teshu==1)y=namE
     player.battle.monsterID=y
     player.battle.monsterHPmx=monster[y].hp()
     player.battle.monsterHPnow=monster[y].hp()
@@ -1343,11 +828,9 @@ function re_calc(lvl)//重新生成怪物属性
     player.battle.monsterSPD=monster[y].spd()
     return
 }
-function beiAttack()
-{
+function beiAttack(){
     var xxx=n(0).add(Math.random())
-    if(xxx.lt(0.2) && HAS(12))
-    {
+    if(xxx.lt(0.2) && HAS(12)){
         player.battle.zhandourizhi.push(
             monster[player.battle.monsterID].name()+' 对 你 造成了 <text style="color:red">'
             +format(0)+'</text> 伤害 (被格挡)')
@@ -1359,10 +842,8 @@ function beiAttack()
         monster[player.battle.monsterID].name()+' 对 你 造成了 <text style="color:red">'
         +format(player.battle.monsterATK.sub(player.stat.def).max(0))+'</text> 伤害')
 }
-function Attack()
-{
-    if(HAS(11))
-    {
+function Attack(){
+    if(HAS(11)){//恢复术
         var xxxxx=player.stat.hpnow
         player.stat.hpnow=player.stat.hpnow.add(player.stat.hp.mul(0.05)).min(player.stat.hp)
         player.battle.zhandourizhi.push(
@@ -1374,21 +855,18 @@ function Attack()
     player.battle.zhandourizhi.push(
         '你 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
         +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
-    if(HAS(8))//淬毒
-    {
+    if(HAS(8)){//淬毒
         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
         player.battle.zhandourizhi.push(
             '弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
             +format(player.stat.atk.mul(0.3))+'</text> 伤害')
     }
-    if(HAS(7))//双发弓手
-    {
+    if(HAS(7)){//双发弓手
         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
         player.battle.zhandourizhi.push(
             '另一支弓箭 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
             +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
-        if(HAS(8))//淬毒
-        {
+        if(HAS(8)){//淬毒
             player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
             player.battle.zhandourizhi.push(
                 '另一支弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
@@ -1396,13 +874,11 @@ function Attack()
         }
     }
 }
-addLayer("battle",  
-{
+addLayer("battle",  {
     symbol: "<text style='color:black'>B",
     row: 0,
     position: 0,
-    startData()
-    {
+    startData(){
         return {
             unlocked: true,
             points: new ExpantaNum(0),
@@ -1428,51 +904,33 @@ addLayer("battle",
     type: "none",
     tooltip:"战斗",
 
-    update(diff)
-    {//现在在干嘛
-        if (player[this.layer].currentDoingProgress>=1)
-        {
-            if(player.battle.inFight==0)
-            {
-                if(player.battle.currentDoingStage==0)
-                {
+    update(diff){//现在在干嘛
+        if (player[this.layer].currentDoingProgress>=1){
+            if(player.battle.inFight==0){
+                if(player.battle.currentDoingStage==0){
                     player.battle.inFight=1
-                    player.stat.hpnow=player.stat.hp
-                    player.battle.stringstringstring=""
-                    player.battle.monsterProgress=n(0)
-                    player.stat.playerProgress=n(0)
-                    player.stat.playerFaProgress=n(0)
-                    player.battle.zhandourizhi=[]
                     re_calc(player.battle.currentLvl)
                 }
-                else
-                {
-                    player[this.layer].currentDoingProgress=0
-                }
+                else player[this.layer].currentDoingProgress=0
                 player[this.layer].currentDoingStage=(player[this.layer].currentDoingStage+1)%2//保证事件在这两样之间循环
             }
         }
-        if(player.battle.inFight==1)
-        {
+        if(player.battle.inFight==1){
             player.battle.monsterProgress=player.battle.monsterProgress.add(player.battle.monsterSPD.div(5000).mul(diff))
             if(player.battle.monsterProgress.gte(1))beiAttack()
             player.stat.playerProgress=player.stat.playerProgress.add(player.stat.spd.mul(layers.challenge.clickables["T13"].EFFECT()).div(5000).mul(diff))
             if(player.stat.playerProgress.gte(1))Attack()
-            if(HAS(9) || HAS(10))
-            {
+            if(HAS(9) || HAS(10)){
                 player.stat.playerFaProgress=player.stat.playerFaProgress.add((HAS(9)?n(0.1):n(0.5)).mul(diff))
-                if(player.stat.playerFaProgress.gte(1))
-                {
+                if(player.stat.playerFaProgress.gte(1)){
                     player.stat.playerFaProgress=n(0)
-                    if(HAS(9))
-                    {
+                    if(HAS(9)){
                         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(2).sub(player.battle.monsterDEF).max(0)).max(0)
                         player.battle.zhandourizhi.push(
                             '你 使用 <text style="color:orange">火球术</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
                             +format(player.stat.atk.mul(2).sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
                     }
-                    else
-                    {
+                    else{
                         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.2)).max(0)
                         player.battle.zhandourizhi.push(
                             '你 使用 <text style="color:cyan">雷电术</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
@@ -1480,13 +938,11 @@ addLayer("battle",
                     }
                 }
             }
-            if(player.stat.hpnow.lte(0.001))
-            {
+            if(player.stat.hpnow.lte(0.001)){
                 player.battle.stringstringstring="<text style='color:red'>你死了</text>"
                 player.battle.inFight=0
             }
-            else if(player.battle.monsterHPnow.lte(0.001))
-            {
+            else if(player.battle.monsterHPnow.lte(0.001)){
                 //计算 击杀boss
                 if(player.battle.monsterID=="slime_guowang")
                 {
@@ -1512,31 +968,19 @@ addLayer("battle",
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
-                if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax))
-                {
+                if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
                     var wea=summon(monster[player.battle.monsterID].BaoLv())
                     if(Array.isArray(wea))
                     player.equip.weapon.push(wea)
                 }
-                if(HAS(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax))
-                {
+                if(HAS(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
                     var wea=summon(monster[player.battle.monsterID].BaoLv())
                     if(Array.isArray(wea))
                     player.equip.weapon.push(wea)
                 }
             }
         }
-        //下面开始处理！
-        if (player[this.layer].currentDoingStage==0)
-        {//stage=0:找怪
-            player[this.layer].currentDoingProgress+=player.stat.spd.div(5000).mul(diff).toNumber()
-            // return ['找怪',player[this.layer].currentDoingProgress]
-        }
-        if (player[this.layer].currentDoingStage==1)
-        {//stage=1:打怪
-            // player[this.layer].currentDoingProgress+=0.01
-            // return ['打怪',player[this.layer].currentDoingProgress]
-        }
+        if (player[this.layer].currentDoingStage==0) player[this.layer].currentDoingProgress+=player.stat.spd.div(5000).mul(diff).toNumber()
     },
     nodeStyle(){
         // return {"clip-path":"polygon(50% 0%,60% 10%,60% 60%,80% 60%,80% 70%,60% 70% 60% 100%,40% 100%,40% 70%,20% 70%,20% 60%,40% 60%,40% 10%)"}
@@ -1548,189 +992,87 @@ addLayer("battle",
             "clip-path":"polygon(50% 0%,70% 10%,70% 60%,90% 60%,90% 75%,60% 75%,60% 100%,40% 100%,40% 75%,10% 75%,10% 60%,30% 60%,30% 10%)"}
             // "clip-path":"polygon(80% 0%,80% 20%,60% 60%,80% 70%,70% 90%,50% 80%,40% 100%,20% 90%,30% 70%,10% 60%,20% 40%,40% 50%,60% 10%)"}
     },
-    clickables:
-    {
+    clickables:{
         "SUB":
         {
-            display()
-            {
-                return '←'
-            },
+            display(){return '←'},
             unlocked(){return true},
-            style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.gte(2)},
+            style(){return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.battle.currentLvl.gt(1)},
             onClick(){
                 player.battle.currentLvl=player.battle.currentLvl.sub(1)
-                if(player.battle.inFight==1)
-                {
-                    player.stat.hpnow=player.stat.hp
-                    player.battle.stringstringstring=""
-                    player.battle.monsterProgress=n(0)
-                    player.stat.playerProgress=n(0)
-                    player.stat.playerFaProgress=n(0)
-                    player.battle.zhandourizhi=[]
-                    re_calc(player.battle.currentLvl)
-                }
+                if(player.battle.inFight==1) re_calc(player.battle.currentLvl)
             },
-            onHold(){
-                if(this.canClick())this.onClick()
-            },
+            onHold(){if(this.canClick())this.onClick()},
         },
-        "ADD":
-        {
-            display()
-            {
-                return '→'
-            },
+        "ADD":{
+            display(){return '→'},
             unlocked(){return true},
-            style(){
-               return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.add(1).lte(49)},
+            style(){return {"width":"50px","height":"50px","min-height":"50px",}},
+            canClick(){return player.battle.currentLvl.lt(49)},
             onClick(){
                 player.battle.currentLvl=player.battle.currentLvl.add(1)
-                if(player.battle.inFight==1)
-                {
-                    player.stat.hpnow=player.stat.hp
-                    player.battle.stringstringstring=""
-                    player.battle.monsterProgress=n(0)
-                    player.stat.playerProgress=n(0)
-                    player.stat.playerFaProgress=n(0)
-                    player.battle.zhandourizhi=[]
-                    re_calc(player.battle.currentLvl)
-                }
+                if(player.battle.inFight==1) re_calc(player.battle.currentLvl)
             },
-            onHold(){
-                if(this.canClick())this.onClick()
-            },
+            onHold(){if(this.canClick())this.onClick()},
         },
-        "BOSS-1":
-        {
-            display()
-            {
-                return '挑战<br>Lv.50 史莱姆国王'
-            },
+        "BOSS-1":{
+            display(){return '挑战<br>Lv.50 史莱姆国王'},
             unlocked(){return player.battle.currentLvl.eq(49) && player.battle.kill_boss_1.eq(0)},
-            style(){
-               return {"width":"150px","height":"50px","min-height":"50px","border-radius":"10px"}},
+            style(){return {"width":"150px","height":"50px","min-height":"50px","border-radius":"10px"}},
             canClick(){return player.battle.currentLvl.eq(49)},
-            onClick(){
-                player.battle.inFight=1
-                player.currentDoingProgress=1
-                player.stat.hpnow=player.stat.hp
-                player.battle.stringstringstring=""
-                player.battle.monsterProgress=n(0)
-                player.stat.playerProgress=n(0)
-                player.battle.zhandourizhi=[]
-                var y="slime_guowang"
-                player.battle.monsterID=y
-                player.battle.monsterHPmx=monster[y].hp()
-                player.battle.monsterHPnow=monster[y].hp()
-                player.battle.monsterATK=monster[y].atk()
-                player.battle.monsterDEF=monster[y].def()
-                player.battle.monsterSPD=monster[y].spd()
-            },
+            onClick(){re_calc(player.battle.currentLvl,1,"slime_guowang")},
         },
     },
 
-    bars:
-    {
-        thatBar:
-        {
+    bars:{
+        thatBar:{
             direction: RIGHT,
             width: 400,
             height: 25,
-            progress()
-            {
-                return player[this.layer].currentDoingProgress
-            },
-            fillStyle()
-            {
-                if (player[this.layer].inFight==0) return {"background-color":"#00FF00"}
-                return {"background-color":"#FF0000"}
-            },
+            progress(){return player[this.layer].currentDoingProgress},
+            fillStyle(){return (player[this.layer].inFight==0?{"background-color":"#00FF00"}:{"background-color":"#FF0000"})},
         },
         monsterHPbar:{
             direction: RIGHT,
             width: 400,
             height: 20,
-            progress()
-            {
-                return player.battle.monsterHPnow.div(player.battle.monsterHPmx)
-            },
-            fillStyle()
-            {
-                return {"background-color":"#FF0000"}
-            },
-            display()
-            {
-                return "HP "+format(player.battle.monsterHPnow)+' / '+format(player.battle.monsterHPmx)
-            }
+            progress(){return player.battle.monsterHPnow.div(player.battle.monsterHPmx)},
+            fillStyle(){return {"background-color":"#FF0000"}},
+            display(){return "HP "+format(player.battle.monsterHPnow)+' / '+format(player.battle.monsterHPmx)}
         },
         playerHPbar:{
             direction: RIGHT,
             width: 400,
             height: 20,
-            progress()
-            {
-                return player.stat.hpnow.div(player.stat.hp)
-            },
-            fillStyle()
-            {
-                return {"background-color":"#FF0000"}
-            },
-            display()
-            {
-                return "HP "+format(player.stat.hpnow)+' / '+format(player.stat.hp)
-            }
+            progress(){return player.stat.hpnow.div(player.stat.hp)},
+            fillStyle(){return {"background-color":"#FF0000"}},
+            display(){return "HP "+format(player.stat.hpnow)+' / '+format(player.stat.hp)}
         },
         monsterSPDbar:{
             direction: RIGHT,
             width: 400,
             height: 20,
-            progress() {
-                return player.battle.monsterProgress
-            },
-            fillStyle(){
-                return {"background-color":"#FFFF00"}
-            },
-            display()
-            {
-                return ""
-            }
+            progress(){return player.battle.monsterProgress},
+            fillStyle(){return {"background-color":"#FFFF00"}},
+            display(){return ""}
         },
         playerSPDbar:{
             direction: RIGHT,
             width: 400,
             height: 20,
-            progress() {
-                return player.stat.playerProgress
-            },
-            fillStyle(){
-                return {"background-color":"#FFFF00"}
-            },
-            display()
-            {
-                return ""
-            }
+            progress(){return player.stat.playerProgress},
+            fillStyle(){return {"background-color":"#FFFF00"}},
+            display(){return ""}
         },
         playerFashubar:{
             direction: RIGHT,
             width: 400,
             height: 20,
-            unlocked(){
-                return HAS(9) || HAS(10)
-            },
-            progress() {
-                return player.stat.playerFaProgress
-            },
-            fillStyle(){
-                return {"background-color":(HAS(9)?"orange":"cyan")}
-            },
-            display()
-            {
-                return ""
-            }
+            unlocked(){return HAS(9) || HAS(10)},
+            progress(){return player.stat.playerFaProgress},
+            fillStyle(){return {"background-color":(HAS(9)?"orange":"cyan")}},
+            display(){return ""}
         },
     },
 
@@ -1758,18 +1100,15 @@ addLayer("battle",
         ["display-text",function(){
             var s=''
             var touming=['ff','ee','dd','cc','bb','aa','99','88','77','66','55','44','33','22','11','00','00','00']
-            for(var i=player.battle.zhandourizhi.length-1;i>=Math.max(0,player.battle.zhandourizhi.length-16);i--)
-            {
+            for(var i=player.battle.zhandourizhi.length-1;i>=Math.max(0,player.battle.zhandourizhi.length-16);i--){
                 s=s+'<text style="color:#FFFFFF'+touming[Math.max(player.battle.zhandourizhi.length-1-i,0)]+'">'+(i+1)+'. '+player.battle.zhandourizhi[i]+'<br>'
             }
             return s}],
     ],
-    // branches:["challenge"],
     layerShown(){return true},
 })
 
-function challenge_save()
-{
+function challenge_save(){
     player.data.hp=player.stat.hp
     player.data.playerProgress=player.stat.playerProgress
     player.data.level=player.stat.level
@@ -1800,8 +1139,7 @@ function challenge_save()
     ]
     player.battle.kill_boss_1=n(0)
 }
-function challenge_load()
-{
+function challenge_load(){
     player.stat.hpnow=player.data.hp
     player.stat.hp=player.data.hp
     player.stat.playerProgress=player.data.playerProgress
@@ -1832,43 +1170,48 @@ function challenge_load()
     ]
     player.data.kill_boss_1=n(0)
 }
-function _inChallenge(x)
-{
-    return player.challenge.in_challenge.eq(1) && player.challenge.challenge_num[0]==x
-}
-function _finishChallenge(x)
-{
-    return player.challenge.finish_challenge[x]
-}
-function huanhang(s,x)
-{
+function _inChallenge(x){return player.challenge.in_challenge.eq(1) && player.challenge.challenge_num[0]==x}
+function _finishChallenge(x){return player.challenge.finish_challenge[x]}
+function HAS(x){return player.challenge.has_tianfu[x]}
+function huanhang(s,x){
     var rt=''
-    for(var i=0;i<s.length;i++)
-    {
-        if(s[i]=='<')
-        {
-            x--;
-            x=Math.max(x,0)
-            // rt=rt+'\n'
-        }
-    }
-    for(var i=0;i<x;i++)
-    {
-        rt=rt+'\n'
-    }
+    for(var i=0;i<s.length;i++)if(s[i]=='<')x=Math.max(x-1,0)
+    for(var i=0;i<x;i++)rt=rt+'\n'
     return rt
 }
-function HAS(x)
-{
-    return player.challenge.has_tianfu[x]
+function get_challenge_text(y){
+    var rt=y*45,x=(y+1)%2
+    return '<p style="transform:rotate('+rt+'deg);font-size:'+(x?'12px':'16px')+';">'
+    +player.challenge.challenge_text[player.challenge.challenge_num[y]]
+    +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[y]],(x?32:21))
 }
-addLayer("challenge",
-{
+function get_challenge_style(y,ss,xpx,ypx){
+    const nw={
+        "width":"400px","height":"400px","min-height":"400px",
+        "clip-path":ss,
+        "left":xpx,"top":ypx,
+        "position":"relative",
+        "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[y]]?"lime":"#AF9B60")
+        ,"transition-duration":"0s"
+    }
+    return nw
+}
+function get_tianfu_style(y){
+    var nw={"width":"100px","height":"100px","min-height":"100px"
+    ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
+    nw["background-image"]="url(js/tianfu/tianfu"+y+".png)"
+    if(layers.challenge.clickables["T"+y].UNlock()){
+        if(player.challenge.has_tianfu[y]==true)nw["border-color"]="yellow"
+        else if(layers.challenge.clickables["T"+y].canBUY())nw["border-color"]="lightblue"
+        else nw["border-color"]="red"
+    }
+    return nw
+}
+addLayer("challenge",{
     symbol: "<text style='color:black;border:solid black;border-radius:100%;border-width:5px'>├C┤",
     row: 0,
     position: 2,
-    startData()
-    {
+    startData(){
         return {
             unlocked: true,
             points: new ExpantaNum(0),
@@ -2004,18 +1347,11 @@ addLayer("challenge",
             "width":"150px",}
             //10% 10%,90% 10%,90% 30%,80% 60%,70% 80%,50% 90%,30% 80%,20% 60%,10% 30%
     },
-    update(diff)
-    {
+    update(diff){
         if(player.stat.level.gte(10))player.challenge.unlock_challenge=true
 
-        if(player.tab=="challenge")
-        {
-            options.forceOneTab=true
-        }
-        else
-        {
-            options.forceOneTab=player.challenge.choose_one_tab
-        }
+        if(player.tab=="challenge")options.forceOneTab=true
+        else options.forceOneTab=player.challenge.choose_one_tab
 
         //计算天赋点
         player.challenge.tianfudianMax=n(0)
@@ -2085,225 +1421,85 @@ addLayer("challenge",
     //奇数 : 32个换行
     //偶数 : 21个换行
     //"background-color":"#AF9B60"
-    clickables:
-    {
-        11:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(0deg);font-size:12px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[0]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[0]],32)
-            },
+    clickables:{
+        11:{
+            display(){return get_challenge_text(0)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(33% 0%,66% 0%,50% 50%)",
-                    "left":"0px","top":"0px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[0]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(0,"polygon(33% 0%,66% 0%,50% 50%)","0px","0px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        12:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(45deg);font-size:16px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[1]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[1]],21)
-            },
+        12:{
+            display(){return get_challenge_text(1)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(66% 0%,100% 33%,50% 50%)",
-                    "left":"-400px","top":"0px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[1]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(1,"polygon(66% 0%,100% 33%,50% 50%)","-400px","0px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        13:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(90deg);font-size:12px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[2]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[2]],32)
-            },
+        13:{
+            display(){return get_challenge_text(2)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(100% 33%,100% 66%,50% 50%)",
-                    "left":"-200px","top":"-400px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[2]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(2,"polygon(100% 33%,100% 66%,50% 50%)","-200px","-400px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        14:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(135deg);font-size:16px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[3]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[3]],21)
-            },
+        14:{
+            display(){return get_challenge_text(3)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(100% 66%,66% 100%,50% 50%)",
-                    "left":"-400px","top":"-800px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[3]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(3,"polygon(100% 66%,66% 100%,50% 50%)","-400px","-800px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        15:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(180deg);font-size:12px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[4]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[4]],32)
-            },
+        15:{
+            display(){return get_challenge_text(4)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(66% 100%,33% 100%,50% 50%)",
-                    "left":"0px","top":"-800px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[4]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(4,"polygon(66% 100%,33% 100%,50% 50%)","0px","-800px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        16:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(225deg);font-size:16px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[5]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[5]],21)
-            },
+        16:{
+            display(){return get_challenge_text(5)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(33% 100%,0% 66%,50% 50%)",
-                    "left":"400px","top":"-800px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[5]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(5,"polygon(33% 100%,0% 66%,50% 50%)","400px","-800px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        17:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(270deg);font-size:12px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[6]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[6]],32)
-            },
+        17:{
+            display(){return get_challenge_text(6)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(0% 66%,0% 33%,50% 50%)",
-                    "left":"200px","top":"-400px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[6]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(6,"polygon(0% 66%,0% 33%,50% 50%)","200px","-400px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        18:
-        {
-            display()
-            {
-                return '<p style="transform:rotate(315deg);font-size:16px;">'
-                +player.challenge.challenge_text[player.challenge.challenge_num[7]]
-                +huanhang(player.challenge.challenge_text[player.challenge.challenge_num[7]],21)
-            },
+        18:{
+            display(){return get_challenge_text(7)},
             unlocked(){return true},
-            style(){
-               return {"width":"400px","height":"400px","min-height":"400px",
-                    "clip-path":"polygon(0% 33%,33% 0%,50% 50%)",
-                    "left":"400px","top":"0px",
-                    "position":"relative",
-                    "background-color":(player.challenge.finish_challenge[player.challenge.challenge_num[7]]?"lime":"#AF9B60")
-                    ,"transition-duration":"0s"
-                    // "border-color":"blue","border-width":"5px",
-                }
-                },
+            style(){return get_challenge_style(6,"polygon(0% 33%,33% 0%,50% 50%)","400px","0px")},
             canClick(){return false},
-            onClick(){
-            },
+            onClick(){},
         },
-        "Left":
-        {
-            display()
-            {
-                return '←'
-            },
+        "Left":{
+            display(){return '←'},
             unlocked(){return true},
             style(){
                return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px",
-            
                "left":"0px","top":"-800px",
                "position":"relative",}},
             canClick(){return player.challenge.in_challenge.eq(0)},
             onClick(){
                 var new_array=[]
                 new_array.push(player.challenge.challenge_num[player.challenge.challenge_num.length-1])
-                for(var i=0;i<player.challenge.challenge_num.length-1;i++)
-                {
+                for(var i=0;i<player.challenge.challenge_num.length-1;i++){
                     new_array.push(player.challenge.challenge_num[i])
                 }
                 player.challenge.challenge_num=new_array
             },
         },
-        "Right":
-        {
-            display()
-            {
-                return '→'
-            },
+        "Right":{
+            display(){return '→'},
             unlocked(){return true},
             style(){
                return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px",
-            
                "left":"0px","top":"-800px",
                "position":"relative",
             }},
@@ -2313,326 +1509,155 @@ addLayer("challenge",
                 player.challenge.challenge_num.splice(0,1)
             },
         },
-        "Enter":
-        {
-            canComplete()
-            {
-                if(player.challenge.challenge_num[0]==0 || player.challenge.challenge_num[0]==1 || player.challenge.challenge_num[0]==2 || player.challenge.challenge_num[0]==3)
+        "Enter":{
+            canComplete(){
+                if(player.challenge.challenge_num[0]<=3)
                 return player.battle.kill_boss_1.eq(1)
                 return false
             },
-            display()
-            {
+            display(){
                 if(player.challenge.in_challenge.eq(0))
                 return "进入挑战"
-                if(this.canComplete())
-                {
-                    return '完成挑战'
-                }
+                if(this.canComplete()) return '完成挑战'
                 return "退出挑战"
             },
             unlocked(){return true},
-            style(){
-               return {
-                "left":"0px","top":"-800px",
-                "position":"relative",
-                }
-                },
+            style(){return {"left":"0px","top":"-800px","position":"relative",}},
             canClick(){return player.challenge.in_challenge.eq(1) || !player.challenge.finish_challenge[player.challenge.challenge_num[0]]},
             onClick(){
-                if(player.challenge.in_challenge.eq(0))
-                {
+                if(player.challenge.in_challenge.eq(0)){
                     player.challenge.in_challenge=n(1)
                     challenge_save()
                 }
-                else
-                {
-                    if(this.canComplete())
-                    {
-                        player.challenge.finish_challenge[player.challenge.challenge_num[0]]=true
-                    }
+                else{
+                    if(this.canComplete()) player.challenge.finish_challenge[player.challenge.challenge_num[0]]=true
                     player.challenge.in_challenge=n(0)
                     challenge_load()
                 }
             },
         },
-        "T1":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(0)
-            },
+        "T1":{
+            UNlock(){return true},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(0) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu1.png)"
-                if(1){
-                    if(player.challenge.has_tianfu[1]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(1)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=1},
-            req:["T2","T3","T4","T5"],
-            branches() { 
-                let col = "white"
-                return this.req.map(x => [x, col]) 
-            },
         },
-        "T2":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && HAS(1)
-            },
+        "T2":{
+            UNlock(){return HAS(1)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu2.png)"
-                if(HAS(1)){
-                    if(player.challenge.has_tianfu[2]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(2)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=2},
         },
-        "T3":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(5)) && HAS(1)
-            },
+        "T3":{
+            UNlock(){return (!HAS(4) || !HAS(5)) && HAS(1)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu3.png)"
-                if(HAS(1) && (!HAS(4) || !HAS(5))){
-                    if(player.challenge.has_tianfu[3]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(3)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=3},
         },
-        "T4":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(3) || !HAS(5)) && HAS(1)
-            },
+        "T4":{
+            UNlock(){return (!HAS(3) || !HAS(5)) && HAS(1)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu4.png)"
-                if(HAS(1) && (!HAS(3) || !HAS(5))){
-                    if(player.challenge.has_tianfu[4]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(4)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=4},
         },
-        "T5":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && (!HAS(4) || !HAS(3)) && HAS(1)
-            },
+        "T5":{
+            UNlock(){return (!HAS(4) || !HAS(3)) && HAS(1)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu5.png)"
-                if(HAS(1) && (!HAS(4) || !HAS(3))){
-                    if(player.challenge.has_tianfu[5]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(5)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=5},
         },
-        "T6":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && HAS(2)
-            },
+        "T6":{
+            UNlock(){return HAS(2)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(1) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu6.png)"
-                if(HAS(2)){
-                    if(player.challenge.has_tianfu[6]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(6)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=6},
         },
-        "T7":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(5)
-            },
+        "T7":{
+            UNlock(){return HAS(5)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu7.png)"
-                if(HAS(5)){
-                    if(player.challenge.has_tianfu[7]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(7)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=7},
         },
-        "T8":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(5)
-            },
+        "T8":{
+            UNlock(){return HAS(5)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu8.png)"
-                if(HAS(5)){
-                    if(player.challenge.has_tianfu[8]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(8)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=8},
         },
-        "T9":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(4) && !HAS(10)
-            },
+        "T9":{
+            UNlock(){return HAS(4) && !HAS(10)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu9.png)"
-                if(HAS(4) && !HAS(10)){
-                    if(player.challenge.has_tianfu[9]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(9)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=9},
         },
-        "T10":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(4) && !HAS(9)
-            },
+        "T10":{
+            UNlock(){return HAS(4) && !HAS(9)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu10.png)"
-                if(HAS(4) && !HAS(9)){
-                    if(player.challenge.has_tianfu[10]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(10)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=10},
         },
-        "T11":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(4)
-            },
+        "T11":{
+            UNlock(){return HAS(4)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu11.png)"
-                if(HAS(4)){
-                    if(player.challenge.has_tianfu[11]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(11)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=11},
         },
-        "T12":
-        {
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(3)
-            },
+        "T12":{
+            UNlock(){return HAS(3)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu12.png)"
-                if(HAS(3)){
-                    if(player.challenge.has_tianfu[12]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(12)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=12},
         },
-        "T13":
-        {
-            EFFECT(){
-                if(!HAS(13))return n(1)
-                return player.stat.hp.sub(player.stat.hpnow).div(player.stat.hp).add(1)},
-            canBUY(){
-                return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && HAS(3)
-            },
+        "T13":{
+            EFFECT(){return (!HAS(13)?n(1):player.stat.hp.sub(player.stat.hpnow).div(player.stat.hp).add(1))},
+            UNlock(){return HAS(3)},
+            canBUY(){return player.challenge.tianfudianMax.sub(player.challenge.tianfudianNow).gte(2) && this.UNlock()},
             display(){return ''},
             unlocked(){return true},
-            style(){
-                var nw={"width":"100px","height":"100px","min-height":"100px"
-                ,"border-radius":"0px","border-width":"10px","border-color":"grey"}
-                nw["background-image"]="url(js/tianfu/tianfu13.png)"
-                if(HAS(3)){
-                    if(player.challenge.has_tianfu[13]==true)nw["border-color"]="yellow"
-                    else if(this.canBUY())nw["border-color"]="lightblue"
-                    else nw["border-color"]="red"
-                }
-                return nw},
+            style(){return get_tianfu_style(13)},
             canClick(){return true},
             onClick(){player.challenge.choose_tianfu_id=13},
         },
-        "ChongXi":
-        {
-            display()
-            {
-                return '重洗'
-            },
+        "ChongXi":{
+            display(){return '重洗'},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
+            style(){return {"border-radius":"20px 0 0 20px","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
             canClick(){return true},
             onClick(){
                 player.challenge.has_tianfu=[
@@ -2645,15 +1670,10 @@ addLayer("challenge",
                 player.challenge.tianfudianNow=n(0)
             },
         },
-        "GouMai":
-        {
-            display()
-            {
-                return '点亮'
-            },
+        "GouMai":{
+            display(){return '点亮'},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
+            style(){return {"border-radius":"0 20px 20px 0","width":"50px","height":"50px","min-height":"50px","transition-duration":"0s"}},
             canClick(){return true},
             onClick(){
                 if(HAS(player.challenge.choose_tianfu_id))return
@@ -2664,26 +1684,6 @@ addLayer("challenge",
             },
         },
     },
-
-    bars:
-    {
-        thatBar:
-        {
-            direction: RIGHT,
-            width: 400,
-            height: 25,
-            progress()
-            {
-                return player[this.layer].currentDoingProgress
-            },
-            fillStyle()
-            {
-                if (player[this.layer].inFight==0) return {"background-color":"#00FF00"}
-                return {"background-color":"#FF0000"}
-            },
-        },
-    },
-
     tabFormat:{
         "挑战":{
             unlocked(){return true},
@@ -2708,9 +1708,7 @@ addLayer("challenge",
                     return '<h1>你有 '+format(player.challenge.tianfudianNow)+' / '+format(player.challenge.tianfudianMax)+' 天赋点'
                 }],"blank",["clickable","GouMai"],]],
                 "blank",
-                ["display-text",function(){
-                    return player.challenge.complete_tianfu_text[player.challenge.choose_tianfu_id]
-                }],
+                ["display-text",function(){return player.challenge.complete_tianfu_text[player.challenge.choose_tianfu_id]}],
                 "blank",
                 ["column",[
                     ["row",[
@@ -2755,45 +1753,6 @@ addLayer("challenge",
                             "blank","blank","blank",
                             ["clickable","T8"],]],
                 ]],
-                // ["row",[
-                //     ["column",[["clickable","T6"],
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",]],
-                //     "blank",
-                //     "blank",
-                //     ["column",[["clickable","T2"],
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",
-                //                 "blank",]],
-                //     "blank",
-                //     "blank",
-                //     ["column",[["clickable","T3"],
-                //                "blank",
-                //                ["clickable","T1"],
-                //                "blank",
-                //                ["clickable","T5"],
-                //                "blank",
-                //                ["clickable","T7"]]],
-                //     "blank",
-                //     "blank",
-                //     ["column",[["clickable","T4"],
-                //                "blank",
-                //                "blank",
-                //                "blank",
-                //                "blank",
-                //                "blank",
-                //                "blank",
-                //                "blank",]]]
-                // ],
             ]
         }
     },

@@ -71,32 +71,32 @@ addLayer("tree-tab", {
         "blank",
         ["display-text",
             function() {
-                return '<text style="color:#FF0000c0">攻击 : </text><text style="color:#FF0000">'+format(player.stat.atk)+'</text>'
+                return '<text style="color:#FF0000">攻击 : </text><text style="color:#FF0000">'+format(player.stat.atk)+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],
         ["display-text",
             function() {
-                return '<text style="color:#ADD8E6c0">防御 : </text><text style="color:lightblue">'+format(player.stat.def)+'</text>'
+                return '<text style="color:#ADD8E6">防御 : </text><text style="color:lightblue">'+format(player.stat.def)+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],
         ["display-text",
             function() {
-                return '<text style="color:#00FF00c0">生命 : </text><text style="color:#00FF00">'+format(player.stat.hp)+'</text>'
+                return '<text style="color:#00FF00">生命 : </text><text style="color:#00FF00">'+format(player.stat.hp)+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],
         ["display-text",
             function() {
-                return '<text style="color:#FF00FFc0">速度 : </text><text style="color:#FF00FF">'+format(player.stat.spd)
+                return '<text style="color:#FF00FF">速度 : </text><text style="color:#FF00FF">'+format(player.stat.spd)
                 +(HAS(13)?'x'+format(layers.challenge.clickables["T13"].EFFECT())+'='+format(player.stat.spd.mul(layers.challenge.clickables["T13"].EFFECT())):'')+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],
         ["display-text",
             function() {
-                return '<text style="color:#FFFF00c0">幸运 : </text><text style="color:#FFFF00">'+format(player.stat.luck)+'</text>'
+                return '<text style="color:#FFFF00">幸运 : </text><text style="color:#FFFF00">'+format(player.stat.luck)+'</text>'
             },
             { "color": "white", "font-size": "32px",}
         ],
