@@ -966,19 +966,26 @@ addLayer("battle",  {
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(EXPgain)+' 点经验'
                 player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
                 player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(MONEYgain)+' 金币'
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
-                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
+                //player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
+                //player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
                 if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
                     var wea=summon(monster[player.battle.monsterID].BaoLv())
-                    if(Array.isArray(wea))
-                    player.equip.weapon.push(wea)
+                    if(Array.isArray(wea)){
+                        player.equip.weapon.push(wea)
+                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了${wea[0]} !`       
+                    }else{
+                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了一件装备，但是被自动售出了`       
+                    }
                 }
                 if(HAS(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
-                    var wea=summon(monster[player.battle.monsterID].BaoLv())
-                    if(Array.isArray(wea))
-                    player.equip.weapon.push(wea)
+                    if(Array.isArray(wea)){
+                        player.equip.weapon.push(wea)
+                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了${wea[0]} !`       
+                    }else{
+                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了一件装备，但是被自动售出了`       
+                    }
                 }
             }
         }
