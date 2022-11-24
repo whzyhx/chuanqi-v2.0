@@ -749,8 +749,8 @@ add_monster('slime_fashi',   "史莱姆<text style='color:#0000FF'>法师</text>
 add_monster('slime_jingying',"史莱姆<text style='color:#00FFFF'>精英</text>",'史莱姆精英',            10, 49,  1.1, 30,   20,   15,  1500, 15,  30,  10)
 add_monster('slime_guowang', "史莱姆<text style='color:gold'>国王</text>",   '史莱姆国王',            1,  0,   1,   3000, 1000, 750, 1750, 150, 300, 100)
 add_monster('kulou_xiao',    "小骷髅",                                       '小骷髅',/*补充补充*/    51, 149, 1.1, 30,   35,   10,  1250, 150, 300, 3)
-add_monster('kulou_zhong',   "中骷髅",                                       '中骷髅',/*补充补充*/    56, 149, 1.1, 60,   70,   20,  1300, 150, 300, 3)
-add_monster('kulou_da',      "大骷髅",                                       '大骷髅',/*补充补充*/    61, 149, 1.1, 100,  120,  30,  1400, 150, 300, 3)
+add_monster('kulou_zhong',   "中骷髅",                                       '中骷髅',/*补充补充*/    56, 149, 1.1, 60,   70,   20,  1300, 300, 450, 3)
+add_monster('kulou_da',      "大骷髅",                                       '大骷髅',/*补充补充*/    61, 149, 1.1, 100,  120,  30,  1400, 500, 600, 3)
 const map_img_src=[
     "<img src='js/img/地图-草.png' alt=''>",
     "<img src='js/img/地图-土.png' alt=''>",
@@ -820,7 +820,7 @@ function Attack(){
         player.battle.zhandourizhi.push(
             '另一支弓箭 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
             +format(player.stat.atk.mul(mult).sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
-        if(HAS(8)){//淬毒
+        if(hasTalent(8)){//淬毒
             player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
             player.battle.zhandourizhi.push(
                 '另一支弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
