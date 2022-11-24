@@ -78,10 +78,11 @@ function getAffix(){
     xx=xx.mul(affix.length).floor()
     return xx
 }
-function summon(baolv){
+function summon(baolv,is_second){
     var data=[]
     var affixku=[]
     var x=n(0).add(Math.random())//随机品质
+    if(is_second==1) x=n(0).add(Math.random())
     // x=n(0.0000000001) // 匿名专属爆率 , ajchen不许用(?)
     x=x.div(player.stat.luck).div(baolv)
     var which=0
@@ -146,7 +147,6 @@ function output(data){
     return s
 }
 // ------------ END -------------\\
-
 function auto_sell(which){
     var newWeapon=[]
     var gain=n(0)
@@ -270,6 +270,7 @@ addLayer("stat",{
                 if(n(player.equip.weaponCurrent[i].length).lte(3)) continue
                 result=result.add(player.equip.weaponCurrent[i][5])
             }
+            if(hasTalent(7))result=result.mul(0.8)
             player.stat.spd=result
         },
         luck(){
@@ -723,88 +724,36 @@ addLayer("equip",{
     layerShown(){return true},
 })
 
+
 var monster={
-    slime:{
-        name(){return "幼年史莱姆"},
-        src(){return '史莱姆'},
-        unlocked(){return n(player.battle.currentLvl).gte(1)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
-        hp(){return n(5).mul(monster['slime'].mult())},
-        atk(){return n(1).mul(monster['slime'].mult())},
-        def(){return n(0).mul(monster['slime'].mult())},
-        spd(){return n(2000)},
-        EXP_gain(){return n(1)},
-        MONEY_gain(){return n(1)},
-        BaoLv(){return n(1)},
-    },
-    slime_zhanshi:{
-        name(){return "史莱姆<text style='color:#FF0000'>战士</text>"},
-        src(){return '史莱姆战士'},
-        unlocked(){return n(player.battle.currentLvl).gte(2)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
-        hp(){return n(10).mul(monster['slime_zhanshi'].mult())},
-        atk(){return n(5).mul(monster['slime_zhanshi'].mult())},
-        def(){return n(2).mul(monster['slime_zhanshi'].mult())},
-        spd(){return n(2000)},
-        EXP_gain(){return n(2)},
-        MONEY_gain(){return n(3)},
-        BaoLv(){return n(2)},
-    },
-    slime_gongshou:{
-        name(){return "史莱姆<text style='color:#00FF00'>弓手</text>"},
-        src(){return '史莱姆弓手'},
-        unlocked(){return n(player.battle.currentLvl).gte(4)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
-        hp(){return n(15).mul(monster['slime_gongshou'].mult())},
-        atk(){return n(8).mul(monster['slime_gongshou'].mult())},
-        def(){return n(4).mul(monster['slime_gongshou'].mult())},
-        spd(){return n(2500)},
-        EXP_gain(){return n(4)},
-        MONEY_gain(){return n(6)},
-        BaoLv(){return n(3)},
-    },
-    slime_fashi:{
-        name(){return "史莱姆<text style='color:#0000FF'>法师</text>"},
-        src(){return '史莱姆法师'},
-        unlocked(){return n(player.battle.currentLvl).gte(6)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
-        hp(){return n(25).mul(monster['slime_fashi'].mult())},
-        atk(){return n(15).mul(monster['slime_fashi'].mult())},
-        def(){return n(8).mul(monster['slime_fashi'].mult())},
-        spd(){return n(2500)},
-        EXP_gain(){return n(8)},
-        MONEY_gain(){return n(15)},
-        BaoLv(){return n(5)},
-    },
-    slime_jingying:{
-        name(){return "史莱姆<text style='color:#00FFFF'>精英</text>"},
-        src(){return '史莱姆精英'},
-        unlocked(){return n(player.battle.currentLvl).gte(10)},
-        mult(){return n(1.1).pow(n(player.battle.currentLvl))},
-        hp(){return n(30).mul(monster['slime_jingying'].mult())},
-        atk(){return n(20).mul(monster['slime_jingying'].mult())},
-        def(){return n(15).mul(monster['slime_jingying'].mult())},
-        spd(){return n(1500)},
-        EXP_gain(){return n(15)},
-        MONEY_gain(){return n(30)},
-        BaoLv(){return n(10)},
-    },
-    slime_guowang:{
-        name(){return "史莱姆<text style='color:gold'>国王</text>"},
-        src(){return '史莱姆国王'},
-        unlocked(){return false},
-        mult(){return n(1)},
-        hp(){return n(3000).mul(monster['slime_guowang'].mult())},
-        atk(){return n(1000).mul(monster['slime_guowang'].mult())},
-        def(){return n(750).mul(monster['slime_guowang'].mult())},
-        spd(){return n(1750)},
-        EXP_gain(){return n(150)},
-        MONEY_gain(){return n(300)},
-        BaoLv(){return n(100)},
-    },
 }
+function add_monster(id,Name, Src, UnlockedLB, UnlockedUB, MultBase, HpBase, AtkBase, DefBase, Spd, ExpGain, MoneyGain, BaoLv) {
+    monster[id] = {
+        name: () => Name,
+        src: () => Src,
+        unlocked: () => player.battle.currentLvl.gte(UnlockedLB) && player.battle.currentLvl.lte(UnlockedUB),
+        mult: () => n(MultBase).pow(n(player.battle.currentLvl)),
+        hp: () => n(HpBase).mul(monster[id].mult()),
+        atk: () => n(AtkBase).mul(monster[id].mult()),
+        def: () => n(DefBase).mul(monster[id].mult()),
+        spd: () => n(Spd),
+        EXP_gain: () => n(ExpGain),
+        MONEY_gain: () => n(MoneyGain),
+        BaoLv: () => n(BaoLv)
+    }
+}
+add_monster('slime',         "幼年史莱姆",                                   '史莱姆',/*补充*/        1,  49,  1.1, 5,    1,    0,   2000, 1,   1,   1)
+add_monster('slime_zhanshi', "史莱姆<text style='color:#FF0000'>战士</text>",'史莱姆战士',            2,  49,  1.1, 10,   5,    2,   2000, 2,   3,   2)
+add_monster('slime_gongshou',"史莱姆<text style='color:#00FF00'>弓手</text>",'史莱姆弓手',            4,  49,  1.1, 15,   8,    4,   2500, 4,   6,   3)
+add_monster('slime_fashi',   "史莱姆<text style='color:#0000FF'>法师</text>",'史莱姆法师',            6,  49,  1.1, 25,   15,   8,   2500, 8,   15,  5)
+add_monster('slime_jingying',"史莱姆<text style='color:#00FFFF'>精英</text>",'史莱姆精英',            10, 49,  1.1, 30,   20,   15,  1500, 15,  30,  10)
+add_monster('slime_guowang', "史莱姆<text style='color:gold'>国王</text>",   '史莱姆国王',            1,  0,   1,   3000, 1000, 750, 1750, 150, 300, 100)
+add_monster('kulou_xiao',    "小骷髅",                                       '小骷髅',/*补充补充*/    51, 149, 1.1, 30,   35,   10,  1250, 150, 300, 3)
+add_monster('kulou_zhong',   "中骷髅",                                       '中骷髅',/*补充补充*/    56, 149, 1.1, 60,   70,   20,  1300, 150, 300, 3)
+add_monster('kulou_da',      "大骷髅",                                       '大骷髅',/*补充补充*/    61, 149, 1.1, 100,  120,  30,  1400, 150, 300, 3)
 const map_img_src=[
     "<img src='js/img/地图-草.png' alt=''>",
+    "<img src='js/img/地图-土.png' alt=''>",
 ]
 //`<img src="js/img/`+moster[]+`.png" alt="">`
 function re_calc(lvl,is_teshu,namE){//重新生成怪物属性
@@ -846,6 +795,8 @@ function beiAttack(){
         +format(player.battle.monsterATK.sub(player.stat.def).max(0))+'</text> 伤害')
 }
 function Attack(){
+    var mult=n(1)
+    if(hasTalent(7))mult=n(0.75)
     if(hasTalent(11)){//恢复术
         var xxxxx=player.stat.hpnow
         player.stat.hpnow=player.stat.hpnow.add(player.stat.hp.mul(0.05)).min(player.stat.hp)
@@ -854,10 +805,10 @@ function Attack(){
             +format(player.stat.hpnow.sub(xxxxx))+'</text> 血量')
     }
     player.stat.playerProgress=n(0)
-    player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
+    player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(mult).sub(player.battle.monsterDEF).max(0)).max(0)
     player.battle.zhandourizhi.push(
         '你 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
-        +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
+        +format(player.stat.atk.mul(mult).sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
     if(hasTalent(8)){//淬毒
         player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
         player.battle.zhandourizhi.push(
@@ -865,11 +816,11 @@ function Attack(){
             +format(player.stat.atk.mul(0.3))+'</text> 伤害')
     }
     if(hasTalent(7)){//双发弓手
-        player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.sub(player.battle.monsterDEF).max(0)).max(0)
+        player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(mult).sub(player.battle.monsterDEF).max(0)).max(0)
         player.battle.zhandourizhi.push(
             '另一支弓箭 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
-            +format(player.stat.atk.sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
-        if(hasTalent(8)){//淬毒
+            +format(player.stat.atk.mul(mult).sub(player.battle.monsterDEF).max(0))+'</text> 伤害')
+        if(HAS(8)){//淬毒
             player.battle.monsterHPnow=player.battle.monsterHPnow.sub(player.stat.atk.mul(0.3)).max(0)
             player.battle.zhandourizhi.push(
                 '另一支弓箭上的<text style="color:pink">毒</text> 对 '+monster[player.battle.monsterID].name()+' 造成了 <text style="color:red">'
@@ -962,30 +913,27 @@ addLayer("battle",  {
                 //注意 , 掉落是需要显示的 , 即加到stringstringstring里
                 var EXPgain=monster[player.battle.monsterID].EXP_gain()
                 var MONEYgain=monster[player.battle.monsterID].MONEY_gain()
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
-                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(EXPgain)+' 点经验'
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
-                player.battle.stringstringstring=player.battle.stringstringstring+'你获得了 '+format(MONEYgain)+' 金币'
-                //player.battle.stringstringstring=player.battle.stringstringstring+'<br>'
-                //player.battle.stringstringstring=player.battle.stringstringstring+'你获得了一件装备 !'
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了 '+format(EXPgain)+' 点经验'
+                player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了 '+format(MONEYgain)+' 金币'
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
                 if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
-                    var wea=summon(monster[player.battle.monsterID].BaoLv())
-                    if(Array.isArray(wea)){
+                    var wea=summon(monster[player.battle.monsterID].BaoLv(),0)
+                    if(Array.isArray(wea))
+                    {
                         player.equip.weapon.push(wea)
-                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了${wea[0]} !`       
-                    }else{
-                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了一件装备，但是被自动售出了`       
+                        player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了 '+wea[0]
                     }
+                    else player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了一件装备 , 但是自动卖出了'
                 }
                 if(hasTalent(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
-                    if(Array.isArray(wea)){
+                    var wea=summon(monster[player.battle.monsterID].BaoLv(),1)
+                    if(Array.isArray(wea))
+                    {
                         player.equip.weapon.push(wea)
-                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了${wea[0]} !`       
-                    }else{
-                        player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了一件装备，但是被自动售出了`       
+                        player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了 '+wea[0]
                     }
+                    else player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了一件装备 , 但是自动卖出了'
                 }
             }
         }
@@ -1010,6 +958,7 @@ addLayer("battle",  {
             canClick(){return player.battle.currentLvl.gt(1)},
             onClick(){
                 player.battle.currentLvl=player.battle.currentLvl.sub(1)
+                if(player.battle.currentLvl.eq(50))player.battle.currentLvl=player.battle.currentLvl.sub(1)
                 if(player.battle.inFight==1) re_calc(player.battle.currentLvl)
             },
             onHold(){if(this.canClick())this.onClick()},
@@ -1018,9 +967,13 @@ addLayer("battle",  {
             display(){return '→'},
             unlocked(){return true},
             style(){return {"width":"50px","height":"50px","min-height":"50px",}},
-            canClick(){return player.battle.currentLvl.lt(49)},
+            canClick(){
+                return player.battle.currentLvl.lt(49)
+                ||(player.battle.kill_boss_1.eq(1) && player.battle.currentLvl.lt(149))
+            },
             onClick(){
                 player.battle.currentLvl=player.battle.currentLvl.add(1)
+                if(player.battle.currentLvl.eq(50))player.battle.currentLvl=player.battle.currentLvl.add(1)
                 if(player.battle.inFight==1) re_calc(player.battle.currentLvl)
             },
             onHold(){if(this.canClick())this.onClick()},
@@ -1095,7 +1048,10 @@ addLayer("battle",  {
         "blank",
         "blank",
         ["display-text",function(){return "<h2>怪物 : "+monster[player.battle.monsterID].name()}],
-        ["display-text",function(){return `<img src="js/img/`+monster[player.battle.monsterID].src()+`.png" alt="">`+'<br>'+map_img_src[0]}],
+        ["display-text",function(){return `<img src="js/img/`+monster[player.battle.monsterID].src()+`.png" alt="">`+'<br>'
+        +map_img_src[
+            (player.battle.currentLvl.lte(49)?0:1)
+        ]}],
         "blank",
         ["bar","monsterHPbar"],
         ["bar","monsterSPDbar"],
@@ -1485,7 +1441,7 @@ addLayer("challenge",{
         18:{
             display(){return get_challenge_text(7)},
             unlocked(){return true},
-            style(){return get_challenge_style(6,"polygon(0% 33%,33% 0%,50% 50%)","400px","0px")},
+            style(){return get_challenge_style(7,"polygon(0% 33%,33% 0%,50% 50%)","400px","0px")},
             canClick(){return false},
             onClick(){},
         },
