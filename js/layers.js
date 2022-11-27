@@ -106,7 +106,7 @@ function summon(baolv,is_second,yuansu){
     var x=n(0).add(Math.random())//随机品质
     if(is_second==1) x=n(0).add(Math.random())
     // x=n(0.000001) // 匿名专属爆率 , ajchen不许用(?)
-    x=x.div(player.stat.luck).div(baolv)
+    x=x.div(player.stat.luck.root(2)).div(baolv)
     var which=0
     var name=''
     for(var i=0;i<possibility.length;i++){
@@ -540,7 +540,7 @@ addLayer("equip",{
         else if(_inChallenge(2))x=n(0.7)
         else if(_inChallenge(7))x=n(10)
         if(_finishChallenge(0))x=x.mul(1.1)
-        player.devSpeed=x
+        player.devSpeed=5
 
         var xx=n(200)
         if(_inChallenge(3))xx=n(10)
@@ -825,12 +825,12 @@ add_monster('slime_gongshou',"史莱姆<text style='color:#00FF00'>弓手</text>
 add_monster('slime_fashi',   "史莱姆<text style='color:#0000FF'>法师</text>",   '史莱姆法师',        3,  49,  1.5, 20,   15,   3,   2000, 5,   7,   1.5, 0 )
 add_monster('slime_jingying',"史莱姆<text style='color:#00FFFF'>精英</text>",   '史莱姆精英',        10, 49,  1.5, 30,   20,   15,  2250, 10,  15,  2,   0 )
 add_monster('slime_guowang', "史莱姆<text style='color:gold'>国王</text>",      '史莱姆国王',        1,  0,   1,   1000, 750,  500, 1500, 20,  30,  10,  0 )
-add_monster('kulou_xiao',    "小骷髅",/*补补*/                                  '小骷髅',/*补补*/    51, 149, 1.5, 30,   35,   10,  1250, 15,  20,  3,   0 )
-add_monster('kulou_zhong',   "中骷髅",/*补补*/                                  '中骷髅',/*补补*/    56, 149, 1.5, 60,   70,   20,  1300, 30,  40,  10,  0 )
-add_monster('kulou_da',      "大骷髅",/*补补*/                                  '大骷髅',/*补补*/    61, 149, 1.5, 100,  120,  30,  1400, 50,  60,  20,  0 )
-add_monster('kulou_da_huo',  "<text style='color:red'>火·</text>大骷髅",/*补*/  '大骷髅-火',/*补*/   66, 149, 1.5, 150,  360,  30,  1400, 70,  80,  30,  1 )
-add_monster('kulou_da_feng', "<text style='color:cyan'>风·</text>大骷髅",/*补*/ '大骷髅-风',/*补*/   66, 149, 1.5, 100,  180,  30,  4200, 80,  100, 30,  2 )
-add_monster('kulou_da_tu',   "<text style='color:brown'>土·</text>大骷髅",/*补*/'大骷髅-土',/*补*/   66, 149, 1.5, 150,  120,  80,  1400, 90,  120, 30,  3 )
+add_monster('kulou_xiao',    "小骷髅",/*补补*/                                  '小骷髅',/*补补*/    51, 149, 1.5, 30,   35,   10,  1250, 15,  20,  2,   0 )
+add_monster('kulou_zhong',   "中骷髅",/*补补*/                                  '中骷髅',/*补补*/    56, 149, 1.5, 40,   50,   15,  1400, 30,  40,  2.5, 0 )
+add_monster('kulou_da',      "大骷髅",/*补补*/                                  '大骷髅',/*补补*/    61, 149, 1.5, 60,   75,   30,  1500, 50,  60,  3,   0 )
+add_monster('kulou_da_huo',  "<text style='color:red'>火·</text>大骷髅",/*补*/  '大骷髅-火',/*补*/   66, 149, 1.5, 90,   150,  30,  1500, 70,  80,  3.5,  1 )
+add_monster('kulou_da_feng', "<text style='color:cyan'>风·</text>大骷髅",/*补*/ '大骷髅-风',/*补*/   66, 149, 1.5, 70,   120,  30,  2500, 80,  100, 3.5,  2 )
+add_monster('kulou_da_tu',   "<text style='color:brown'>土·</text>大骷髅",/*补*/'大骷髅-土',/*补*/   66, 149, 1.5, 80,   100,  65,  1500, 90,  120, 3.5,  3 )
 const map_img_src=[
     "<img src='js/img/地图-草.png' alt=''>",
     "<img src='js/img/地图-土.png' alt=''>",
