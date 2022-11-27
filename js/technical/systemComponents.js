@@ -128,7 +128,7 @@ var systemComponents = {
         <h3>{{VERSION.withName}}</h3>
         <span v-if="modInfo.author">
             <br>
-            作者: {{modInfo.author}}	
+            作者: <h1><h1><h1>匿_名</h1></h1></h1> 和 <small><small><small>ajchen</small></small></small>
         </span>
         <br>
         模组树 <a v-bind:href="'https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md'" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}" >{{TMT_VERSION.tmtNum}}</a> 制作者为Acamaeda

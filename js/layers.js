@@ -7,14 +7,17 @@ const quality=[
     "<text style='color:gold'>传奇的</text>",
     "<text style='color:red'>神话的</text>",
 ]
+const quality_color=[
+    "grey","white","lime","lightblue","magenta","gold","red",
+]
 const possibility=[
     n(1000000),
-    n(0.1),
-    n(0.01),
-    n(0.001),
-    n(0.0001),
-    n(0.00001),
-    n(0.000001),
+    n(0.40),
+    n(0.20),
+    n(0.04),
+    n(0.0075),
+    n(0.0023),
+    n(0.0002),
 ]
 const part=[
     "剑",
@@ -34,8 +37,8 @@ const part_base=[
     [n(1),n(0),n(2),n(0)],
     [n(0),n(1.5),n(1.5),n(0)],
 ]
-const base=[n(2),n(1),n(5),n(10)]
-const quality_base=[n(1),n(2),n(5),n(10),n(20),n(50),n(100)]
+const base=[n(1),n(0.5),n(2.5),n(10)]
+const quality_base=[n(1),n(2),n(3),n(5),n(7),n(10),n(20)]
 const affix=[
     ["<text style='color:grey'>力量I"  , "攻击+10%"],
     ["<text style='color:white'>力量II" ,"攻击+20%"],
@@ -61,29 +64,48 @@ const affix=[
     ["<text style='color:gold'>韧性VI" , "防御+60%"],
     ["<text style='color:red'>韧性VII" , "防御+70%"],
 ]
+const affixQualityLb=[
+    0,0,1,1,2,2,3,
+    0,0,1,1,2,2,3,
+    0,0,1,1,2,2,3,
+]
+const affixQualityUb=[
+    1,2,3,4,6,6,6,
+    1,2,3,4,6,6,6,
+    1,2,3,4,6,6,6,
+]
 const affixPoss=[
     [n(0),n(0),n(0),n(0),n(0)],
-    [n(0),n(0),n(0),n(0),n(0)],
-    [n(0.5),n(0),n(0),n(0),n(0)],
-    [n(0.8),n(0.2),n(0),n(0),n(0)],
-    [n(0.8),n(0.6),n(0.2),n(0),n(0)],
-    [n(1),n(0.8),n(0.6),n(0.2),n(0)],
-    [n(1),n(1),n(0.8),n(0.6),n(0.2)]
+    [n(0.2),n(0),n(0),n(0),n(0)],
+    [n(0.6),n(0),n(0),n(0),n(0)],
+    [n(0.8),n(0.4),n(0),n(0),n(0)],
+    [n(1),n(0.6),n(0.4),n(0),n(0)],
+    [n(1),n(1),n(0.6),n(0.4),n(0)],
+    [n(1),n(1),n(1),n(0.6),n(0.4)]
 ]
 //每件装备格式如下
-//[名字,部位,att,def,hp,spd,[ , , ],level,quality]
+//[名字,部位,att,def,hp,spd,[ , , ],level,quality,yuansu]
+//0: 无 , 1: 火 , 2: 风 , 3: 土
 const sell_price=[1,5,15,50,150,500,1500]
-function getAffix(){
+function getAffix(pinzhi,now_affix){
+    var new_affix=[]
+    var vis=[]
+    for(var i=0;i<500;i++)vis.push(false)
+    for(var i=0;i<now_affix.length;i++)vis[now_affix[i]]=true
+    for(var i=0;i<affix.length;i++){
+        if(n(pinzhi).gte(affixQualityLb[i]) && n(pinzhi).lte(affixQualityUb[i]) && !vis[i])
+            new_affix.push(i)
+    }
     var xx=n(0).add(Math.random())
-    xx=xx.mul(affix.length).floor()
-    return xx
+    xx=xx.mul(new_affix.length).floor()
+    return new_affix[xx]
 }
-function summon(baolv,is_second){
+function summon(baolv,is_second,yuansu){
     var data=[]
     var affixku=[]
     var x=n(0).add(Math.random())//随机品质
     if(is_second==1) x=n(0).add(Math.random())
-    // x=n(0.0000000001) // 匿名专属爆率 , ajchen不许用(?)
+    // x=n(0.000001) // 匿名专属爆率 , ajchen不许用(?)
     x=x.div(player.stat.luck).div(baolv)
     var which=0
     var name=''
@@ -97,12 +119,15 @@ function summon(baolv,is_second){
         player.stat.money=player.stat.money.add(sell_price[which])
         return 1
     }
+    if(yuansu==1)name='<text style="color:red">火·</text>'+name
+    if(yuansu==2)name='<text style="color:cyan">风·</text>'+name
+    if(yuansu==3)name='<text style="color:olive">土·</text>'+name
     var xxx=n(0).add(Math.random())//随机词缀
     var xxxx=n(which)
     for(var i=0;i<5;i++){
         var gailv=affixPoss[xxxx][i]
         if(xxx.lte(gailv)){
-            pos=getAffix()
+            pos=getAffix(xxxx,affixku)
             name=name+affix[pos][0]+'的</text>'
             affixku.push(pos)
         }
@@ -113,7 +138,7 @@ function summon(baolv,is_second){
     data.push(name)
     data.push(xx)
     //计算装备等级对属性的影响
-    var mult=n(1.05).pow(player.battle.currentLvl.sub(1))
+    var mult=n(0.2).mul(player.battle.currentLvl.sub(1)).add(1)
     for(var i=0;i<4;i++){
         if(i==3)mult=n(1)
         data.push(n(base[i].mul(quality_base[xxxx]).mul(part_base[xx][i])).mul(mult))
@@ -122,6 +147,7 @@ function summon(baolv,is_second){
     data.push(affixku)
     data.push(player.battle.currentLvl)
     data.push(xxxx)
+    data.push(yuansu)
     return data
 }
 function output(data){
@@ -220,12 +246,12 @@ addLayer("stat",{
                 result=result.add(player.equip.weaponCurrent[i][2])
                 //计算词缀对属性的影响
                 for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++){
-                    if(player.equip.weaponCurrent[i][6][j].array[0]>=0 && player.equip.weaponCurrent[i][6][j].array[0]<=6)
-                        mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]).mul(0.1).add(1.1))
+                    if(player.equip.weaponCurrent[i][6][j]>=0 && player.equip.weaponCurrent[i][6][j]<=6)
+                        mult=mult.add(n(player.equip.weaponCurrent[i][6][j]).add(1).mul(0.1))
                 }
             }
-            if(hasTalent(5))mult=mult.mul(1.2)
-            if(hasTalent(4))mult=mult.mul(1.5)
+            if(hasTalent(5))result=result.mul(1.2)
+            if(hasTalent(4))result=result.mul(1.5)
             player.stat.atk=result.mul(mult)//返回
         },
         def(){
@@ -237,12 +263,12 @@ addLayer("stat",{
                 result=result.add(player.equip.weaponCurrent[i][3])
                 //计算词缀对属性的影响
                 for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++){
-                    if(player.equip.weaponCurrent[i][6][j].array[0]>=14 && player.equip.weaponCurrent[i][6][j].array[0]<=20)
-                        mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]-13).mul(0.1).add(1.1))
+                    if(player.equip.weaponCurrent[i][6][j]>=14 && player.equip.weaponCurrent[i][6][j]<=20)
+                        mult=mult.add(n(player.equip.weaponCurrent[i][6][j]-13).add(1).mul(0.1))
                 }
             }
-            if(hasTalent(3))mult=mult.mul(1.3)
-            if(hasTalent(12))mult=mult.mul(1.5)
+            if(hasTalent(3))result=result.mul(1.3)
+            if(hasTalent(12))result=result.mul(1.5)
             player.stat.def=result.mul(mult)//返回
         },
         hp(){
@@ -254,11 +280,11 @@ addLayer("stat",{
                 result=result.add(player.equip.weaponCurrent[i][4])
                 //计算词缀对属性的影响
                 for(var j=0;j<player.equip.weaponCurrent[i][6].length;j++){
-                    if(player.equip.weaponCurrent[i][6][j].array[0]>=7 && player.equip.weaponCurrent[i][6][j].array[0]<=13)
-                        mult=mult.mul(n(player.equip.weaponCurrent[i][6][j].array[0]-6).mul(0.1).add(1.1))
+                    if(player.equip.weaponCurrent[i][6][j]>=7 && player.equip.weaponCurrent[i][6][j]<=13)
+                        mult=mult.add(n(player.equip.weaponCurrent[i][6][j]-6).add(1).mul(0.1))
                 }
             }
-            if(hasTalent(3))mult=mult.mul(1.3)
+            if(hasTalent(3))result=result.mul(1.3)
             player.stat.hp=result.mul(mult)//返回
         },
         spd(){
@@ -445,6 +471,26 @@ function display_weapon(which){
     if(n(player.equip.weaponCurrent[which].length).lte(3))return '<text style="color:white"><h1>'+"无"+'</h1></text><br>'
     return '<text style="color:white">'+output(player.equip.weaponCurrent[which])+'</text>'
 }
+function weapon_style(wea){
+    const Css={
+    "border-radius":"0px","width":"200px","height":"300px","min-height":"300px",
+    "background-color":"black","transition-duration":"0s",
+    "border-width":"10px","border-color":"white white white white"}
+    if(wea.length>=9){
+        var sss=""
+        var x=n(wea[8])
+        sss=sss+quality_color[x]+' '+quality_color[x]
+        var x=n(wea[8])
+        if(wea.length>=10){
+            if(wea[9]==0)sss=sss+' '+quality_color[x]+' '+quality_color[x]
+            if(wea[9]==1)sss=sss+' '+"#F75D59"+' '+"#F75D59"
+            if(wea[9]==2)sss=sss+' '+"cyan"+' '+"cyan"
+            if(wea[9]==3)sss=sss+' '+"olive"+' '+"olive"
+        }
+        Css["border-color"]=sss
+    }
+    return Css
+}
 addLayer("equip",{
     symbol: "<h2>W",
     position: 1,
@@ -479,6 +525,14 @@ addLayer("equip",{
     },
     update(diff)
     {
+        for(var i=0;i<player.equip.weapon.length;i++){
+            if(player.equip.weapon[i].length>=5 && player.equip.weapon[i].length<=9)
+                player.equip.weapon[i].push(0)
+        }
+        for(var i=0;i<player.equip.weaponCurrent.length;i++){
+            if(player.equip.weaponCurrent[i].length>=5 && player.equip.weaponCurrent[i].length<=9)
+                player.equip.weaponCurrent[i].push(0)
+        }
         player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
         
         var x=n(1)
@@ -486,7 +540,7 @@ addLayer("equip",{
         else if(_inChallenge(2))x=n(0.7)
         else if(_inChallenge(7))x=n(10)
         if(_finishChallenge(0))x=x.mul(1.1)
-        player.devSpeed=x
+        player.devSpeed=5
 
         var xx=n(200)
         if(_inChallenge(3))xx=n(10)
@@ -509,6 +563,11 @@ addLayer("equip",{
             onClick(){player.equip.currentPage=player.equip.currentPage.add(1)},
         },
         "Now":{
+            WeApOn(){
+                var l=player.equip.currentID
+                if(n(player.equip.weapon.length).lte(l) || n(player.equip.weapon[l].length).lte(1))return [1,1]
+                return player.equip.weapon[l]
+            },
             display(){
                 var s='<h1>当前的</h1><br><br>'
                 var l=player.equip.currentID
@@ -516,13 +575,18 @@ addLayer("equip",{
                 return "<text style='color:white'>"+s+output(player.equip.weapon[l])
             },
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-                        "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(this.WeApOn())},
             canClick(){return false},
             onClick(){},
         },
         "Player":{
+            WeApOn(){
+                var l=player.equip.currentID
+                if(n(player.equip.weapon.length).lte(l))return [1,1]
+                var x=n(player.equip.weapon[l][1])
+                if(n(player.equip.weaponCurrent[x].length).lte(3))return [1,1]
+                return player.equip.weaponCurrent[x]
+            },
             display(){
                 var s='<h1>穿戴中</h1><br><br>'
                 var l=player.equip.currentID
@@ -532,9 +596,7 @@ addLayer("equip",{
                 return "<text style='color:white'>"+s+output(player.equip.weaponCurrent[x])
             },
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-                        "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(this.WeApOn())},
             canClick(){return false},
             onClick(){},
         },
@@ -581,63 +643,49 @@ addLayer("equip",{
         "Weapon-0":{
             display(){return display_weapon(0)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-               "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(player.equip.weaponCurrent[0])},
             canClick(){return false},
             onClick(){},
         },
         "Weapon-1":{
             display(){return display_weapon(1)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-               "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(player.equip.weaponCurrent[1])},
             canClick(){return false},
             onClick(){},
         },
         "Weapon-2":{
             display(){return display_weapon(2)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-               "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(player.equip.weaponCurrent[2])},
             canClick(){return false},
             onClick(){},
         },
         "Weapon-3":{
             display(){return display_weapon(3)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-               "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(player.equip.weaponCurrent[3])},
             canClick(){return false},
             onClick(){},
         },
         "Weapon-4":{
             display(){return display_weapon(4)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-               "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(player.equip.weaponCurrent[4])},
             canClick(){return false},
             onClick(){},
         },
         "Weapon-5":{
             display(){return display_weapon(5)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-               "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(player.equip.weaponCurrent[5])},
             canClick(){return false},
             onClick(){},
         },
         "Weapon-6":{
             display(){return display_weapon(6)},
             unlocked(){return true},
-            style(){
-               return {"border-radius":"0px","width":"200px","height":"300px","min-height":"300px","background-color":"black","transition-duration":"0s",
-               "border-width":"5px","border-color":"white"}},
+            style(){return weapon_style(player.equip.weaponCurrent[6])},
             canClick(){return false},
             onClick(){},
         },
@@ -659,10 +707,39 @@ addLayer("equip",{
         },
         getStyle(data,id){
             var x=n(id/100).floor(),y=n(id%100)
+            // var xxx=50*(x.toNumber()-1)
+            // var rot_deg=[30,15,0,-15,-30],yyy=rot_deg[y.toNumber()-1]
+            // var yidong=[120,60,0,-60,-120],zzz=yidong[y.toNumber()-1]
+            // var pianyi=[-60,-30,0,30,60]
+            // zzz=zzz+pianyi[y.toNumber()-1]*(x.toNumber()-1)
+            const Css={"height":"75px","min-height":"75px","width":"125px","background-color":"black"
+            ,"border-radius":"0px","border-width":"5px","border-color":"white white white white","transition-duration":"0s","margin":"10px",
+            // "transform":"rotate("+yyy+"deg)",
+            // "position":"relative","top":"-"+xxx+"px","left":""+zzz+"px"
+        }
             var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
-            if(player.equip.currentID.eq(idd))
-                return {"height":"50px","min-height":"50px","width":"150px","background-color":"rgb(205,185,39)","border-radius":"0px","transition-duration":"0s"}
-            return {"height":"50px","min-height":"50px","width":"150px","background-color":"black","border-radius":"0px","transition-duration":"0s"}
+            var sss=""
+            if(n(player.equip.weapon.length).gt(idd)){
+                var wea=player.equip.weapon[idd]
+                var x=n(wea[8])
+                sss=sss+quality_color[x]+' '+quality_color[x]
+            }
+            if(n(player.equip.weapon.length).gt(idd)){ 
+                var wea=player.equip.weapon[idd]
+                var x=n(wea[8])
+                if(wea.length>=10){
+                    if(wea[9]==0)sss=sss+' '+quality_color[x]+' '+quality_color[x]
+                    if(wea[9]==1)sss=sss+' '+"#F75D59"+' '+"#F75D59"
+                    if(wea[9]==2)sss=sss+' '+"cyan"+' '+"cyan"
+                    if(wea[9]==3)sss=sss+' '+"olive"+' '+"olive"
+                }
+            }
+            Css["border-color"]=sss
+            if(player.equip.currentID.eq(idd)){
+                Css["background-color"]="rgb(205,185,39)"
+                return Css
+            }
+            return Css
         },
         onClick(data, id) {
             var x=n(id/100).floor(),y=n(id%100)
@@ -673,7 +750,7 @@ addLayer("equip",{
             var x=n(id/100).floor(),y=n(id%100)
             var idd=x.sub(1).mul(5).add(y).sub(1).add(player.equip.currentPage.sub(1).mul(50))
             if(n(player.equip.weapon.length).lte(idd)) return ''
-            return '<text style="color:white">'+'LV.'+format(player.equip.weapon[idd][7])+' '+player.equip.weapon[idd][0]
+            return '<p style="color:white">'+'LV.'+format(player.equip.weapon[idd][7])+' '+player.equip.weapon[idd][0]
         },
     },
     tabFormat:{
@@ -724,38 +801,40 @@ addLayer("equip",{
     layerShown(){return true},
 })
 
-
 var monster={
 }
-function add_monster(id,Name, Src, UnlockedLB, UnlockedUB, MultBase, HpBase, AtkBase, DefBase, Spd, ExpGain, MoneyGain, BaoLv) {
+function add_monster(id, Name, Src, UnlockedLB, UnlockedUB, MultBase, HpBase, AtkBase, DefBase, Spd, ExpGain, MoneyGain, BaoLv, YuanSu) {
     monster[id] = {
         name: () => Name,
         src: () => Src,
         unlocked: () => player.battle.currentLvl.gte(UnlockedLB) && player.battle.currentLvl.lte(UnlockedUB),
-        mult: () => n(MultBase).pow(n(player.battle.currentLvl)),
+        mult: () => n(MultBase).sub(1).mul(n(player.battle.currentLvl).sub(1)).add(1),
         hp: () => n(HpBase).mul(monster[id].mult()),
         atk: () => n(AtkBase).mul(monster[id].mult()),
         def: () => n(DefBase).mul(monster[id].mult()),
         spd: () => n(Spd),
-        EXP_gain: () => n(ExpGain),
-        MONEY_gain: () => n(MoneyGain),
-        BaoLv: () => n(BaoLv)
+        EXP_gain: () => n(ExpGain).mul(n(0.3).mul(n(player.battle.currentLvl).sub(1)).add(1)),
+        MONEY_gain: () => n(MoneyGain).mul(n(0.3).mul(n(player.battle.currentLvl).sub(1)).add(1)),
+        BaoLv: () => n(BaoLv),
+        yuansu: () => YuanSu,
     }
 }
-add_monster('slime',         "幼年史莱姆",                                   '史莱姆',/*补充*/        1,  49,  1.1, 5,    1,    0,   2000, 1,   1,   1)
-add_monster('slime_zhanshi', "史莱姆<text style='color:#FF0000'>战士</text>",'史莱姆战士',            2,  49,  1.1, 10,   5,    2,   2000, 2,   3,   2)
-add_monster('slime_gongshou',"史莱姆<text style='color:#00FF00'>弓手</text>",'史莱姆弓手',            4,  49,  1.1, 15,   8,    4,   2500, 4,   6,   3)
-add_monster('slime_fashi',   "史莱姆<text style='color:#0000FF'>法师</text>",'史莱姆法师',            6,  49,  1.1, 25,   15,   8,   2500, 8,   15,  5)
-add_monster('slime_jingying',"史莱姆<text style='color:#00FFFF'>精英</text>",'史莱姆精英',            10, 49,  1.1, 30,   20,   15,  1500, 15,  30,  10)
-add_monster('slime_guowang', "史莱姆<text style='color:gold'>国王</text>",   '史莱姆国王',            1,  0,   1,   3000, 1000, 750, 1750, 150, 300, 100)
-add_monster('kulou_xiao',    "小骷髅",                                       '小骷髅',/*补充补充*/    51, 149, 1.1, 30,   35,   10,  1250, 150, 300, 3)
-add_monster('kulou_zhong',   "中骷髅",                                       '中骷髅',/*补充补充*/    56, 149, 1.1, 60,   70,   20,  1300, 300, 450, 3)
-add_monster('kulou_da',      "大骷髅",                                       '大骷髅',/*补充补充*/    61, 149, 1.1, 100,  120,  30,  1400, 500, 600, 3)
+add_monster('slime',         "幼年史莱姆",                                      '史莱姆',/*补补*/    1,  49,  1.5, 5,    1,    0,   2000, 1,   1,   1,   0 )
+add_monster('slime_zhanshi', "史莱姆<text style='color:#FF0000'>战士</text>",   '史莱姆战士',        3,  49,  1.5, 15,   12,   5,   1750, 3,   5,   1.3, 0 )
+add_monster('slime_gongshou',"史莱姆<text style='color:#00FF00'>弓手</text>",   '史莱姆弓手',        3,  49,  1.5, 13,   20,   0,   3000, 4,   6,   1.4, 0 )
+add_monster('slime_fashi',   "史莱姆<text style='color:#0000FF'>法师</text>",   '史莱姆法师',        3,  49,  1.5, 20,   15,   3,   2000, 5,   7,   1.5, 0 )
+add_monster('slime_jingying',"史莱姆<text style='color:#00FFFF'>精英</text>",   '史莱姆精英',        10, 49,  1.5, 30,   20,   15,  2250, 10,  15,  2,   0 )
+add_monster('slime_guowang', "史莱姆<text style='color:gold'>国王</text>",      '史莱姆国王',        1,  0,   1,   1000, 750,  500, 1500, 20,  30,  10,  0 )
+add_monster('kulou_xiao',    "小骷髅",/*补补*/                                  '小骷髅',/*补补*/    51, 149, 1.5, 30,   35,   10,  1250, 15,  20,  3,   0 )
+add_monster('kulou_zhong',   "中骷髅",/*补补*/                                  '中骷髅',/*补补*/    56, 149, 1.5, 60,   70,   20,  1300, 30,  40,  10,  0 )
+add_monster('kulou_da',      "大骷髅",/*补补*/                                  '大骷髅',/*补补*/    61, 149, 1.5, 100,  120,  30,  1400, 50,  60,  20,  0 )
+add_monster('kulou_da_huo',  "<text style='color:red'>火·</text>大骷髅",/*补*/  '大骷髅-火',/*补*/   66, 149, 1.5, 150,  360,  30,  1400, 70,  80,  30,  1 )
+add_monster('kulou_da_feng', "<text style='color:cyan'>风·</text>大骷髅",/*补*/ '大骷髅-风',/*补*/   66, 149, 1.5, 100,  180,  30,  4200, 80,  100, 30,  2 )
+add_monster('kulou_da_tu',   "<text style='color:brown'>土·</text>大骷髅",/*补*/'大骷髅-土',/*补*/   66, 149, 1.5, 150,  120,  80,  1400, 90,  120, 30,  3 )
 const map_img_src=[
     "<img src='js/img/地图-草.png' alt=''>",
     "<img src='js/img/地图-土.png' alt=''>",
 ]
-//`<img src="js/img/`+moster[]+`.png" alt="">`
 function re_calc(lvl,is_teshu,namE){//重新生成怪物属性
     player.stat.hpnow=player.stat.hp
     player.battle.stringstringstring=""
@@ -918,7 +997,7 @@ addLayer("battle",  {
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
                 if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
-                    var wea=summon(monster[player.battle.monsterID].BaoLv(),0)
+                    var wea=summon(monster[player.battle.monsterID].BaoLv(),0,monster[player.battle.monsterID].yuansu())
                     if(Array.isArray(wea))
                     {
                         player.equip.weapon.push(wea)
@@ -927,7 +1006,7 @@ addLayer("battle",  {
                     else player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了一件装备 , 但是自动卖出了'
                 }
                 if(hasTalent(6) && n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
-                    var wea=summon(monster[player.battle.monsterID].BaoLv(),1)
+                    var wea=summon(monster[player.battle.monsterID].BaoLv(),1,monster[player.battle.monsterID].yuansu())
                     if(Array.isArray(wea))
                     {
                         player.equip.weapon.push(wea)
