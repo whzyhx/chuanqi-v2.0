@@ -1,7 +1,7 @@
 ﻿let modInfo = {
 	name: "传奇II",
 	id: "Maybe_Fantacy_Tree_2",
-	author: "<h1><h1><h1><h1><h1>匿_名</h1></h1></h1></h1></h1> 和 ajchen",
+	author: "我草这个上吸漏斗太他妈上吸漏斗了", //见 technical\systemComponents.js 第131行
 	pointsName: "金币",
 	discordName: "",
 	discordLink: "",

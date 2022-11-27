@@ -992,8 +992,8 @@ addLayer("battle",  {
                 //注意 , 掉落是需要显示的 , 即加到stringstringstring里
                 var EXPgain=monster[player.battle.monsterID].EXP_gain()
                 var MONEYgain=monster[player.battle.monsterID].MONEY_gain()
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了 '+format(EXPgain)+' 点经验'
-                player.battle.stringstringstring=player.battle.stringstringstring+'<br>你获得了 '+format(MONEYgain)+' 金币'
+                player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了 ${format(EXPgain)} 点经验`
+                player.battle.stringstringstring=player.battle.stringstringstring+`<br>你获得了 ${format(MONEYgain)} 金币`
                 player.stat.EXPnow=player.stat.EXPnow.add(EXPgain)
                 player.stat.money=player.stat.money.add(MONEYgain)
                 if(n(player.equip.weapon.length).lt(player.equip.weaponSizeMax)){
