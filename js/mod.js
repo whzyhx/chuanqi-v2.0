@@ -54,7 +54,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return `时间速度：${player.stat.timeSpeed.toNumber()}x`}
+	// function(){return `时间速度：${player.stat.timeSpeed.toNumber()}x`}
 ]
 
 // Determines when the game "ends"
