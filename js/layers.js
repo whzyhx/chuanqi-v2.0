@@ -91,6 +91,7 @@ function summon(baolv,is_second){
         if(x.lte(possibility[i])){
             name=quality[i]
             which=i
+            break
         }
     }
     if(player.stat.guolv[which]){
@@ -283,6 +284,14 @@ addLayer("stat",{
             if(hasTalent(2))result=result.mul(3)
             player.stat.luck=result
         },
+        timeSpeed(){
+            var result=n(1)
+            if(_inChallenge(0))result=n(5)
+            else if(_inChallenge(2))result=n(0.7)
+            else if(_inChallenge(7))result=n(10)
+            if(_finishChallenge(0))result=result.mul(1.1)
+            player.stat.timeSpeed=result
+        }
     },
     clickables:{
         "Sell 0":{
@@ -481,12 +490,13 @@ addLayer("equip",{
     {
         player.equip.maxPage=n(player.equip.weapon.length).div(50).add(1).floor()
         
-        var x=n(1)
+        /*var x=n(1)
         if(_inChallenge(0))x=n(5)
         else if(_inChallenge(2))x=n(0.7)
         else if(_inChallenge(7))x=n(10)
         if(_finishChallenge(0))x=x.mul(1.1)
-        player.devSpeed=x
+        player.devSpeed=x*/
+        //见 player.stat.timeSpeed
 
         var xx=n(200)
         if(_inChallenge(3))xx=n(10)
@@ -725,8 +735,7 @@ addLayer("equip",{
 })
 
 
-var monster={
-}
+var monster={ }
 function add_monster(id,Name, Src, UnlockedLB, UnlockedUB, MultBase, HpBase, AtkBase, DefBase, Spd, ExpGain, MoneyGain, BaoLv) {
     monster[id] = {
         name: () => Name,
@@ -859,6 +868,9 @@ addLayer("battle",  {
     tooltip:"战斗",
 
     update(diff){//现在在干嘛
+
+        diff*=(player.stat.timeSpeed.toNumber())
+
         if (player[this.layer].currentDoingProgress>=1){
             if(player.battle.inFight==0){
                 if(player.battle.currentDoingStage==0){
