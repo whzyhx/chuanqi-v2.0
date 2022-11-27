@@ -54,6 +54,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	function(){return `时间速度：${player.stat.timeSpeed.toNumber()}x`}
 ]
 
 // Determines when the game "ends"
@@ -73,4 +74,5 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	player.devSpeed=1
 }
