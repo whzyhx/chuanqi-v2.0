@@ -540,7 +540,7 @@ addLayer("equip",{
         else if(_inChallenge(2))x=n(0.7)
         else if(_inChallenge(7))x=n(10)
         if(_finishChallenge(0))x=x.mul(1.1)
-        player.devSpeed=5
+        player.devSpeed=x
 
         var xx=n(200)
         if(_inChallenge(3))xx=n(10)
